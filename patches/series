@@ -3,7 +3,7 @@ src-fix/fix-null-mInstanceID.patch
 src-fix/fix-unkown-warning-clang-9.patch
 src-fix/fix-safe-browsing-prefs.patch
 src-fix/fix-prefs.patch
-src-fix/fix-disabled-supervised-user.patch
+Extensions/base/fix-disabled-supervised-user.patch
 Extensions/base/gn.patch
 Extensions/base/src.patch
 Extensions/base/res.patch
