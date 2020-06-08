@@ -3,6 +3,14 @@ src-fix/fix-null-mInstanceID.patch
 src-fix/fix-unkown-warning-clang-9.patch
 src-fix/fix-safe-browsing-prefs.patch
 src-fix/fix-prefs.patch
+src-fix/fix-disabled-supervised-user.patch
+Extensions/base/gn.patch
+Extensions/base/src.patch
+Extensions/base/res.patch
+Extensions/base/change-package-name-chromium-extensions.patch
+Extensions/open-setting-in-new-tab.patch
+Extensions/allow-select-folder.patch
+Extensions/crx-download-install-prompt.patch
 Vanadium/0020-disable-media-router-media-remoting-by-default.patch
 Vanadium/0021-disable-media-router-by-default.patch
 Unobtainium/kill-Auth.patch
@@ -11,7 +19,6 @@ Unobtainium/kill-Location-fall-back-to-system.patch
 Unobtainium/kill-Vision.patch
 Unobtainium/kill-Translate.patch
 Unobtainium/kill-TOS-and-metrics-opt-out.patch
-ungoogled-chromium-android/change-package-name-chromium.patch
 ungoogled-chromium-android/Remove-dependency-on-com.google.android.gcm.patch
 ungoogled-chromium-android/Remove-dependency-on-com.google.android.gms.gcm.patch
 ungoogled-chromium-android/Remove-dependency-on-com.google.android.gms.auth.patch

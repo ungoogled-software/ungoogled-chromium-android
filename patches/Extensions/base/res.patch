@@ -1,0 +1,977 @@
+From: Wengling Chen <feiyu2817@gmail.com>
+Date: Sat, 30 May 2020 18:25:38 -0400
+Subject: resource fixes for enable_extensions=true
+
+---
+ chrome/app/bookmarks_strings.grdp          |    6 +-
+ chrome/app/chromium_strings.grd            |   20 +++----
+ chrome/app/generated_resources.grd         |   77 ++++++++++-------------------
+ chrome/app/profiles_strings.grdp           |    9 ---
+ chrome/app/theme/theme_resources.grd       |   24 ++++-----
+ chrome/browser/browser_resources.grd       |   24 ++++-----
+ components/autofill_payments_strings.grdp  |   14 +----
+ components/autofill_strings.grdp           |    2 
+ components/components_strings.grd          |    4 -
+ components/history_strings.grdp            |    2 
+ components/new_or_sad_tab_strings.grdp     |    4 -
+ components/page_info_strings.grdp          |    6 +-
+ components/payments_strings.grdp           |    2 
+ components/sync_ui_strings.grdp            |    2 
+ mojo/public/js/mojo_bindings_resources.grd |    2 
+ ui/resources/ui_resources.grd              |   10 +--
+ ui/webui/resources/webui_resources.grd     |    6 +-
+ 17 files changed, 92 insertions(+), 122 deletions(-)
+
+--- a/chrome/app/theme/theme_resources.grd
++++ b/chrome/app/theme/theme_resources.grd
+@@ -28,7 +28,7 @@
+       <if expr="is_linux or is_win or chromeos">
+         <structure type="chrome_scaled_image" name="IDR_ACCESSIBILITY_CAPTIONS_PREVIEW_BACKGROUND" file="common/captions-preview-bg.png" />
+       </if>
+-      <if expr="toolkit_views and not is_macosx">
++      <if expr="not is_macosx">
+         <structure type="chrome_scaled_image" name="IDR_APP_WINDOW_CLOSE" file="common/app_window_close.png" />
+         <structure type="chrome_scaled_image" name="IDR_APP_WINDOW_CLOSE_H" file="common/app_window_close_hover.png" />
+         <structure type="chrome_scaled_image" name="IDR_APP_WINDOW_CLOSE_P" file="common/app_window_close_active.png" />
+@@ -70,7 +70,7 @@
+       <if expr="is_win">
+         <structure type="chrome_scaled_image" name="IDR_BOOKMARK_BAR_FOLDER_MANAGED" file="win/bookmark_bar_folder_managed.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_BOOKMARK_BAR_APPS_SHORTCUT" file="common/apps_bookmark_bar_icon.png" />
+         <structure type="chrome_scaled_image" name="IDR_BOOKMARKS_FAVICON" file="common/favicon_bookmarks.png" />
+       </if>
+@@ -78,7 +78,7 @@
+         <structure type="chrome_scaled_image" name="IDR_BUTTON_USER_IMAGE_CHOOSE_FILE" file="cros/choose_file.png" />
+         <structure type="chrome_scaled_image" name="IDR_BUTTON_USER_IMAGE_TAKE_PHOTO" file="cros/take_photo.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+       <!-- Note: Tab close buttons are not traditional buttons.  Tab close buttons
+            fill a background with a color from the theme and tile IDR_CLOSE_1 over it.
+            See chrome/browser/ui/views/tabs/tab.cc -->
+@@ -94,7 +94,7 @@
+       <if expr="chromeos">
+         <structure type="chrome_scaled_image" name="IDR_DEVICE_DISABLED" file="cros/device_disabled.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_DOWNLOADS_FAVICON" file="common/favicon_downloads.png" />
+         <structure type="chrome_scaled_image" name="IDR_ERROR_NETWORK_OFFLINE" file="common/error_network_offline.png" />
+       </if>
+@@ -132,7 +132,7 @@
+       <if expr="_google_chrome">
+         <structure type="chrome_scaled_image" name="IDR_GOOGLE_ICON" file="google_chrome/google_icon.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_HELP_MENU" file="common/help_16.png" />
+         <structure type="chrome_scaled_image" name="IDR_HIDE_PASSWORD_HOVER" file="common/hide_password_hover.png" />
+         <if expr="not chromeos">
+@@ -148,7 +148,7 @@
+       <if expr="enable_service_discovery">
+         <structure type="chrome_scaled_image" name="IDR_LOCAL_DISCOVERY_CLOUDPRINT_ICON" file="common/cloudprint.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_MANAGEMENT_FAVICON" file="common/favicon_management.png" />
+         <structure type="chrome_scaled_image" name="IDR_MAXIMIZE_BUTTON_MASK" file="common/maximize_button_mask.png" />
+         <structure type="chrome_scaled_image" name="IDR_MINIMIZE_BUTTON_MASK" file="common/minimize_button_mask.png" />
+@@ -158,12 +158,12 @@
+         <structure type="chrome_scaled_image" name="IDR_ARC_PLAY_STORE_OPTIN_IN_PROGRESS_NOTIFICATION" file="cros/notification_play_store_optin_in_progress.png" />
+         <structure type="chrome_scaled_image" name="IDR_NOTIFICATION_EASYUNLOCK_ENABLED" file="cros/notification_easyunlock_enabled.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_PASSWORD_CHECK" file="common/password_check.png" />
+         <structure type="chrome_scaled_image" name="IDR_PASSWORD_CHECK_DARK" file="common/password_check_dark.png" />
+       </if>
+       <structure type="chrome_scaled_image" name="IDR_PLUGINS_FAVICON" file="common/favicon_extensions.png" />
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_PRERENDER" file="common/prerender_succeed_icon.png" />
+       </if>
+       <if expr="not _google_chrome">
+@@ -253,7 +253,7 @@
+         <structure type="chrome_scaled_image" name="IDR_RESET_WARNING" file="cros/reset_warning.png" />
+       </if>
+       <structure type="chrome_scaled_image" name="IDR_RESTORE_BUTTON_MASK" file="common/restore_button_mask.png" />
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_SAFETY_TIP_LOOKALIKE_ILLUSTRATION_DARK" file="common/safety_tip_lookalike_illustration_dark.png" />
+         <structure type="chrome_scaled_image" name="IDR_SAFETY_TIP_LOOKALIKE_ILLUSTRATION_LIGHT" file="common/safety_tip_lookalike_illustration_light.png" />
+         <structure type="chrome_scaled_image" name="IDR_SAFETY_TIP_SUSPICIOUS_ILLUSTRATION_DARK" file="common/safety_tip_suspicious_illustration_dark.png" />
+@@ -265,7 +265,7 @@
+       <if expr="chromeos">
+         <structure type="chrome_scaled_image" name="IDR_SECONDARY_USER_SETTINGS" file="cros/secondary_user_settings.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_SETTINGS_FAVICON" file="common/favicon_settings.png" />
+         <structure type="chrome_scaled_image" name="IDR_SHOW_PASSWORD_HOVER" file="common/show_password_hover.png" />
+       </if>
+@@ -287,7 +287,7 @@
+       <if expr="chromeos">
+         <structure type="chrome_scaled_image" name="IDR_TAB_RECORDING_INDICATOR" file="cros/tab_recording_indicator.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_COOKIE_BLOCKING_ON_HEADER" file="common/cookie_blocking_on_header.png" />
+         <structure type="chrome_scaled_image" name="IDR_COOKIE_BLOCKING_OFF_HEADER" file="common/cookie_blocking_off_header.png" />
+       </if>
+@@ -341,7 +341,7 @@
+         <structure type="chrome_scaled_image" name="IDR_PASTE_VIOLATION_DARK" file="common/paste_violation_dark.png" />
+       </if>
+       <if expr="not _google_chrome">
+-        <if expr="not is_android">
++        <if expr="is_android">
+           <structure type="chrome_scaled_image" name="IDR_WEBSTORE_ICON" file="chromium/webstore_icon.png" />
+           <structure type="chrome_scaled_image" name="IDR_WEBSTORE_ICON_16" file="chromium/webstore_icon_16.png" />
+           <structure type="chrome_scaled_image" name="IDR_WEBSTORE_ICON_24" file="chromium/webstore_icon_24.png" />
+--- a/ui/resources/ui_resources.grd
++++ b/ui/resources/ui_resources.grd
+@@ -78,7 +78,7 @@
+         <structure type="chrome_scaled_image" name="IDR_AURA_CURSOR_ZOOM_IN" file="common/pointers/zoom_in.png" />
+         <structure type="chrome_scaled_image" name="IDR_AURA_CURSOR_ZOOM_OUT" file="common/pointers/zoom_out.png" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_CLOSE_2" file="close_2.png" />
+         <structure type="chrome_scaled_image" name="IDR_CLOSE_2_H" file="close_2_hover.png" />
+         <structure type="chrome_scaled_image" name="IDR_CLOSE_2_MASK" file="close_2_mask.png" />
+@@ -92,7 +92,7 @@
+       </if>
+       <structure type="chrome_scaled_image" name="IDR_DEFAULT_FAVICON" file="common/default_favicon.png" />
+       <structure type="chrome_scaled_image" name="IDR_DEFAULT_FAVICON_DARK" file="common/default_favicon_dark.png" />
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_DEFAULT_FAVICON_32" file="common/default_favicon_32.png" />
+         <structure type="chrome_scaled_image" name="IDR_DEFAULT_FAVICON_DARK_32" file="common/default_favicon_dark_32.png" />
+         <structure type="chrome_scaled_image" name="IDR_DEFAULT_FAVICON_64" file="common/default_favicon_64.png" />
+@@ -134,7 +134,7 @@
+       <if expr="toolkit_views and not is_macosx">
+         <structure type="chrome_scaled_image" name="IDR_NOTIFICATION_SETTINGS" file="common/notification_settings.png"/>
+       </if>
+-      <if expr="not is_android and not is_ios">
++      <if expr="is_android and not is_ios">
+         <structure type="chrome_scaled_image" name="IDR_NTP_DEFAULT_FAVICON" file="common/ntp_default_favicon.png" />
+       </if>
+       <if expr="not is_android and not is_ios">
+@@ -142,7 +142,7 @@
+         <structure type="chrome_scaled_image" name="IDR_OOBE_ACTION_BOX_BUTTON_NORMAL" file="cros/action_box_button_normal.png" />
+         <structure type="chrome_scaled_image" name="IDR_OOBE_ACTION_BOX_BUTTON_PRESSED" file="cros/action_box_button_pressed.png" />
+       </if>
+-      <if expr="not is_android and not is_ios">
++      <if expr="is_android and not is_ios">
+         <structure type="chrome_scaled_image" name="IDR_SIGNAL_0_BAR" file="common/signal_0_bar.png" />
+         <structure type="chrome_scaled_image" name="IDR_SIGNAL_1_BAR" file="common/signal_1_bar.png" />
+         <structure type="chrome_scaled_image" name="IDR_SIGNAL_2_BAR" file="common/signal_2_bar.png" />
+@@ -154,7 +154,7 @@
+         <structure type="chrome_scaled_image" name="IDR_SIGNAL_3_BAR_SELECTED" file="common/signal_3_bar_selected.png" />
+         <structure type="chrome_scaled_image" name="IDR_SIGNAL_4_BAR_SELECTED" file="common/signal_4_bar_selected.png" />
+       </if>
+-      <if expr="use_aura">
++      <if expr="is_android">
+         <structure type="chrome_scaled_image" name="IDR_TEXT_SELECTION_HANDLE_CENTER" file="common/text_selection_handle_center.png" />
+         <structure type="chrome_scaled_image" name="IDR_TEXT_SELECTION_HANDLE_LEFT" file="common/text_selection_handle_left.png" />
+         <structure type="chrome_scaled_image" name="IDR_TEXT_SELECTION_HANDLE_RIGHT" file="common/text_selection_handle_right.png" />
+--- a/mojo/public/js/mojo_bindings_resources.grd
++++ b/mojo/public/js/mojo_bindings_resources.grd
+@@ -14,7 +14,7 @@
+   <release seq="1">
+     <includes>
+       <!-- All resources included on Android should use the lite bindings. -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <include name="IDR_MOJO_MOJO_BINDINGS_JS"
+             file="${root_gen_dir}/mojo/public/js/mojo_bindings.js"
+             use_base_dir="false"
+--- a/chrome/app/generated_resources.grd
++++ b/chrome/app/generated_resources.grd
+@@ -292,7 +292,7 @@ are declared in tools/grit/grit_rule.gni
+       </if>
+ 
+       <!-- Settings specific strings -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <part file="settings_strings.grdp" />
+         <part file="shared_settings_strings.grdp"/>
+       </if>
+@@ -303,7 +303,7 @@ are declared in tools/grit/grit_rule.gni
+       </if>
+ 
+       <!-- Welcome strings -->
+-      <if expr="not chromeos and not is_android">
++      <if expr="not chromeos and is_android">
+         <part file="welcome_strings.grdp" />
+       </if>
+ 
+@@ -447,7 +447,7 @@ are declared in tools/grit/grit_rule.gni
+         Disable
+       </message>
+       <!-- Search strings are only used in webui, so no mobile. -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_SEARCH_CLEARED" desc="Message announced to screenreader users when search is cleared.">
+           Search cleared
+         </message>
+@@ -475,7 +475,7 @@ are declared in tools/grit/grit_rule.gni
+       </if>
+ 
+        <!-- content area context menus. Android does not use it -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_CONTENT_CONTEXT_INSPECTELEMENT" desc="The name of the Inspect Element command in the content area context menu">
+           I&amp;nspect
+         </message>
+@@ -975,7 +975,7 @@ are declared in tools/grit/grit_rule.gni
+       </if>
+ 
+       <!-- Page menu. Android has separate strings for its menu -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <if expr="not use_titlecase">
+           <message name="IDS_NEW_TAB" desc="The text label of a menu item for opening a new tab">
+             New &amp;tab
+@@ -2019,7 +2019,7 @@ are declared in tools/grit/grit_rule.gni
+       </message>
+ 
+       <!-- Download Context Menu Items -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <if expr="not use_titlecase">
+           <if expr="is_macosx">
+             <message name="IDS_DOWNLOAD_MENU_SHOW"
+@@ -2272,7 +2272,7 @@ are declared in tools/grit/grit_rule.gni
+       </if>
+ 
+       <!-- Desktop omnibox PWA install icon -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_OMNIBOX_PWA_INSTALL_ICON_LABEL" desc="String for the omnibox icon label promoting an app installation">
+           Install
+         </message>
+@@ -2747,7 +2747,6 @@ are declared in tools/grit/grit_rule.gni
+       </message>
+ 
+       <!-- Win certificate selector dialog strings.  -->
+-      <if expr="toolkit_views">
+         <message name="IDS_CERT_SELECTOR_SUBJECT_COLUMN" desc="The text of the header for the certificate subject column in the certificate selector dialog.">
+           Subject
+         </message>
+@@ -2760,7 +2759,6 @@ are declared in tools/grit/grit_rule.gni
+         <message name="IDS_CERT_SELECTOR_SERIAL_COLUMN" desc="The text of the header for the certificate serial number column in the certificate selector dialog.">
+           Serial
+         </message>
+-      </if>
+ 
+       <message name="IDS_CERT_EXPORT_TYPE_BASE64" desc="The description of saving a single certificate in base64 encoding.">
+         Base64-encoded ASCII, single certificate
+@@ -3327,7 +3325,7 @@ are declared in tools/grit/grit_rule.gni
+       </message>
+ 
+       <!-- Task Manager Window -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <if expr="not use_titlecase">
+           <message name="IDS_TASK_MANAGER_KILL" desc="The caption of the Task Manager kill button">
+             End process
+@@ -3606,7 +3604,7 @@ are declared in tools/grit/grit_rule.gni
+       <message name="IDS_UTILITY_PROCESS_FILE_UTILITY_NAME" desc="The name of the utility process used for various Chrome specific file operations.">
+           Chrome File Utilities
+       </message>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_UTILITY_PROCESS_PROFILE_IMPORTER_NAME" desc="The name of the utility process used for importing profiles.">
+           Profile Importer
+         </message>
+@@ -5106,7 +5104,7 @@ Keep your key file in a safe place. You
+       </message>
+ 
+       <!-- about:system strings -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_ABOUT_SYS_TITLE" desc="about:system page title">
+           About System
+         </message>
+@@ -5137,7 +5135,7 @@ Keep your key file in a safe place. You
+       </if>
+ 
+       <!-- chrome://browser-switch strings -->
+-      <if expr="is_win or is_macosx or (is_linux and not chromeos)">
++      <if expr="is_win or is_macosx or is_android or (is_linux and not chromeos)">
+         <message name="IDS_ABOUT_BROWSER_SWITCH_TITLE" desc="about:browser-switch page title">
+           Legacy Browser Support
+         </message>
+@@ -5622,7 +5620,7 @@ Keep your key file in a safe place. You
+       </message>
+ 
+       <!-- Strings for intent picker -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_TOOLTIP_INTENT_PICKER_ICON" desc="The tooltip for the intent picker bubble icon">
+           To open this link, choose an app
+         </message>
+@@ -5854,20 +5852,7 @@ the Bookmarks menu.">
+           No thanks
+         </message>
+       </if>
+-      <if expr="not is_android">
+-        <message name="IDS_PASSWORD_MANAGER_SAVE_BUTTON" desc="Save button text for password manager">
+-          Save
+-        </message>
+-        <if expr="use_titlecase">
+-          <message name="IDS_PASSWORD_MANAGER_UPDATE_BUTTON" desc="In Title Case: Update button text for password manager">
+-            Update Password
+-          </message>
+-        </if>
+-        <if expr="not use_titlecase">
+-          <message name="IDS_PASSWORD_MANAGER_UPDATE_BUTTON" desc="Update button text for password manager">
+-            Update password
+-          </message>
+-        </if>
++      <if expr="is_android">
+         <message name="IDS_PASSWORD_MANAGER_BUBBLE_BLACKLIST_BUTTON" desc="Button text for the 'Save Password' bubble's 'Never remember for this site' option">
+           Never
+         </message>
+@@ -5924,7 +5909,7 @@ the Bookmarks menu.">
+       </if>
+ 
+       <!-- Android uses custom UI for Bookmark importing -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <!-- Import Settings Dialog -->
+         <if expr="is_win">
+           <message name="IDS_IMPORT_FROM_IE" desc="browser combo box: Microsoft Internet Explorer">
+@@ -6738,7 +6723,7 @@ the Bookmarks menu.">
+       <!-- Settings related strings not specific to chrome://settings.
+            (Settings specific strings are in settings_strings.grdp).
+            Android uses native UI for settings -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_TOOLBAR_INFORM_SET_HOME_PAGE" desc="The confirmation message when dropping a link on the Home toolbar button">
+            Your home page has been set.
+         </message>
+@@ -6945,7 +6930,7 @@ the Bookmarks menu.">
+           Generate QR code for this Image
+         </message>
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_OMNIBOX_QRCODE_GENERATOR_ICON_LABEL" desc="String for the omnibox icon label for the QR code Generator">
+           QR code
+         </message>
+@@ -7109,14 +7094,12 @@ the Bookmarks menu.">
+       </message>
+ 
+       <!-- Accessiblility strings for Infobars in Views -->
+-      <if expr="toolkit_views">
+         <message name="IDS_ACCNAME_INFOBAR_CONTAINER" desc="The accessible name for the infobar container.">
+           Infobar Container
+         </message>
+         <message name="IDS_ACCNAME_INFOBAR" desc="The accessible name for an infobar.">
+           Infobar
+         </message>
+-      </if>
+ 
+       <!-- One click sign-in bubble and dialog -->
+       <message name="IDS_ONE_CLICK_BUBBLE_UNDO" desc="The text for the undo button in the one click sign-in bubble.">
+@@ -7170,7 +7153,7 @@ the Bookmarks menu.">
+       </message>
+ 
+       <!-- Managed UI on pages like chrome://settings and chrome://downloads -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <if expr="chromeos">
+           <message name="IDS_DEVICE_MANAGED_WITH_HYPERLINK" desc="Message to end users in Enterprise/EDU, with a link for more info (ChromeOS)">
+             Your <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph><ph name="DEVICE_TYPE">$2<ex>Chromebook</ex></ph> is managed<ph name="END_LINK">&lt;/a&gt;</ph> by your organization
+@@ -7291,7 +7274,7 @@ the Bookmarks menu.">
+       </message>
+ 
+       <!-- Strings used for non-Android builds -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_APP_DEFAULT_PAGE_NAME"
+                  desc="Default name for the first 'Apps' page on the New Tab Page.">
+           Apps
+@@ -7937,7 +7920,7 @@ Please help our engineers fix this probl
+       </if>
+ 
+       <!-- Android uses native UI to handle Sync settings -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <!-- Sync options dialog strings -->
+         <if expr="not chromeos">
+           <message name="IDS_SYNC_OVERVIEW" desc="The message that appears in the options dialog when sync has not been set up by the user.">
+@@ -8046,7 +8029,6 @@ Please help our engineers fix this probl
+       </if>
+ 
+       <!-- Translate Bubble -->
+-      <if expr="toolkit_views">
+         <message name="IDS_TRANSLATE_BUBBLE_BEFORE_TRANSLATE_TITLE" desc="Title text for the translate bubble when asking to translate a page.">
+           Translate this page?
+         </message>
+@@ -8210,7 +8192,6 @@ Please help our engineers fix this probl
+         <message name="IDS_TRANSLATE_BUBBLE_RESET" desc="Text to show for the language combobox to revert to its original state in the advanced view under TAB UI">
+             Reset
+         </message>
+-      </if>
+ 
+       <!-- Web and message center notifications -->
+       <message name="IDS_NOTIFICATION_BUTTON_SETTINGS" desc="Short button label to go to the notification settings panel">
+@@ -9086,7 +9067,7 @@ Please help our engineers fix this probl
+       </message>
+ 
+       <!-- Media Galleries. -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_MEDIA_GALLERIES_DIALOG_HEADER" desc="Header for media gallery permissions dialog.">
+           Media-File Permissions for "<ph name="EXTENSION">$1<ex>Photo Editor</ex></ph>"
+         </message>
+@@ -9625,7 +9606,7 @@ Please help our engineers fix this probl
+       </message>
+     </if>
+ 
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <!-- Device Chooser Prompt -->
+       <message name="IDS_BLUETOOTH_DEVICE_CHOOSER_PROMPT_ORIGIN" desc="The label that is used to introduce Bluetooth chooser details to the user in a popup when it is from a website.">
+         <ph name="Origin">$1<ex>www.9oo91e.qjz9zk</ex></ph> wants to pair
+@@ -9738,7 +9719,7 @@ Please help our engineers fix this probl
+     </message>
+ 
+     <!-- Serial port chooser -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_SERIAL_PORT_CHOOSER_PROMPT_ORIGIN" desc="The label that is used to introduce serial port chooser details to the user in a popup when it is from a website.">
+         <ph name="Origin">$1<ex>www.9oo91e.qjz9zk</ex></ph> wants to connect to a serial port
+       </message>
+@@ -9757,7 +9738,7 @@ Please help our engineers fix this probl
+     </if>
+ 
+     <!-- HID (Human Interface Device) chooser -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_HID_CHOOSER_PROMPT_ORIGIN" desc="The label that is used to introduce the Human Interface Device (HID) chooser details to the user in a popup when it is from a website.">
+         <ph name="Origin">$1<ex>www.9oo91e.qjz9zk</ex></ph> wants to connect to a HID device
+       </message>
+@@ -9818,7 +9799,7 @@ Please help our engineers fix this probl
+     </if>
+ 
+     <!-- Framebust / Blocked Redirection intervention message -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <!-- Android strings are declared in android_chrome_strings.grd. -->
+       <message name="IDS_REDIRECT_BLOCKED_MESSAGE" desc="The message stating that a redirect (noun) was blocked on this page. This will be followed on a separate line with the address the user was being redirected to.">
+         Redirect blocked:
+@@ -9924,7 +9905,7 @@ Please help our engineers fix this probl
+     </if>
+ 
+     <!-- Download open confirmation dialog -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_DOWNLOAD_OPEN_CONFIRMATION_DIALOG_TITLE" desc="Title of the dialog prompt shown to users when an extension is trying to open a downloaded file.">
+         Open download
+       </message>
+@@ -10093,7 +10074,7 @@ Please help our engineers fix this probl
+     </message>
+ 
+     <!-- Relaunch notification bubble and dialog. -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <if expr="not chromeos">
+         <message name="IDS_RELAUNCH_ACCEPT_BUTTON" desc="The text in the accept button of a dialog that causes the browser to be relaunched immediately.">
+           Relaunch now
+@@ -10110,7 +10091,7 @@ Please help our engineers fix this probl
+     </if>
+ 
+     <!-- Web-modal dialog shown during Web Authenticaton API requests. -->
+-    <if expr="is_win or is_macosx or desktop_linux or chromeos">
++    <if expr="is_win or is_macosx or is_android or desktop_linux or chromeos">
+       <message name="IDS_WEBAUTHN_GENERIC_TITLE" desc="Title of most dialogs shown while the user is authenticating on a web site using a security key.">
+         Use your security key with <ph name="APP_NAME">$1<ex>9oo91e.qjz9zk</ex></ph>
+       </message>
+@@ -10416,7 +10397,7 @@ Please help our engineers fix this probl
+     </message>
+ 
+     <!-- User happiness tracking survey UI -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <if expr="use_titlecase">
+         <message name="IDS_HATS_BUBBLE_OK_LABEL" translateable="false" desc="Button label on Happiness Tracking Survey's invitation banner, clicking the button gives the user's consent on taking the survey.">
+           Take Survey
+@@ -10611,7 +10592,7 @@ Please help our engineers fix this probl
+     </message>
+ 
+     <!-- Extension request -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_ENTERPRISE_EXTENSION_REQUEST_APPROVED_TITLE" desc="The notification title when there are some extension requests approved.">
+         {NUM_EXTENSIONS, plural,
+           =1 {An extension has been approved}
+--- a/components/components_strings.grd
++++ b/components/components_strings.grd
+@@ -316,7 +316,7 @@
+       <part file="undo_strings.grdp" />
+       <part file="version_ui_strings.grdp" />
+ 
+-      <if expr="not is_android and not is_ios">
++      <if expr="is_android and not is_ios">
+         <part file="management_strings.grdp" />
+       </if>
+       <if expr="is_android">
+@@ -396,7 +396,7 @@
+       <message name="IDS_PLUGIN_NOT_SUPPORTED" desc="The placeholder text for an unsupported plugin.">
+         This plugin is not supported
+       </message>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <if expr="not use_titlecase">
+           <message name="IDS_PRINT" desc="The text label of the Print... menu item. Opens a dialog box to select print settings">
+             &amp;Print...
+--- a/chrome/app/bookmarks_strings.grdp
++++ b/chrome/app/bookmarks_strings.grdp
+@@ -2,7 +2,7 @@
+ <!-- Bookmarks specific strings (included from generated_resources.grd). -->
+ <grit-part>
+   <!-- Begin of Bookmarks Bar strings-->
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <!-- The special folders created when importing from other other browsers. -->
+     <if expr="is_win">
+       <message name="IDS_BOOKMARK_GROUP_FROM_IE" desc="The group name of bookmarks from Internet Explorer">
+@@ -100,7 +100,7 @@
+     <message name="IDS_BOOKMARK_BAR_NEW_FOLDER" desc="Menu title for adding a new folder">
+       Add &amp;folder...
+     </message>
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_SHOW_BOOKMARK_BAR" desc="The toggle to show the bookmark bar">
+         &amp;Show bookmarks bar
+       </message>
+@@ -152,7 +152,7 @@
+     <message name="IDS_BOOKMARK_BAR_NEW_FOLDER" desc="In Title Case: Menu title for adding a new folder">
+       Add &amp;Folder...
+     </message>
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_SHOW_BOOKMARK_BAR" desc="In Title Case: The toggle to show the bookmark bar">
+         &amp;Show Bookmarks Bar
+       </message>
+--- a/chrome/app/chromium_strings.grd
++++ b/chrome/app/chromium_strings.grd
+@@ -179,7 +179,7 @@ If you update this file, be sure also to
+   <release seq="1" allow_pseudo="false">
+     <messages fallback_to_english="true">
+       <!-- Settings specific strings -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <part file="settings_chromium_strings.grdp" />
+       </if>
+ 
+@@ -667,7 +667,6 @@ Chromium is unable to recover your setti
+       </if>
+ 
+       <!-- Enterprise sign-in dialog -->
+-      <if expr="toolkit_views">
+         <message name="IDS_ENTERPRISE_SIGNIN_TITLE" desc="The title of the dialog to confirm linking the browser profile with the signed-in enterprise account">
+           Link your Chromium data to this account?
+         </message>
+@@ -677,10 +676,9 @@ Chromium is unable to recover your setti
+         <message name="IDS_ENTERPRISE_SIGNIN_EXPLANATION_WITH_PROFILE_CREATION" desc="The warning message displayed to an enterprise user about to link their profile to their Google account. Additionally notifies the user that they can create a new profile instead. This message is followed by a 'Learn more' link.">
+           You are signing in with a managed account and giving its administrator control over your Chromium profile. Your Chromium data, such as your apps, bookmarks, history, passwords, and other settings will become permanently tied to <ph name="USER_NAME">$1<ex>pat@example.com</ex></ph>. You will be able to delete this data via the Google Accounts Dashboard, but you will not be able to associate this data with another account. You can optionally create a new profile to keep your existing Chromium data separate. <ph name="LEARN_MORE">$2<ex>Learn more</ex></ph>
+         </message>
+-      </if>
+ 
+       <!-- about:browser-switch strings -->
+-      <if expr="is_win or is_macosx or (is_linux and not chromeos)">
++      <if expr="is_win or is_macosx or is_android or (is_linux and not chromeos)">
+         <message name="IDS_ABOUT_BROWSER_SWITCH_DESCRIPTION_UNKNOWN_BROWSER" desc="Description shown while waiting for an alternative browser to open, when the browser name is not auto-detected">
+           Your system administrator has configured Chromium to open an alternative browser to access <ph name="TARGET_URL_HOSTNAME">$1<ex>example.com</ex></ph>.
+         </message>
+@@ -795,7 +793,7 @@ Chromium is unable to recover your setti
+       </if>
+ 
+       <!-- Material Design User Manager -->
+-      <if expr="not is_android and not chromeos">
++      <if expr="is_android and not chromeos">
+         <!-- User pod remove sync warning text -->
+         <message name="IDS_LOGIN_POD_USER_REMOVE_WARNING_SYNC" desc="Main text shown as a warning when attempting to remove an user.">
+           This person's browsing data will be deleted from this device. To recover the data, sign in to Chromium as <ph name="USER_EMAIL">$2<ex>foo@example.com</ex></ph>.
+@@ -872,7 +870,7 @@ Chromium is unable to recover your setti
+         </message>
+       </if>
+ 
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_BUBBLE_TEXT" desc="The text of a bubble that confirms users allows integrating the accessibility labels service of Google to Chromium.">
+           If an image doesn’t have a useful description, Chromium will try to provide one for you. To create descriptions, images are sent to Google. You can turn this off in settings at any time.
+         </message>
+@@ -957,7 +955,7 @@ Chromium is unable to recover your setti
+       </message>
+ 
+       <!-- Sync errors. Android uses native UI to handle Sync settings -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_SYNC_UPGRADE_CLIENT" desc="Message indicating client needs to be upgraded to the latest version.">
+           Update Chromium to start sync
+         </message>
+@@ -1045,7 +1043,7 @@ Chromium is unable to recover your setti
+       </if>
+ 
+       <!-- Welcome page (chrome://welcome) strings -->
+-      <if expr="not chromeos and not is_android">
++      <if expr="not chromeos and is_android">
+         <message name="IDS_WELCOME_HEADER" desc="A message which will appear as the header on the Welcome UI if the user has never run Chromium before.">
+           Welcome to Chromium
+         </message>
+@@ -1058,7 +1056,7 @@ Chromium is unable to recover your setti
+         </message>
+       </if>
+       <!-- Relaunch notification bubble and dialog. -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <if expr="not chromeos">
+           <message name="IDS_RELAUNCH_RECOMMENDED_TITLE" desc="The title of a dialog that tells users that a browser relaunch is recommended for an update available for some number of days.">
+             {0, plural,
+@@ -1102,7 +1100,7 @@ Chromium is unable to recover your setti
+         </if>
+       </if>
+       <!-- Chromium launch blocking dialog. -->
+-      <if expr="not is_android and not chromeos">
++      <if expr="is_android and not chromeos">
+          <message name="IDS_ENTERPRISE_STARTUP_CLOUD_POLICY_ENROLLMENT_TOOLTIP" desc="The information message of Chromium launch blocking dialog for machine level user cloud policy enrollment.">
+           Launching Chromium...
+         </message>
+@@ -1117,7 +1115,7 @@ Chromium is unable to recover your setti
+         Share a Chromium tab
+       </message>
+       <!-- User happiness tracking survey UI -->
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_HATS_BUBBLE_TITLE" translateable="false" desc="The title of Happiness Tracking Survey's invitation banner, it invites users to take a survey">
+           Help us improve Chromium
+         </message>
+--- a/components/sync_ui_strings.grdp
++++ b/components/sync_ui_strings.grdp
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <grit-part>
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <message name="IDS_SYNC_BASIC_ENCRYPTION_DATA" desc="Text of the radio that when selected enables basic encryption.">
+       Encrypt synced passwords with your Google credentials
+     </message>
+--- a/chrome/browser/browser_resources.grd
++++ b/chrome/browser/browser_resources.grd
+@@ -8,11 +8,11 @@
+   </outputs>
+   <release seq="1">
+     <structures>
+-      <if expr="is_win or is_macosx or desktop_linux or chromeos">
++      <if expr="is_win or is_macosx or is_android or desktop_linux or chromeos">
+         <structure name="IDR_SIGNIN_SHARED_CSS_JS" file="${root_gen_dir}\chrome\browser\resources\signin\signin_shared_css.js" use_base_dir="false" preprocess="true" type="chrome_html" />
+         <structure name="IDR_SIGNIN_SHARED_OLD_CSS_HTML" file="resources\signin\signin_shared_old_css.html" preprocess="true" allowexternalscript="true" type="chrome_html" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <!-- New Tab Page WebUI. -->
+         <structure name="IDR_INCOGNITO_TAB_HTML" file="resources\ntp4\incognito_tab.html" compress="gzip" flattenhtml="true" type="chrome_html" />
+         <structure name="IDR_INCOGNITO_TAB_THEME_CSS" file="resources\ntp4\incognito_tab_theme.css" compress="gzip" flattenhtml="true" type="chrome_html" />
+@@ -63,7 +63,7 @@
+         <include name="IDR_DISCARDS_SITE_DATA_MOJOM_LITE_JS" file="${root_gen_dir}\chrome\browser\ui\webui\discards\site_data.mojom-lite.js" compress="gzip" use_base_dir="false" type="BINDATA" />
+         <include name="IDR_DISCARDS_SORTED_TABLE_BEHAVIOR_JS" file="resources\discards\sorted_table_behavior.js" compress="gzip" type="BINDATA" />
+       </if>
+-      <if expr="is_win or is_macosx or (is_linux and not chromeos)">
++      <if expr="is_win or is_macosx or is_android or (is_linux and not chromeos)">
+         <include name="IDR_BROWSER_SWITCH_APP_JS" file="${root_gen_dir}\chrome\browser\resources\browser_switch\app.js" compress="gzip" use_base_dir="false" type="BINDATA" />
+         <include name="IDR_BROWSER_SWITCH_PROXY_JS" file="resources\browser_switch\browser_switch_proxy.js" compress="gzip" type="BINDATA" />
+         <include name="IDR_BROWSER_SWITCH_HTML" file="resources\browser_switch\browser_switch.html" compress="gzip" allowexternalscript="true" type="BINDATA" />
+@@ -79,7 +79,7 @@
+         <include name="IDR_ABOUT_NACL_CSS" file="resources\about_nacl\about_nacl.css" compress="gzip" flattenhtml="true" type="chrome_html" />
+         <include name="IDR_ABOUT_NACL_JS" file="resources\about_nacl\about_nacl.js" compress="gzip" type="BINDATA" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <include name="IDR_ABOUT_SYS_HTML" file="resources\about_sys\about_sys.html" compress="gzip" type="BINDATA" />
+         <include name="IDR_ABOUT_SYS_CSS" file="resources\about_sys\about_sys.css" compress="gzip" flattenhtml="true" type="BINDATA" />
+         <include name="IDR_ABOUT_SYS_JS" file="resources\about_sys\about_sys.js" compress="gzip" type="BINDATA" />
+@@ -110,7 +110,7 @@
+         <include name="IDR_OFFLINE_INTERNALS_BROWSER_PROXY_JS" file="resources\offline_pages\offline_internals_browser_proxy.js" type="BINDATA" compress="gzip" />
+       </if>
+ 
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <!-- New Tab Page -->
+         <part file="resources/local_ntp/icons.grdp" />
+       </if>
+@@ -128,7 +128,7 @@
+         <include name="IDR_HANGOUT_SERVICES_MANIFEST" file="resources\hangout_services\manifest.json" type="BINDATA" />
+       </if>
+ 
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <!-- Page not available for guest. -->
+         <include name="IDR_PAGE_NOT_AVAILABLE_FOR_GUEST_APP_HTML" file="resources\page_not_available_for_guest\app.html" type="BINDATA" />
+       </if>
+@@ -170,14 +170,14 @@
+       <if expr="desktop_linux">
+         <include name="IDR_PLUGIN_DB_JSON" file="resources\plugin_metadata\plugins_linux.json" type="BINDATA" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <include name="IDR_MANAGEMENT_HTML" file="resources\management\management.html" flattenhtml="true" allowexternalscript="true" type="BINDATA" compress="gzip" />
+         <include name="IDR_MANAGEMENT_UI_JS" file="${root_gen_dir}/chrome/browser/resources/management/management_ui.js" use_base_dir="false" type="BINDATA" compress="gzip" preprocess="true" />
+         <include name="IDR_MANAGEMENT_BROWSER_PROXY_JS" file="resources\management\management_browser_proxy.js" type="BINDATA" compress="gzip" preprocess="true" />
+         <include name="IDR_MANAGEMENT_ICONS_JS" file="${root_gen_dir}/chrome/browser/resources/management/icons.js" use_base_dir="false" type="BINDATA" compress="gzip" preprocess="true" />
+       </if>
+       <include name="IDR_URL_MOJOM_LITE_JS" file="${root_gen_dir}\url\mojom\url.mojom-lite.js" use_base_dir="false" type="BINDATA" compress="gzip" />
+-      <if expr="is_win or is_macosx or desktop_linux or chromeos">
++      <if expr="is_win or is_macosx or desktop_linux or chromeos or is_android">
+         <include name="IDR_SYNC_DISABLED_CONFIRMATION_HTML" file="resources\signin\sync_confirmation\sync_disabled_confirmation.html" type="BINDATA" />
+         <include name="IDR_SYNC_DISABLED_CONFIRMATION_APP_JS" file="${root_gen_dir}\chrome\browser\resources\signin\sync_confirmation\sync_disabled_confirmation_app.js" use_base_dir="false" preprocess="true" type="BINDATA" />
+         <include name="IDR_SYNC_CONFIRMATION_HTML" file="resources\signin\sync_confirmation\sync_confirmation.html" flattenhtml="true" allowexternalscript="true" type="BINDATA" />
+@@ -187,7 +187,7 @@
+         <include name="IDR_SYNC_CONFIRMATION_IMAGES_SYNC_CONFIRMATION_ILLUSTRATION_SVG" file="resources\signin\sync_confirmation\images\sync_confirmation_illustration.svg" type="BINDATA" compress="gzip" />
+         <include name="IDR_SYNC_CONFIRMATION_IMAGES_SYNC_CONFIRMATION_ILLUSTRATION_DARK_SVG" file="resources\signin\sync_confirmation\images\sync_confirmation_illustration_dark.svg" type="BINDATA" compress="gzip" />
+       </if>
+-      <if expr="is_win or is_macosx or desktop_linux">
++      <if expr="is_win or is_macosx or is_android or desktop_linux">
+         <include name="IDR_SIGNIN_EMAIL_CONFIRMATION_HTML" file="resources\signin\signin_email_confirmation\signin_email_confirmation.html" flattenhtml="true" allowexternalscript="true" type="BINDATA" />
+         <include name="IDR_SIGNIN_EMAIL_CONFIRMATION_APP_JS" file="${root_gen_dir}\chrome\browser\resources\signin\signin_email_confirmation\signin_email_confirmation_app.js" use_base_dir="false" preprocess="true" type="BINDATA" />
+         <include name="IDR_SIGNIN_ERROR_HTML" file="resources\signin\signin_error\signin_error.html" type="BINDATA" />
+@@ -313,7 +313,7 @@
+         <include name="IDR_QUICKOFFICE_MANIFEST" file="resources\chromeos\quickoffice\manifest.json" type="BINDATA" />
+         <include name="IDR_PRODUCT_CHROMEOS_SYNC_CONSENT_SCREEN_ICONS" file="internal\resources\chromeos-sync-consent-icons.html" type="BINDATA" />
+       </if>
+-      <if expr="not is_android and not chromeos">
++      <if expr="is_android and not chromeos">
+         <include name="IDR_CONTROL_BAR_HTML" file="resources\user_manager\control_bar.html" type="BINDATA" />
+         <include name="IDR_CONTROL_BAR_JS" file="resources\user_manager\control_bar.js" type="BINDATA" />
+         <include name="IDR_CREATE_PROFILE_HTML" file="resources\user_manager\create_profile.html" type="BINDATA" />
+@@ -331,7 +331,7 @@
+         <include name="IDR_USER_MANAGER_TUTORIAL_HTML" file="resources\user_manager\user_manager_tutorial.html" type="BINDATA" />
+         <include name="IDR_USER_MANAGER_TUTORIAL_JS" file="resources\user_manager\user_manager_tutorial.js" type="BINDATA" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <include name="IDR_IDENTITY_INTERNALS_HTML" file="resources\identity_internals\identity_internals.html" compress="gzip" type="BINDATA" />
+         <include name="IDR_IDENTITY_INTERNALS_CSS" file="resources\identity_internals\identity_internals.css" compress="gzip" type="BINDATA" />
+         <include name="IDR_IDENTITY_INTERNALS_JS" file="resources\identity_internals\identity_internals.js" compress="gzip" type="BINDATA" />
+@@ -408,7 +408,7 @@
+         </if>
+         <include name="IDR_BRAILLE_MANIFEST" file="resources\chromeos\accessibility\braille_ime\manifest.json" type="BINDATA" />
+       </if>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <include name="IDR_MEDIA_ROUTER_INTERNALS_HTML" file="resources\media_router\media_router_internals.html" compress="gzip" type="BINDATA" />
+         <include name="IDR_MEDIA_ROUTER_INTERNALS_CSS" file="resources\media_router\media_router_internals.css" compress="gzip" type="BINDATA" />
+         <include name="IDR_MEDIA_ROUTER_INTERNALS_JS" file="resources\media_router\media_router_internals.js" compress="gzip" type="BINDATA" />
+--- a/components/history_strings.grdp
++++ b/components/history_strings.grdp
+@@ -63,7 +63,7 @@
+       Clear Browsing Data...
+     </message>
+   </if>
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <message name="IDS_HISTORY_OTHER_SESSIONS_COLLAPSE_SESSION" desc="In the 'Other Sessions' menu on the history page, the label for the command to collapse (hide) the list of windows and tabs in a session.">
+       Collapse list
+     </message>
+--- a/components/new_or_sad_tab_strings.grdp
++++ b/components/new_or_sad_tab_strings.grdp
+@@ -106,7 +106,7 @@
+           Learn more
+         </message>
+       </if>
+-      <if expr="is_win or is_linux or is_macosx or chromeos">
++      <if expr="is_win or is_linux or is_android or is_macosx or chromeos">
+         <message name="IDS_SAD_TAB_ERROR_CODE" desc="The message displayed on the crashed web page indicating the type of the crash.">
+           Error code: <ph name="ERROR_CODE">$1<ex>STATUS_ACCESS_VIOLATION</ex></ph>
+         </message>
+@@ -117,7 +117,7 @@
+                desc="Title of the new tab page, not to be confused with the action of opening a new tab.">
+         New Tab
+       </message>
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <message name="IDS_NEW_TAB_OTR_HEADING"
+                  desc="Heading used when a person opens an OTR window">
+           You’ve gone incognito
+--- a/chrome/app/profiles_strings.grdp
++++ b/chrome/app/profiles_strings.grdp
+@@ -441,11 +441,6 @@
+     Although you can no longer access your old profile, you can still remove it.
+   </message>
+   <if expr="is_android">
+-    <message name="IDS_SYNC_USER_NAME_IN_USE_ERROR" desc="Mobile: An error message shown when a user tries to sign in to sync using a user name that's already in use by another profile.">
+-      This account is already being used on this device.
+-    </message>
+-  </if>
+-  <if expr="not is_android">
+     <message name="IDS_SYNC_USER_NAME_IN_USE_ERROR" desc="An error message shown when a user tries to sign in to sync using a user name that's already in use by another profile.">
+       This account is already being used on this computer.
+     </message>
+@@ -455,7 +450,7 @@
+   </if>
+ 
+   <!-- Android does not support multiple profiles and supervised users -->
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <!-- Create Profile Dialog -->
+     <message name="IDS_PROFILES_CREATE_TITLE" desc="Title of the create profile dialog">
+       Add person
+@@ -488,7 +483,7 @@
+     </message>
+   </if>
+ 
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <!-- User manager web UI -->
+     <if expr="use_titlecase">
+       <message name="IDS_ADD_USER_BUTTON" desc="Text shown on an add user button on login/locker screen">
+--- a/components/autofill_payments_strings.grdp
++++ b/components/autofill_payments_strings.grdp
+@@ -68,7 +68,7 @@
+     </if>
+   </if>
+ 
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <message name="IDS_AUTOFILL_FIELD_LABEL_PHONE" desc="The label of the Phone entry in a settings-like UI to enter a phone number.">
+       Phone
+     </message>
+@@ -79,19 +79,15 @@
+ 
+   <!-- Autofill save credit card bubble or infobar prompt -->
+   <if expr="is_android or is_ios">
+-    <then>
+       <message name="IDS_AUTOFILL_SAVE_CARD_INFOBAR_ACCEPT" desc="Text to show for the Autofill save credit card infobar accept button.">
+         Save
+       </message>
+-    </then>
+-    <else>
+       <message name="IDS_AUTOFILL_SAVE_CARD_BUBBLE_LOCAL_SAVE_ACCEPT" desc="Text to show for the Autofill save credit card local save bubble accept button.">
+         Save
+       </message>
+       <message name="IDS_AUTOFILL_SAVE_CARD_BUBBLE_UPLOAD_SAVE_ACCEPT" desc="Text to show for the Autofill save credit card upload save bubble accept button.">
+         Save
+       </message>
+-    </else>
+   </if>
+   <if expr="is_android">
+     <message name="IDS_AUTOFILL_SAVE_CARD_PROMPT_CONFIRM" desc="Text to show for the Autofill upload save credit card prompt accept button when more information (e.g., CVC) was needed in order to save the card and was entered." formatter_data="android_java">
+@@ -202,7 +198,7 @@
+   </message>
+ 
+   <!-- Autofill Local card migration bubble or dialog -->
+-  <if expr="not is_ios and not is_android">
++  <if expr="not is_ios and is_android">
+     <message name="IDS_AUTOFILL_GOOGLE_PAY_LOGO_ACCESSIBLE_NAME" desc="The accessible name for the Google Pay logo in the local card migration bubble or dialog.">
+       Google Pay logo
+     </message>
+@@ -406,7 +402,7 @@
+ 
+   <!-- WebAuthn fingerprint opt-in dialog -->
+   <!-- Desktop only -->
+-  <if expr="not is_ios and not is_android">
++  <if expr="not is_ios and is_android">
+     <if expr="is_macosx">
+       <message name="IDS_AUTOFILL_WEBAUTHN_OPT_IN_DIALOG_TITLE" desc="Headline asking the user if they want to use their device's platform authenticator to confirm their cards in the future instead of CVC.">
+         Use Touch ID instead of CVC?
+@@ -462,7 +458,7 @@
+ 
+   <!-- Webauthn verify pending dialog -->
+   <!-- Desktop only -->
+-  <if expr="not is_ios and not is_android">
++  <if expr="not is_ios and is_android">
+     <message name="IDS_AUTOFILL_WEBAUTHN_VERIFY_PENDING_DIALOG_TITLE" desc="Headline of the dialog shown when user has opted in to use platform biometric authenticator and has selected one card to fill the form. This shows the verification of the selected card is in progress.">
+         Verifying your identity...
+     </message>
+@@ -479,7 +475,7 @@
+   </message>
+ 
+   <!-- Cloud token related strings (Desktop only) -->
+-  <if expr="not is_ios and not is_android">
++  <if expr="not is_ios and is_android">
+     <message name="IDS_AUTOFILL_CLOUD_TOKEN_DROPDOWN_OPTION_LABEL" desc="Text shown in the button in the Autofill dropdown menu when a credit card form field is queried, to offer the option to use a virtual card.">
+       Use a virtual card number...
+     </message>
+--- a/components/autofill_strings.grdp
++++ b/components/autofill_strings.grdp
+@@ -165,7 +165,7 @@
+     Show cards from your Google Account
+   </message>
+ 
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <message name="IDS_AUTOFILL_POPUP_ACCESSIBLE_NODE_DATA" desc="The accessibility text to speak when we display an autofill popup.">
+       Autofill
+     </message>
+--- a/components/page_info_strings.grdp
++++ b/components/page_info_strings.grdp
+@@ -181,7 +181,7 @@
+     </message>
+ 
+     <!-- Certificate Viewer link -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_PAGE_INFO_CERTIFICATE" desc="Title of the certificate area in the Page Info bubble, shown when a HTTPS site is loaded.">
+         Certificate
+       </message>
+@@ -209,7 +209,7 @@
+     </if>
+ 
+     <!-- Cookies -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_PAGE_INFO_COOKIES" desc="The label for the Cookies setting in the Page Information Window.">
+         Cookies
+       </message>
+@@ -426,7 +426,7 @@
+     </message>
+ 
+     <!-- Permission change infobar. -->
+-    <if expr="not is_android">
++    <if expr="is_android">
+       <message name="IDS_PAGE_INFO_INFOBAR_TEXT" desc="The string shown in the infobar after the user has changed site permissions settings, reminding them to reload the page in order for the new settings to take effect.">
+         To apply your updated settings to this site, reload this page
+       </message>
+--- a/components/payments_strings.grdp
++++ b/components/payments_strings.grdp
+@@ -558,7 +558,7 @@
+   </if>
+ 
+   <!-- Payment Request section preview strings. They are slightly different on desktop and android because the pluralization and formatting code behaves differently. -->
+-  <if expr="not is_android">
++  <if expr="is_android">
+     <message name="IDS_PAYMENT_REQUEST_PAYMENT_METHODS_PREVIEW" desc="This is a snippet of a payment method a user has saved to Chrome, plus an indication of the number of additional payment methods the user has saved. Its function is to show the user has payment methods that can be used to complete a payment, and thus doesn't have to type the entire payment method. [ICU Syntax]">
+     {PAYMENT_METHOD, plural,
+        =0 {<ph name="PAYMENT_METHOD_PREVIEW">{1}<ex>VISA ....1234</ex></ph>}
+--- a/ui/webui/resources/webui_resources.grd
++++ b/ui/webui/resources/webui_resources.grd
+@@ -135,12 +135,12 @@ without changes to the corresponding grd
+                use_base_dir="false" type="BINDATA" compress="gzip"
+                preprocess="true" />
+ 
+-      <if expr="not is_android">
++      <if expr="is_android">
+         <part file="cr_components/cr_components_images.grdp" />
+         <part file="cr_elements_images.grdp" />
+       </if>
+ 
+-      <if expr="not is_android and not is_ios">
++      <if expr="is_android and not is_ios">
+         <part file="cr_components/cr_components_resources_v3.grdp" />
+         <part file="cr_elements_resources_v3.grdp" />
+         <part file="cr_polymer_resources_v3.grdp" />
+@@ -459,7 +459,7 @@ without changes to the corresponding grd
+                    compress="gzip" />
+       </if>
+ 
+-      <if expr="not is_android and not is_ios">
++      <if expr="is_android and not is_ios">
+         <part file="cr_components/cr_components_resources.grdp" />
+         <part file="cr_elements_resources.grdp" />
+         <part file="cr_polymer_resources.grdp" />

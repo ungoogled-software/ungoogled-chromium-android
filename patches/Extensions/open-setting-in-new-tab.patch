@@ -1,0 +1,129 @@
+From: Wengling Chen <feiyu2817@gmail.com>
+Date: Sat, 06 Jun 2020 19:24:20 -0400
+Subject: make settings of extensions open in new tab
+
+
+---
+ chrome/browser/extensions/api/developer_private/developer_private_api.cc |    4 -
+ chrome/browser/extensions/extension_context_menu_model.cc                |    2 
+ chrome/browser/extensions/extension_tab_util.cc                          |   35 ++++------
+ chrome/browser/extensions/extension_tab_util.h                           |    2 
+ chrome/browser/ui/webui/settings/people_handler.cc                       |    1 
+ 5 files changed, 20 insertions(+), 24 deletions(-)
+
+--- a/chrome/browser/extensions/api/developer_private/developer_private_api.cc
++++ b/chrome/browser/extensions/api/developer_private/developer_private_api.cc
+@@ -1908,12 +1908,14 @@ ExtensionFunction::ResponseAction Develo
+     return RespondNow(Error(kNoOptionsPageForExtensionError));
+ 
+   content::WebContents* web_contents = GetSenderWebContents();
++
+   if (!web_contents)
+     return RespondNow(Error(kCouldNotFindWebContentsError));
+ 
+   ExtensionTabUtil::OpenOptionsPage(
+       extension,
+-      chrome::FindBrowserWithWebContents(web_contents));
++      web_contents);
++
+   return RespondNow(NoArguments());
+ }
+ 
+--- a/chrome/browser/extensions/extension_tab_util.cc
++++ b/chrome/browser/extensions/extension_tab_util.cc
+@@ -864,30 +864,28 @@ bool ExtensionTabUtil::OpenOptionsPageFr
+   // that's the only place it's running.
+   DCHECK(!profile->IsOffTheRecord() || IncognitoInfo::IsSplitMode(extension));
+   Browser* browser = chrome::FindBrowserWithProfile(profile);
++  LOG(ERROR) << "Cannot open new tab here";
+   if (!browser)
+     browser = Browser::Create(Browser::CreateParams(profile, true));
+   if (!browser)
+     return false;
+-  return extensions::ExtensionTabUtil::OpenOptionsPage(extension, browser);
++  return false;
+ }
+ 
+ bool ExtensionTabUtil::OpenOptionsPage(const Extension* extension,
+-                                       Browser* browser) {
++                                       content::WebContents* web_contents) {
+   if (!OptionsPageInfo::HasOptionsPage(extension))
+     return false;
+ 
++  LOG(WARNING) << "extension_tab_util.cc: OpenOptionsPage() entry";
++
+   // Force the options page to open in non-OTR window if the extension is not
+   // running in split mode, because it won't be able to save settings from OTR.
+   // This version of OpenOptionsPage() can be called from an OTR window via e.g.
+   // the action menu, since that's not initiated by the extension.
+-  std::unique_ptr<chrome::ScopedTabbedBrowserDisplayer> displayer;
+-  if (browser->profile()->IsOffTheRecord() &&
+-      !IncognitoInfo::IsSplitMode(extension)) {
+-    displayer.reset(new chrome::ScopedTabbedBrowserDisplayer(
+-        browser->profile()->GetOriginalProfile()));
+-    browser = displayer->browser();
+-  }
+ 
++  // Instead open in native browser, open a new tab through JNI bridge
++  // Incognito Mode not handled yet
+   GURL url_to_navigate;
+   bool open_in_tab = OptionsPageInfo::ShouldOpenInTab(extension);
+   if (open_in_tab) {
+@@ -904,17 +902,14 @@ bool ExtensionTabUtil::OpenOptionsPage(c
+     url_to_navigate = url_to_navigate.ReplaceComponents(replacements);
+   }
+ 
+-  NavigateParams params(
+-      GetSingletonTabNavigateParams(browser, url_to_navigate));
+-  // We need to respect path differences because we don't want opening the
+-  // options page to close a page that might be open to extension content.
+-  // However, if the options page opens inside the chrome://extensions page, we
+-  // can override an existing page.
+-  // Note: ref behavior is to ignore.
+-  params.path_behavior = open_in_tab ? NavigateParams::RESPECT
+-                                     : NavigateParams::IGNORE_AND_NAVIGATE;
+-  params.url = url_to_navigate;
+-  ShowSingletonTabOverwritingNTP(browser, std::move(params));
++  web_contents->OpenURL(
++      content::OpenURLParams(
++          url_to_navigate, content::Referrer(),
++          WindowOpenDisposition::NEW_FOREGROUND_TAB,
++          ui::PAGE_TRANSITION_LINK, false
++    ));
++
++  LOG(WARNING) << "extension_tab_util.cc: return";
+   return true;
+ }
+ 
+--- a/chrome/browser/extensions/extension_tab_util.h
++++ b/chrome/browser/extensions/extension_tab_util.h
+@@ -236,7 +236,7 @@ class ExtensionTabUtil {
+   // Open the extension's options page. Returns true if an options page was
+   // successfully opened (though it may not necessarily *load*, e.g. if the
+   // URL does not exist).
+-  static bool OpenOptionsPage(const Extension* extension, Browser* browser);
++  static bool OpenOptionsPage(const Extension* extension, content::WebContents* web_contents);
+ 
+   // Returns true if the given Browser can report tabs to extensions.
+   // Example of Browsers which don't support tabs include apps and devtools.
+--- a/chrome/browser/extensions/extension_context_menu_model.cc
++++ b/chrome/browser/extensions/extension_context_menu_model.cc
+@@ -327,7 +327,7 @@ void ExtensionContextMenuModel::ExecuteC
+     }
+     case OPTIONS:
+       DCHECK(OptionsPageInfo::HasOptionsPage(extension));
+-      ExtensionTabUtil::OpenOptionsPage(extension, browser_);
++      ExtensionTabUtil::OpenOptionsPage(extension, GetActiveWebContents());
+       break;
+     case TOGGLE_VISIBILITY: {
+       bool currently_visible = button_visibility_ == VISIBLE;
+--- a/chrome/browser/ui/webui/settings/people_handler.cc
++++ b/chrome/browser/ui/webui/settings/people_handler.cc
+@@ -711,7 +711,6 @@ void PeopleHandler::HandleSignout(const
+ }
+ 
+ void PeopleHandler::HandlePauseSync(const base::ListValue* args) {
+-  DCHECK(AccountConsistencyModeManager::IsDiceEnabledForProfile(profile_));
+   auto* identity_manager = IdentityManagerFactory::GetForProfile(profile_);
+   DCHECK(identity_manager->HasPrimaryAccount());
+ 

@@ -1,0 +1,1406 @@
+---
+ base/android/java/src/org/chromium/base/ContentUriUtils.java                                         |    1 
+ base/files/file_path.cc                                                                              |    8 
+ base/files/file_util.cc                                                                              |    8 
+ base/files/file_util_posix.cc                                                                        |   10 
+ chrome/android/BUILD.gn                                                                              |    2 
+ chrome/android/chrome_java_sources.gni                                                               |    2 
+ chrome/android/java/src/org/chromium/chrome/browser/extensions/ExtensionInstallCustomScrollView.java |  130 ++++
+ chrome/android/java/src/org/chromium/chrome/browser/extensions/ExtensionInstallDialogViewBridge.java |  156 +++++
+ chrome/browser/download/download_crx_util.cc                                                         |    2 
+ chrome/browser/extensions/android/BUILD.gn                                                           |   20 
+ chrome/browser/extensions/android/java/res/layout/extension_install_dialog.xml                       |  103 +++
+ chrome/browser/extensions/crx_installer.cc                                                           |    7 
+ chrome/browser/extensions/extension_install_prompt.cc                                                |    1 
+ chrome/browser/extensions/unpacked_installer.cc                                                      |   32 +
+ chrome/browser/ui/BUILD.gn                                                                           |    4 
+ chrome/browser/ui/android/strings/android_chrome_strings.grd                                         |    5 
+ chrome/browser/ui/extensions/extension_install_ui_default.cc                                         |   12 
+ chrome/browser/ui/views/extensions/extension_install_dialog_view.cc                                  |    2 
+ chrome/browser/ui/views/extensions/extension_install_dialog_view_android.cc                          |  264 ++++++++++
+ chrome/browser/ui/views/extensions/extension_install_dialog_view_android.h                           |   89 +++
+ components/crx_file/crx_verifier.cc                                                                  |    7 
+ extensions/browser/sandboxed_unpacker.cc                                                             |   19 
+ extensions/common/file_util.cc                                                                       |   22 
+ 23 files changed, 883 insertions(+), 23 deletions(-)
+
+--- a/base/files/file_util_posix.cc
++++ b/base/files/file_util_posix.cc
+@@ -362,8 +362,13 @@ std::string AppendModeCharacter(StringPi
+ FilePath MakeAbsoluteFilePath(const FilePath& input) {
+   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
+   char full_path[PATH_MAX];
+-  if (realpath(input.value().c_str(), full_path) == nullptr)
++  LOG(INFO) << "file_util_posix.cc: MakeAbsoluteFilePath: input: " << input;
++  //LOG(INFO) << "file_util_posix.cc: MakeAbsoluteFilePath: PATH_MAX: " << PATH_MAX;
++  if (realpath(input.value().c_str(), full_path) == nullptr) {
++    LOG(INFO) << "file_util_posix.cc: MakeAbsoluteFilePath: realpath nullptr";
+     return FilePath();
++  }
++  LOG(INFO) << "file_util_posix.cc: MakeAbsoluteFilePath: full_path:" << full_path;
+   return FilePath(full_path);
+ }
+ 
+@@ -791,6 +796,7 @@ FILE* OpenFile(const FilePath& filename,
+   DCHECK(
+       strchr(mode, 'e') == nullptr ||
+       (strchr(mode, ',') != nullptr && strchr(mode, 'e') > strchr(mode, ',')));
++  //LOG(INFO) << "file_util_posix.cc: OpenFile: mode: " << mode;
+   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
+   FILE* result = nullptr;
+ #if defined(OS_MACOSX)
+@@ -800,9 +806,11 @@ FILE* OpenFile(const FilePath& filename,
+ #else
+   std::string mode_with_e(AppendModeCharacter(mode, 'e'));
+   const char* the_mode = mode_with_e.c_str();
++  //LOG(INFO) << "file_util_posix.cc: OpenFile: the_mode: " << the_mode;
+ #endif
+   do {
+     result = fopen(filename.value().c_str(), the_mode);
++    //LOG(INFO) << "file_util_posix.cc: OpenFile: result: " << result;
+   } while (!result && errno == EINTR);
+ #if defined(OS_MACOSX)
+   // Mark the descriptor as close-on-exec.
+--- a/chrome/browser/extensions/unpacked_installer.cc
++++ b/chrome/browser/extensions/unpacked_installer.cc
+@@ -64,12 +64,19 @@ const char kImportNotSharedModule[] = "'
+ void MaybeCleanupMetadataFolder(const base::FilePath& extension_path) {
+   const std::vector<base::FilePath> reserved_filepaths =
+       file_util::GetReservedMetadataFilePaths(extension_path);
+-  for (const auto& file : reserved_filepaths)
+-    base::DeleteFile(file, true /*recursive*/);
++  for (const auto& file : reserved_filepaths) {
++    LOG(INFO) << "unpacked_installer.cc: MaybeCleanupMetadataFolder: file: " << file;
++    LOG(INFO) << "unpacked_installer.cc: MaybeCleanupMetadataFolder: PathExists: " << (base::PathExists(file));
++    if (base::PathExists(file))
++      base::DeleteFile(file, true /*recursive*/);
++  }
+ 
+   const base::FilePath& metadata_dir = extension_path.Append(kMetadataFolder);
+-  if (base::IsDirectoryEmpty(metadata_dir))
++  if (base::PathExists(metadata_dir) && base::IsDirectoryEmpty(metadata_dir)) {
++    LOG(INFO) << "unpacked_installer.cc: MaybeCleanupMetadataFolder: metadata_dir: " << metadata_dir;
++    LOG(INFO) << "unpacked_installer.cc: MaybeCleanupMetadataFolder: PathExists(metadata_dir): " << (base::PathExists(metadata_dir));
+     base::DeleteFileRecursively(metadata_dir);
++  }
+ }
+ 
+ }  // namespace
+@@ -94,6 +101,7 @@ UnpackedInstaller::~UnpackedInstaller()
+ }
+ 
+ void UnpackedInstaller::Load(const base::FilePath& path_in) {
++  LOG(INFO) << "unpacked_installer.cc: Load: path_in: " << path_in;
+   DCHECK(extension_path_.empty());
+   extension_path_ = path_in;
+   GetExtensionFileTaskRunner()->PostTask(
+@@ -111,17 +119,21 @@ bool UnpackedInstaller::LoadFromCommandL
+   // Load extensions from the command line synchronously to avoid a race
+   // between extension loading and loading an URL from the command line.
+   base::ThreadRestrictions::ScopedAllowIO allow_io;
++  LOG(INFO) << "unpacked_installer.cc: path_in: " << path_in;
+ 
+   extension_path_ =
+       base::MakeAbsoluteFilePath(path_util::ResolveHomeDirectory(path_in));
++  LOG(INFO) << "unpacked_installer.cc: extension_path_: " << extension_path_;
+ 
+   if (!IsLoadingUnpackedAllowed()) {
++    LOG(INFO) << "unpacked_installer.cc: !IsLoadingUnpackedAllowed";
+     ReportExtensionLoadError(kUnpackedExtensionsBlacklistedError);
+     return false;
+   }
+ 
+   std::string error;
+   if (!LoadExtension(Manifest::COMMAND_LINE, GetFlags(), &error)) {
++    LOG(INFO) << "unpacked_installer.cc: !LoadExtension";
+     ReportExtensionLoadError(error);
+     return false;
+   }
+@@ -132,6 +144,8 @@ bool UnpackedInstaller::LoadFromCommandL
+     return true;
+ #else
+     // Defined here to avoid unused variable errors in official builds.
++    LOG(INFO) << "unpacked_installer.cc: only_allow_apps: " << only_allow_apps;
++    LOG(INFO) << "unpacked_installer.cc: !extension()->is_platform_app(): " << (!extension()->is_platform_app());
+     const char extension_instead_of_app_error[] =
+         "App loading flags cannot be used to load extensions. Please use "
+         "--load-extension instead.";
+@@ -141,12 +155,16 @@ bool UnpackedInstaller::LoadFromCommandL
+   }
+ 
+   extension()->permissions_data()->BindToCurrentThread();
++  LOG(INFO) << "unpacked_installer.cc: BindToCurrentThread";
+   PermissionsUpdater(
+       service_weak_->profile(), PermissionsUpdater::INIT_FLAG_TRANSIENT)
+       .InitializePermissions(extension());
++  LOG(INFO) << "unpacked_installer.cc: PermissionsUpdater";
+   StartInstallChecks();
++  LOG(INFO) << "unpacked_installer.cc: StartInstallChecks";
+ 
+   *extension_id = extension()->id();
++  LOG(INFO) << "unpacked_installer.cc: return";
+   return true;
+ }
+ 
+@@ -247,18 +265,22 @@ bool UnpackedInstaller::LoadExtension(Ma
+   // warnings/errors and ensures we don't treat a user provided file as one by
+   // the Extension system.
+   MaybeCleanupMetadataFolder(extension_path_);
++  LOG(INFO) << "unpacked_installer.cc: LoadExtension: extension_path_: " << extension_path_;
+ 
+   // Treat presence of illegal filenames as a hard error for unpacked
+   // extensions. Don't do so for command line extensions since this breaks
+   // Chrome OS autotests (crbug.com/764787).
+   if (location == Manifest::UNPACKED &&
+       !file_util::CheckForIllegalFilenames(extension_path_, error)) {
++    LOG(INFO) << "unpacked_installer.cc: LoadExtension: CheckForIllegalFilenames";
+     return false;
+   }
+ 
++  LOG(INFO) << "unpacked_installer.cc: LoadExtension: before file_util::LoadExtension";
+   extension_ =
+       file_util::LoadExtension(extension_path_, location, flags, error);
+ 
++  LOG(INFO) << "unpacked_installer.cc: LoadExtension: after file_util::LoadExtension";
+   return extension() &&
+          extension_l10n_util::ValidateExtensionLocales(
+              extension_path_, extension()->manifest()->value(), error) &&
+@@ -309,7 +331,9 @@ bool UnpackedInstaller::IsLoadingUnpacke
+ }
+ 
+ void UnpackedInstaller::GetAbsolutePath() {
+-  extension_path_ = base::MakeAbsoluteFilePath(extension_path_);
++  LOG(INFO) << "unpacked_installer.cc: GetAbsolutePath: before: " << extension_path_;
++  //extension_path_ = base::MakeAbsoluteFilePath(extension_path_);
++  LOG(INFO) << "unpacked_installer.cc: GetAbsolutePath: after: " << extension_path_;
+ 
+   // Set priority explicitly to avoid unwanted task priority inheritance.
+   base::PostTask(
+--- a/extensions/common/file_util.cc
++++ b/extensions/common/file_util.cc
+@@ -218,30 +218,40 @@ scoped_refptr<Extension> LoadExtension(
+     std::string* error) {
+   std::unique_ptr<base::DictionaryValue> manifest;
+   if (!manifest_file) {
++    LOG(INFO) << "file_util.cc: LoadExtension: !manifest_file";
+     manifest = LoadManifest(extension_path, error);
+   } else {
++    LOG(INFO) << "file_util.cc: LoadExtension: manifest_file";
+     manifest = LoadManifest(extension_path, manifest_file, error);
+   }
+   if (!manifest.get())
+     return nullptr;
+ 
++  LOG(INFO) << "file_util.cc: LoadExtension: manifest.get()";
++
+   if (!extension_l10n_util::LocalizeExtension(
+           extension_path, manifest.get(),
+           extension_l10n_util::GetGzippedMessagesPermissionForLocation(
+               location),
+           error)) {
++    LOG(INFO) << "file_util.cc: LoadExtension: extension_l10n_util";
+     return nullptr;
+   }
+ 
++  LOG(INFO) << "file_util.cc: LoadExtension: before Extension::Create";
+   scoped_refptr<Extension> extension(Extension::Create(
+       extension_path, location, *manifest, flags, extension_id, error));
++  LOG(INFO) << "file_util.cc: LoadExtension: after Extension::Create";
+   if (!extension.get())
+     return nullptr;
+ 
+   std::vector<InstallWarning> warnings;
+-  if (!ValidateExtension(extension.get(), error, &warnings))
++  if (!ValidateExtension(extension.get(), error, &warnings)) {
++    LOG(INFO) << "file_util.cc: LoadExtension: !ValidateExtension";
+     return nullptr;
++  }
+   extension->AddInstallWarnings(std::move(warnings));
++  LOG(INFO) << "file_util.cc: LoadExtension: return";
+ 
+   return extension;
+ }
+@@ -256,8 +266,12 @@ std::unique_ptr<base::DictionaryValue> L
+     const base::FilePath& extension_path,
+     const base::FilePath::CharType* manifest_filename,
+     std::string* error) {
++  LOG(INFO) << "file_util.cc: LoadManifest: extension_path: " << extension_path;
++  LOG(INFO) << "file_util.cc: LoadManifest: manifest_filename: " << manifest_filename;
+   base::FilePath manifest_path = extension_path.Append(manifest_filename);
++  LOG(INFO) << "file_util.cc: LoadManifest: manifest_path: " << manifest_path;
+   if (!base::PathExists(manifest_path)) {
++    LOG(INFO) << "file_util.cc: LoadManifest: !base::PathExists(manifest_path)";
+     *error = l10n_util::GetStringUTF8(IDS_EXTENSION_MANIFEST_UNREADABLE);
+     return nullptr;
+   }
+@@ -265,24 +279,30 @@ std::unique_ptr<base::DictionaryValue> L
+   JSONFileValueDeserializer deserializer(manifest_path);
+   std::unique_ptr<base::Value> root(deserializer.Deserialize(nullptr, error));
+   if (!root.get()) {
++    LOG(INFO) << "file_util.cc: LoadManifest: !root.get()";
+     if (error->empty()) {
++      LOG(INFO) << "file_util.cc: LoadManifest: error->empty()";
+       // If |error| is empty, than the file could not be read.
+       // It would be cleaner to have the JSON reader give a specific error
+       // in this case, but other code tests for a file error with
+       // error->empty().  For now, be consistent.
+       *error = l10n_util::GetStringUTF8(IDS_EXTENSION_MANIFEST_UNREADABLE);
+     } else {
++      LOG(INFO) << "file_util.cc: LoadManifest: !error->empty()";
+       *error = base::StringPrintf(
+           "%s  %s", manifest_errors::kManifestParseError, error->c_str());
++      LOG(INFO) << "file_util.cc: LoadManifest: !error->empty(): error: " << *error;
+     }
+     return nullptr;
+   }
+ 
+   if (!root->is_dict()) {
++    LOG(INFO) << "file_util.cc: LoadManifest: !root->is_dict()";
+     *error = l10n_util::GetStringUTF8(IDS_EXTENSION_MANIFEST_INVALID);
+     return nullptr;
+   }
+ 
++  LOG(INFO) << "file_util.cc: LoadManifest: return";
+   return base::DictionaryValue::From(std::move(root));
+ }
+ 
+--- a/base/files/file_util.cc
++++ b/base/files/file_util.cc
+@@ -130,10 +130,13 @@ bool ReadFileToStringWithMaxSize(const F
+                                  size_t max_size) {
+   if (contents)
+     contents->clear();
+-  if (path.ReferencesParent())
++  if (path.ReferencesParent()) {
++    LOG(INFO) << "base/files/file_util.cc: ReferencesParent";
+     return false;
++  }
+   FILE* file = OpenFile(path, "rb");
+   if (!file) {
++    LOG(INFO) << "base/files/file_util.cc: !file";
+     return false;
+   }
+ 
+@@ -174,8 +177,9 @@ bool ReadFileToStringWithMaxSize(const F
+     bytes_read_so_far += bytes_read_this_pass;
+     // Last fread syscall (after EOF) can be avoided via feof, which is just a
+     // flag check.
+-    if (feof(file))
++    if (feof(file)) {
+       break;
++    }
+     local_contents.resize(bytes_read_so_far + chunk_size);
+   }
+   read_status = read_status && !ferror(file);
+--- a/components/crx_file/crx_verifier.cc
++++ b/components/crx_file/crx_verifier.cc
+@@ -10,6 +10,7 @@
+ #include <set>
+ #include <utility>
+ 
++#include "base/android/content_uri_utils.h"
+ #include "base/base64.h"
+ #include "base/bind.h"
+ #include "base/callback.h"
+@@ -211,7 +212,11 @@ VerifierResult Verify(
+     std::string* crx_id) {
+   std::string public_key_local;
+   std::string crx_id_local;
+-  base::File file(crx_path, base::File::FLAG_OPEN | base::File::FLAG_READ);
++  LOG(INFO) << "crx_verifier.cc: Verify: crx_path: " << crx_path;
++  //base::File file(crx_path, base::File::FLAG_OPEN | base::File::FLAG_READ);
++  base::File file = base::OpenContentUriForRead(crx_path);
++  LOG(INFO) << "crx_verifier.cc: Verify: file.IsValid(): " << (file.IsValid());
++
+   if (!file.IsValid())
+     return VerifierResult::ERROR_FILE_NOT_READABLE;
+ 
+--- a/extensions/browser/sandboxed_unpacker.cc
++++ b/extensions/browser/sandboxed_unpacker.cc
+@@ -295,32 +295,44 @@ void SandboxedUnpacker::StartWithCrx(con
+   DCHECK(unpacker_io_task_runner_->RunsTasksInCurrentSequence());
+ 
+   crx_unpack_start_time_ = base::TimeTicks::Now();
++  LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: crx_unpack_start_time_: " << crx_unpack_start_time_;
+   std::string expected_hash;
++  LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: expected_hash: " << crx_info.expected_hash;
+   if (!crx_info.expected_hash.empty() &&
+       base::CommandLine::ForCurrentProcess()->HasSwitch(
+           extensions::switches::kEnableCrxHashCheck)) {
++    LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: crx_info.expected_hash.empty(): " << (crx_info.expected_hash.empty());
++    LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: kEnableCrxHashCheck: " << (base::CommandLine::ForCurrentProcess()->HasSwitch(extensions::switches::kEnableCrxHashCheck));
+     expected_hash = base::ToLowerASCII(crx_info.expected_hash);
+   }
+ 
+   PATH_LENGTH_HISTOGRAM("Extensions.SandboxUnpackInitialCrxPathLength",
+                         crx_info.path);
+-  if (!CreateTempDirectory())
++  if (!CreateTempDirectory()) {
++    LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: CreateTempDirectory: " << (CreateTempDirectory());
+     return;  // ReportFailure() already called.
++  }
+ 
+   // Initialize the path that will eventually contain the unpacked extension.
+   extension_root_ = temp_dir_.GetPath().AppendASCII(kTempExtensionName);
++  LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: extension_root_: " << extension_root_;
+   PATH_LENGTH_HISTOGRAM("Extensions.SandboxUnpackUnpackedCrxPathLength",
+                         extension_root_);
+ 
+   // Extract the public key and validate the package.
+   if (!ValidateSignature(crx_info.path, expected_hash,
+                          g_verifier_format_override_for_test.value_or(
+-                             crx_info.required_format)))
++                             crx_info.required_format))) {
++    LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: ValidateSignature: " << (ValidateSignature(crx_info.path, expected_hash,
++                         g_verifier_format_override_for_test.value_or(
++                             crx_info.required_format)));
+     return;  // ValidateSignature() already reported the error.
++  }
+ 
+   // Copy the crx file into our working directory.
+   base::FilePath temp_crx_path =
+       temp_dir_.GetPath().Append(crx_info.path.BaseName());
++  LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: temp_crx_path: " << temp_crx_path;
+   PATH_LENGTH_HISTOGRAM("Extensions.SandboxUnpackTempCrxPathLength",
+                         temp_crx_path);
+ 
+@@ -367,6 +379,7 @@ void SandboxedUnpacker::StartWithCrx(con
+   }
+ 
+   Unzip(link_free_crx_path, unzipped_dir);
++  LOG(INFO) << "sandboxed_unpacker.cc: StartWithCrx: on_return";
+ }
+ 
+ void SandboxedUnpacker::StartWithDirectory(const std::string& extension_id,
+@@ -910,7 +923,9 @@ bool SandboxedUnpacker::ValidateSignatur
+     const crx_file::VerifierFormat required_format) {
+   std::vector<uint8_t> hash;
+   if (!expected_hash.empty()) {
++    LOG(INFO) << "sandboxed_unpacker.cc: ValidateSignature: !expected_hash.empty(): " << (expected_hash.empty());
+     if (!base::HexStringToBytes(expected_hash, &hash)) {
++      LOG(INFO) << "sandboxed_unpacker.cc: ValidateSignature: CRX_EXPECTED_HASH_INVALID";
+       FailWithPackageError(
+           SandboxedUnpackerFailureReason::CRX_EXPECTED_HASH_INVALID);
+       return false;
+--- a/chrome/browser/extensions/crx_installer.cc
++++ b/chrome/browser/extensions/crx_installer.cc
+@@ -166,6 +166,7 @@ CrxInstaller::~CrxInstaller() {
+ }
+ 
+ void CrxInstaller::InstallCrx(const base::FilePath& source_file) {
++  LOG(INFO) << "crx_installer.cc: InstallCrx: source_file: " << source_file;
+   crx_file::VerifierFormat format =
+       off_store_install_allow_reason_ == OffStoreInstallDisallowed
+           ? GetWebstoreVerifierFormat(
+@@ -183,6 +184,7 @@ void CrxInstaller::InstallCrxFile(const
+   NotifyCrxInstallBegin();
+ 
+   source_file_ = source_file.path;
++  LOG(INFO) << "crx_installer.cc: InstallCrxFile: source_file_: " << source_file_;
+ 
+   auto unpacker = base::MakeRefCounted<SandboxedUnpacker>(
+       install_source_, creation_flags_, install_directory_,
+@@ -545,6 +547,7 @@ void CrxInstaller::OnUnpackSuccess(
+     return;
+   }
+ 
++  LOG(INFO) << "crx_installer.cc: OnUnpackSuccess: BindOnce(&CrxInstaller::CheckInstall, this)";
+   if (!base::PostTask(FROM_HERE, {BrowserThread::UI},
+                       base::BindOnce(&CrxInstaller::CheckInstall, this)))
+     NOTREACHED();
+@@ -606,6 +609,7 @@ void CrxInstaller::CheckInstall() {
+ 
+   // Skip the checks if the extension is a bookmark app.
+   if (extension()->from_bookmark()) {
++    LOG(INFO) << "crx_installer.cc: CheckInstall: ConfirmInstall 1";
+     ConfirmInstall();
+     return;
+   }
+@@ -632,6 +636,7 @@ void CrxInstaller::OnInstallChecksComple
+     return;
+ 
+   if (errors.empty()) {
++    LOG(INFO) << "crx_installer.cc: CheckInstall: ConfirmInstall 2";
+     ConfirmInstall();
+     return;
+   }
+@@ -687,6 +692,7 @@ void CrxInstaller::OnInstallChecksComple
+     return;
+   }
+ 
++  LOG(INFO) << "crx_installer.cc: CheckInstall: ConfirmInstall 3";
+   ConfirmInstall();
+ }
+ 
+@@ -738,6 +744,7 @@ void CrxInstaller::ConfirmInstall() {
+       (!allow_silent_install_ || !approved_) &&
+       !update_from_settings_page_) {
+     AddRef();  // Balanced in OnInstallPromptDone().
++    LOG(INFO) << "crx_installer.cc: ConfirmInstall: ShowDialog";
+     client_->ShowDialog(base::Bind(&CrxInstaller::OnInstallPromptDone, this),
+                         extension(), nullptr, show_dialog_callback_);
+   } else {
+--- a/chrome/browser/download/download_crx_util.cc
++++ b/chrome/browser/download/download_crx_util.cc
+@@ -42,6 +42,7 @@ ExtensionInstallPrompt* mock_install_pro
+ std::unique_ptr<ExtensionInstallPrompt> CreateExtensionInstallPrompt(
+     Profile* profile,
+     const DownloadItem& download_item) {
++  LOG(INFO) << "download_crx_util.cc: CreateExtensionInstallPrompt: download_item";
+   // Use a mock if one is present.  Otherwise, create a real extensions
+   // install UI.
+   if (mock_install_prompt_for_testing) {
+@@ -60,6 +61,7 @@ std::unique_ptr<ExtensionInstallPrompt>
+       }
+       web_contents = browser->tab_strip_model()->GetActiveWebContents();
+     }
++    LOG(INFO) << "download_crx_util.cc: CreateExtensionInstallPrompt: on_return";
+     return std::unique_ptr<ExtensionInstallPrompt>(
+         new ExtensionInstallPrompt(web_contents));
+   }
+--- a/chrome/browser/extensions/extension_install_prompt.cc
++++ b/chrome/browser/extensions/extension_install_prompt.cc
+@@ -629,6 +629,7 @@ void ExtensionInstallPrompt::ShowConfirm
+     show_dialog_callback_ = GetDefaultShowDialogCallback();
+   // TODO(https://crbug.com/957713): Use OnceCallback and eliminate the need for
+   // a callback on the stack.
++  LOG(INFO) << "extension_install_prompt.cc: ShowConfirmation: callbacks";
+   auto cb = std::move(done_callback_);
+   std::move(show_dialog_callback_)
+       .Run(show_params_.get(), cb, std::move(prompt_));
+--- /dev/null
++++ b/chrome/android/java/src/org/chromium/chrome/browser/extensions/ExtensionInstallDialogViewBridge.java
+@@ -0,0 +1,156 @@
++// Copyright 2020 The Ungoogled-Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++package org.chromium.chrome.browser.extensions;
++
++import android.content.Context;
++import android.content.res.Resources;
++import android.view.LayoutInflater;
++
++import org.chromium.base.annotations.CalledByNative;
++import org.chromium.base.annotations.NativeMethods;
++import org.chromium.chrome.browser.ChromeActivity;
++import org.chromium.chrome.extensions.R;
++import org.chromium.chrome.browser.download.DownloadLocationCustomView;
++import org.chromium.ui.base.WindowAndroid;
++import org.chromium.ui.modaldialog.DialogDismissalCause;
++import org.chromium.ui.modaldialog.ModalDialogManager;
++import org.chromium.ui.modaldialog.ModalDialogProperties;
++import org.chromium.ui.modelutil.PropertyModel;
++
++import java.io.File;
++
++
++/**
++* Helper class to handle communication between extension install dialog and native.
++*/
++
++public class ExtensionInstallDialogViewBridge implements ModalDialogProperties.Controller {
++    private long mNativeExtensionInstallDialogViewBridge;
++    private PropertyModel mDialogModel;
++    private ExtensionInstallCustomScrollView mCustomView;
++    private ModalDialogManager mModalDialogManager;
++    private Context mContext;
++
++    private ExtensionInstallDialogViewBridge(long nativeExtensionInstallDialogViewBridge) {
++        mNativeExtensionInstallDialogViewBridge = nativeExtensionInstallDialogViewBridge;
++    }
++
++    @CalledByNative
++    public static ExtensionInstallDialogViewBridge create(long nativeExtensionInstallDialogView) {
++        return new ExtensionInstallDialogViewBridge(nativeExtensionInstallDialogView);
++    }
++
++    @CalledByNative
++    private void destroy() {
++        mNativeExtensionInstallDialogViewBridge = 0;
++        if (mModalDialogManager != null) {
++            mModalDialogManager.dismissDialog(
++                    mDialogModel, DialogDismissalCause.DISMISSED_BY_NATIVE);
++        }
++    }
++
++    @CalledByNative
++    public void showDialog(WindowAndroid windowAndroid,
++            String title, String storeLink, String withholdPermissionsHeading,
++            boolean shouldDisplayWithholdingUI, boolean shouldShowPermissions, int permissionCount,
++            String[] permissions, String[] permissionsDetails, String permissionsHeading,
++            String[] retainedFiles, String retainedFilesHeading,
++            String[] retainedDeviceMessageStrings, String retainedDevicesHeading) {
++        ChromeActivity activity = (ChromeActivity) windowAndroid.getActivity().get();
++        // If the activity has gone away, just clean up the native pointer.
++        if (activity == null) {
++            onDismiss(null, DialogDismissalCause.ACTIVITY_DESTROYED);
++            return;
++        }
++
++        // Check list of permissions match their length. If mismatch, dismiss with cancel
++        if (permissions.length != permissionCount || permissionsDetails.length != permissionCount) {
++            onDismiss(null, DialogDismissalCause.NEGATIVE_BUTTON_CLICKED);
++            return;
++        }
++
++        mModalDialogManager = activity.getModalDialogManager();
++        mContext = activity;
++
++        // Already showing the dialog.
++        if (mDialogModel != null) return;
++
++        // Actually show the dialog.
++        mCustomView = (ExtensionInstallCustomScrollView) LayoutInflater.from(mContext).inflate(
++                R.layout.extension_install_dialog, null);
++        mCustomView.initialize(title, storeLink, withholdPermissionsHeading,
++                shouldDisplayWithholdingUI, shouldShowPermissions, permissionCount,
++                permissions, permissionsDetails, permissionsHeading,
++                retainedFiles, retainedFilesHeading,
++                retainedDeviceMessageStrings, retainedDevicesHeading);
++
++        Resources resources = mContext.getResources();
++        mDialogModel =
++                new PropertyModel.Builder(ModalDialogProperties.ALL_KEYS)
++                        .with(ModalDialogProperties.CONTROLLER, this)
++                        .with(ModalDialogProperties.TITLE, title)
++                        .with(ModalDialogProperties.CUSTOM_VIEW, mCustomView)
++                        .with(ModalDialogProperties.POSITIVE_BUTTON_TEXT, resources,
++                                R.string.extension_install_prompt_ok_button)
++                        .with(ModalDialogProperties.NEGATIVE_BUTTON_TEXT, resources,
++                                R.string.cancel)
++                        .build();
++
++        mModalDialogManager.showDialog(mDialogModel, ModalDialogManager.ModalDialogType.APP);
++    }
++
++    @Override
++    public void onClick(PropertyModel model, int buttonType) {
++        switch (buttonType) {
++            case ModalDialogProperties.ButtonType.POSITIVE:
++                mModalDialogManager.dismissDialog(
++                        model, DialogDismissalCause.POSITIVE_BUTTON_CLICKED);
++                break;
++            case ModalDialogProperties.ButtonType.NEGATIVE:
++                mModalDialogManager.dismissDialog(
++                        model, DialogDismissalCause.NEGATIVE_BUTTON_CLICKED);
++                break;
++            default:
++        }
++    }
++
++    @Override
++    public void onDismiss(PropertyModel model, int dismissalCause) {
++        switch (dismissalCause) {
++            case DialogDismissalCause.POSITIVE_BUTTON_CLICKED:
++                accept((mCustomView != null && mCustomView.getWithholdPermissionChecked()));
++                break;
++            default:
++                cancel();
++                break;
++        }
++        mDialogModel = null;
++        mCustomView = null;
++    }
++
++    private void accept(boolean withholdPermissionsCheckboxChecked) {
++        if (mNativeExtensionInstallDialogViewBridge != 0) {
++            ExtensionInstallDialogViewBridgeJni.get().Accept(
++                    mNativeExtensionInstallDialogViewBridge, ExtensionInstallDialogViewBridge.this,
++                    withholdPermissionsCheckboxChecked);
++        }
++    }
++
++    private void cancel() {
++        if (mNativeExtensionInstallDialogViewBridge != 0) {
++            ExtensionInstallDialogViewBridgeJni.get().Cancel(
++                    mNativeExtensionInstallDialogViewBridge, ExtensionInstallDialogViewBridge.this);
++        }
++    }
++
++    @NativeMethods
++    interface Natives {
++        void Cancel(
++                long nativeExtensionInstallDialogView, ExtensionInstallDialogViewBridge caller);
++        void Accept(
++                long nativeExtensionInstallDialogView, ExtensionInstallDialogViewBridge caller,
++                boolean withholdPermissionsCheckboxChecked);
++    }
++}
+--- /dev/null
++++ b/chrome/browser/extensions/android/java/res/layout/extension_install_dialog.xml
+@@ -0,0 +1,103 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!-- Copyright 2020 The Ungoogled-Chromium Authors. All rights reserved.
++     Use of this source code is governed by a BSD-style license that can be
++     found in the LICENSE file. -->
++
++<org.chromium.chrome.browser.extensions.ExtensionInstallCustomScrollView
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content" >
++
++    <LinearLayout
++        android:orientation="vertical"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        style="@style/AlertDialogContent">
++
++        <TextView
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:id="@+id/subtitle"
++            android:textAppearance="@style/TextAppearance.TextMedium.Secondary"
++            android:visibility="visible"
++            android:layout_marginBottom="16dp" />
++
++        <ScrollView
++            android:id="@+id/scroll"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content">
++
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:orientation="vertical">
++
++                <TextView
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:id="@+id/permissions_heading"
++                    android:textAppearance="@style/TextAppearance.TextMedium.Secondary"
++                    android:maxLines="1"
++                    android:visibility="visible"
++                    android:layout_marginBottom="8dp" />
++
++                <TextView
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:id="@+id/permissions"
++                    android:textAppearance="@style/TextAppearance.TextMedium.Secondary"
++                    android:visibility="gone"
++                    android:layout_marginBottom="8dp" />
++
++                <TextView
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:id="@+id/retained_files_heading"
++                    android:textAppearance="@style/TextAppearance.TextMedium.Secondary"
++                    android:maxLines="1"
++                    android:visibility="gone"
++                    android:layout_marginBottom="8dp" />
++
++                <TextView
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:id="@+id/retained_files"
++                    android:textAppearance="@style/TextAppearance.TextMedium.Secondary"
++                    android:visibility="gone"
++                    android:layout_marginBottom="8dp" />
++
++                <TextView
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:id="@+id/retained_devices_heading"
++                    android:textAppearance="@style/TextAppearance.TextMedium.Secondary"
++                    android:maxLines="1"
++                    android:visibility="gone"
++                    android:layout_marginBottom="8dp" />
++
++                <TextView
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:id="@+id/retained_device_message"
++                    android:textAppearance="@style/TextAppearance.TextMedium.Secondary"
++                    android:visibility="gone"
++                    android:layout_marginBottom="8dp" />
++
++            </LinearLayout>
++
++        </ScrollView>
++
++        <CheckBox
++            style="@style/TextAppearance.TextMedium.Tertiary"
++            android:id="@+id/withhold_permission_checkbox"
++            android:visibility="gone"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="16dp"
++            android:layout_marginStart="-5dp"/>
++
++    </LinearLayout>
++
++</org.chromium.chrome.browser.extensions.ExtensionInstallCustomScrollView>
++
+--- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
++++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
+@@ -1448,6 +1448,11 @@ Your Google account may have other forms
+       </message>
+ 
+       <!-- About Chrome preferences -->
++      <message name="IDS_EXTENSION_INSTALL_PROMPT_OK_BUTTON" desc="OK button for extension install dialog [CHAR-LIMIT=16]">
++        Install
++      </message>
++
++      <!-- About Chrome preferences -->
+       <message name="IDS_PREFS_ABOUT_CHROME" desc="Title for the About Chrome page. [CHAR-LIMIT=32]">
+         About Chrome
+       </message>
+--- /dev/null
++++ b/chrome/browser/ui/views/extensions/extension_install_dialog_view_android.cc
+@@ -0,0 +1,264 @@
++// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#include "chrome/browser/ui/views/extensions/extension_install_dialog_view_android.h"
++
++#include <string>
++#include <utility>
++
++#include "base/android/jni_android.h"
++#include "base/android/jni_string.h"
++#include "base/bind.h"
++#include "base/i18n/message_formatter.h"
++#include "base/macros.h"
++#include "base/metrics/histogram_functions.h"
++#include "base/metrics/histogram_macros.h"
++#include "base/strings/utf_string_conversions.h"
++#include "chrome/android/chrome_jni_headers/ExtensionInstallDialogViewBridge_jni.h"
++#include "chrome/browser/extensions/extension_install_prompt_show_params.h"
++#include "chrome/browser/profiles/profile.h"
++#include "chrome/browser/ui/browser.h"
++#include "chrome/browser/ui/browser_dialogs.h"
++#include "chrome/browser/ui/scoped_tabbed_browser_displayer.h"
++#include "chrome/browser/ui/views/chrome_layout_provider.h"
++#include "chrome/browser/ui/views/chrome_typography.h"
++#include "chrome/browser/ui/views/extensions/expandable_container_view.h"
++#include "chrome/browser/ui/views/extensions/extension_permissions_view.h"
++#include "chrome/common/extensions/extension_constants.h"
++#include "chrome/grit/generated_resources.h"
++#include "components/constrained_window/constrained_window_views.h"
++#include "content/public/browser/browser_thread.h"
++#include "content/public/browser/page_navigator.h"
++#include "content/public/browser/web_contents.h"
++#include "extensions/common/constants.h"
++#include "extensions/common/extension.h"
++#include "extensions/common/extension_urls.h"
++#include "ui/accessibility/ax_enums.mojom.h"
++#include "ui/android/window_android.h"
++#include "ui/base/l10n/l10n_util.h"
++#include "ui/base/resource/resource_bundle.h"
++#include "url/android/gurl_android.h"
++
++using content::OpenURLParams;
++using content::Referrer;
++
++namespace {
++
++// Time delay before the install button is enabled after initial display.
++int g_install_delay_in_ms = 500;
++
++void ShowExtensionInstallDialogImpl(
++    ExtensionInstallPromptShowParams* show_params,
++    const ExtensionInstallPrompt::DoneCallback& done_callback,
++    std::unique_ptr<ExtensionInstallPrompt::Prompt> prompt) {
++  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
++  ExtensionInstallDialogView* dialog = new ExtensionInstallDialogView(
++      show_params->profile(), show_params->GetParentWebContents(),
++      done_callback, std::move(prompt));
++  dialog->ShowDialog(
++    show_params->GetParentWindow());
++}
++
++}  // namespace
++
++ExtensionInstallDialogView::ExtensionInstallDialogView(
++    Profile* profile,
++    content::PageNavigator* navigator,
++    const ExtensionInstallPrompt::DoneCallback& done_callback,
++    std::unique_ptr<ExtensionInstallPrompt::Prompt> prompt)
++    : profile_(profile),
++      navigator_(navigator),
++      done_callback_(done_callback),
++      prompt_(std::move(prompt)),
++      title_(prompt_->GetDialogTitle()),
++      handled_result_(false),
++      is_dialog_showing_(false) {
++  DCHECK(prompt_->extension());
++
++  JNIEnv* env = base::android::AttachCurrentThread();
++  java_obj_.Reset(env, Java_ExtensionInstallDialogViewBridge_create(
++    env, reinterpret_cast<intptr_t>(this)).obj());
++  DCHECK(!java_obj_.is_null());
++
++  UMA_HISTOGRAM_ENUMERATION("Extensions.InstallPrompt.Type2", prompt_->type(),
++                            ExtensionInstallPrompt::NUM_PROMPT_TYPES);
++  chrome::RecordDialogCreation(chrome::DialogIdentifier::EXTENSION_INSTALL);
++}
++
++ExtensionInstallDialogView::~ExtensionInstallDialogView() {
++  JNIEnv* env = base::android::AttachCurrentThread();
++  Java_ExtensionInstallDialogViewBridge_destroy(env, java_obj_);
++  if (!handled_result_ && !done_callback_.is_null()) {
++    std::move(done_callback_)
++        .Run(ExtensionInstallPrompt::Result::USER_CANCELED);
++  }
++}
++
++// TODO
++void ExtensionInstallDialogView::Cancel(
++    JNIEnv* env,
++    const base::android::JavaParamRef<jobject>& obj) {
++  if (handled_result_)
++    return;
++
++  handled_result_ = true;
++  UpdateInstallResultHistogram(false);
++  std::move(done_callback_).Run(ExtensionInstallPrompt::Result::USER_CANCELED);
++}
++
++// TODO
++void ExtensionInstallDialogView::Accept(
++    JNIEnv* env,
++    const base::android::JavaParamRef<jobject>& obj,
++    jboolean jwithhold_permissions_checkbox_checked) {
++  DCHECK(!handled_result_);
++
++  bool withhold_permissions_checkbox_checked =
++    static_cast<bool>(jwithhold_permissions_checkbox_checked != JNI_FALSE);
++  handled_result_ = true;
++  UpdateInstallResultHistogram(true);
++  // If the prompt had a checkbox element and it was checked we send that along
++  // as the result, otherwise we just send a normal accepted result.
++  auto result =
++      prompt_->ShouldDisplayWithholdingUI() &&
++              withhold_permissions_checkbox_checked
++          ? ExtensionInstallPrompt::Result::ACCEPTED_AND_OPTION_CHECKED
++          : ExtensionInstallPrompt::Result::ACCEPTED;
++  std::move(done_callback_).Run(result);
++}
++
++void ExtensionInstallDialogView::ShowDialog(
++    gfx::NativeWindow native_window) {
++  if (!native_window)
++    return;
++
++  base::string16 store_link(base::ASCIIToUTF16(""));
++  base::string16 withhold_permissions_heading(base::ASCIIToUTF16(""));
++  if (prompt_->has_webstore_data()) {
++    // TODO: this is not shown yet
++    store_link =
++        l10n_util::GetStringUTF16(IDS_EXTENSION_PROMPT_STORE_LINK);
++    GURL store_url(extension_urls::GetWebstoreItemDetailURLPrefix() +
++                 prompt_->extension()->id());
++  } else if (prompt_->ShouldDisplayWithholdingUI()) {
++    withhold_permissions_heading =
++        l10n_util::GetStringUTF16(IDS_EXTENSION_WITHHOLD_PERMISSIONS);
++  }
++
++  // If dialog is already showing, do nothing. (assuming cancel?)
++  if (is_dialog_showing_) {
++    return;
++  }
++
++  is_dialog_showing_ = true;
++
++  JNIEnv* env = base::android::AttachCurrentThread();
++  Java_ExtensionInstallDialogViewBridge_showDialog(
++      env, java_obj_, native_window->GetJavaObject(),
++      base::android::ConvertUTF16ToJavaString(env, title_),
++      base::android::ConvertUTF16ToJavaString(env, store_link),
++      base::android::ConvertUTF16ToJavaString(env, withhold_permissions_heading),
++      static_cast<bool>(prompt_->ShouldDisplayWithholdingUI()),
++      static_cast<bool>(prompt_->ShouldShowPermissions()),
++      static_cast<int>(prompt_->GetPermissionCount()),
++      ToJavaArrayOfPermissions(env),
++      ToJavaArrayOfPermissionsDetails(env),
++      prompt_->ShouldShowPermissions() ? base::android::ConvertUTF16ToJavaString(env, prompt_->GetPermissionsHeading()) :
++      base::android::ConvertUTF16ToJavaString(env, l10n_util::GetStringUTF16(IDS_EXTENSION_NO_SPECIAL_PERMISSIONS)),
++      ToJavaArrayOfRetainedFiles(env),
++      base::android::ConvertUTF16ToJavaString(env, prompt_->GetRetainedFilesHeading()),
++      ToJavaArrayOfRetainedDeviceMessageStrings(env),
++      base::android::ConvertUTF16ToJavaString(env, prompt_->GetRetainedDevicesHeading())
++      );
++}
++
++base::android::ScopedJavaLocalRef<jobjectArray> ExtensionInstallDialogView::ToJavaArrayOfPermissions(
++      JNIEnv* env) {
++  DCHECK_GE(prompt_->GetPermissionCount(), 0u);
++  base::android::ScopedJavaLocalRef<jclass> object_clazz =
++    base::android::GetClass(env, "java/lang/String");
++  jobjectArray joa =
++    env->NewObjectArray(prompt_->GetPermissionCount(), object_clazz.obj(), NULL);
++  jni_generator::CheckException(env);
++
++  for (size_t i = 0; i < prompt_->GetPermissionCount(); ++i) {
++    env->SetObjectArrayElement(joa, i,
++      base::android::ConvertUTF16ToJavaString(env,
++        prompt_->GetPermission(i)).obj());
++  }
++  return base::android::ScopedJavaLocalRef<jobjectArray>(env, joa);
++}
++
++base::android::ScopedJavaLocalRef<jobjectArray> ExtensionInstallDialogView::ToJavaArrayOfPermissionsDetails(
++  JNIEnv* env) {
++  DCHECK_GE(prompt_->GetPermissionCount(), 0u);
++  base::android::ScopedJavaLocalRef<jclass> object_clazz =
++    base::android::GetClass(env, "java/lang/String");
++  jobjectArray joa =
++    env->NewObjectArray(prompt_->GetPermissionCount(), object_clazz.obj(), NULL);
++  jni_generator::CheckException(env);
++
++  for (size_t i = 0; i < prompt_->GetPermissionCount(); ++i) {
++    env->SetObjectArrayElement(joa, i,
++      base::android::ConvertUTF16ToJavaString(env,
++        prompt_->GetPermissionsDetails(i)).obj());
++  }
++  return base::android::ScopedJavaLocalRef<jobjectArray>(env, joa);
++}
++
++base::android::ScopedJavaLocalRef<jobjectArray> ExtensionInstallDialogView::ToJavaArrayOfRetainedFiles(
++  JNIEnv* env) {
++  DCHECK_GE(prompt_->GetRetainedFileCount(), 0u);
++  base::android::ScopedJavaLocalRef<jclass> object_clazz =
++    base::android::GetClass(env, "java/lang/String");
++  jobjectArray joa =
++    env->NewObjectArray(prompt_->GetRetainedFileCount(), object_clazz.obj(), NULL);
++  jni_generator::CheckException(env);
++
++  for (size_t i = 0; i < prompt_->GetRetainedFileCount(); ++i) {
++    env->SetObjectArrayElement(joa, i,
++      base::android::ConvertUTF16ToJavaString(env,
++        prompt_->GetRetainedFile(i)).obj());
++  }
++  return base::android::ScopedJavaLocalRef<jobjectArray>(env, joa);
++}
++
++base::android::ScopedJavaLocalRef<jobjectArray> ExtensionInstallDialogView::ToJavaArrayOfRetainedDeviceMessageStrings(
++  JNIEnv* env) {
++  DCHECK_GE(prompt_->GetRetainedDeviceCount(), 0u);
++  base::android::ScopedJavaLocalRef<jclass> object_clazz =
++    base::android::GetClass(env, "java/lang/String");
++  jobjectArray joa =
++    env->NewObjectArray(prompt_->GetRetainedDeviceCount(), object_clazz.obj(), NULL);
++  jni_generator::CheckException(env);
++
++  for (size_t i = 0; i < prompt_->GetRetainedDeviceCount(); ++i) {
++    env->SetObjectArrayElement(joa, i,
++      base::android::ConvertUTF16ToJavaString(env,
++        prompt_->GetRetainedDeviceMessageString(i)).obj());
++  }
++  return base::android::ScopedJavaLocalRef<jobjectArray>(env, joa);
++}
++
++void ExtensionInstallDialogView::UpdateInstallResultHistogram(bool accepted)
++    const {
++  // Only update histograms if |install_result_timer_| was initialized in
++  // |VisibilityChanged|.
++  if (prompt_->type() == ExtensionInstallPrompt::INSTALL_PROMPT &&
++      install_result_timer_) {
++    if (accepted) {
++      UmaHistogramMediumTimes("Extensions.InstallPrompt.TimeToInstall",
++                              install_result_timer_->Elapsed());
++    } else {
++      UmaHistogramMediumTimes("Extensions.InstallPrompt.TimeToCancel",
++                              install_result_timer_->Elapsed());
++    }
++  }
++}
++
++// static
++ExtensionInstallPrompt::ShowDialogCallback
++ExtensionInstallPrompt::GetDefaultShowDialogCallback() {
++  return base::Bind(&ShowExtensionInstallDialogImpl);
++}
+--- /dev/null
++++ b/chrome/browser/ui/views/extensions/extension_install_dialog_view_android.h
+@@ -0,0 +1,89 @@
++// Copyright 2014 The Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#ifndef CHROME_BROWSER_UI_VIEWS_EXTENSIONS_EXTENSION_INSTALL_DIALOG_VIEW_ANDROID_H_
++#define CHROME_BROWSER_UI_VIEWS_EXTENSIONS_EXTENSION_INSTALL_DIALOG_VIEW_ANDROID_H_
++
++#include <vector>
++
++#include "base/android/jni_android.h"
++#include "base/android/scoped_java_ref.h"
++#include "base/macros.h"
++#include "base/optional.h"
++#include "base/timer/elapsed_timer.h"
++#include "base/timer/timer.h"
++#include "chrome/browser/extensions/extension_install_prompt.h"
++#include "ui/gfx/native_widget_types.h"
++
++class Profile;
++
++namespace content {
++class PageNavigator;
++}
++
++// Modal dialog that shows when the user attempts to install an extension. Also
++// shown if the extension is already installed but needs additional permissions.
++// Android JNI version.
++class ExtensionInstallDialogView {
++ public:
++  // The views::View::id of the ratings section in the dialog.
++  static const int kRatingsViewId = 1;
++
++  ExtensionInstallDialogView(
++      Profile* profile,
++      content::PageNavigator* navigator,
++      const ExtensionInstallPrompt::DoneCallback& done_callback,
++      std::unique_ptr<ExtensionInstallPrompt::Prompt> prompt);
++  ~ExtensionInstallDialogView();
++
++  void Cancel(
++    JNIEnv* env,
++    const base::android::JavaParamRef<jobject>& obj);
++  void Accept(
++    JNIEnv* env,
++    const base::android::JavaParamRef<jobject>& obj,
++    const jboolean withhold_permissions_checkbox_checked);
++  void ShowDialog(gfx::NativeWindow native_window);
++
++ private:
++  bool is_external_install() const {
++    return prompt_->type() == ExtensionInstallPrompt::EXTERNAL_INSTALL_PROMPT;
++  }
++
++  // Updates the histogram that holds installation accepted/aborted data.
++  void UpdateInstallResultHistogram(bool accepted) const;
++
++  Profile* profile_;
++  content::PageNavigator* navigator_;
++  ExtensionInstallPrompt::DoneCallback done_callback_;
++  std::unique_ptr<ExtensionInstallPrompt::Prompt> prompt_;
++  base::string16 title_;
++
++  // Set to true once the user's selection has been received and the callback
++  // has been run.
++  bool handled_result_;
++
++  // Used to record time between dialog creation and acceptance, cancellation,
++  // or dismissal.
++  base::Optional<base::ElapsedTimer> install_result_timer_;
++
++  // TODO: Checkbox used to indicate if permissions should be withheld on install.
++
++  // JNI
++  bool is_dialog_showing_;
++  base::android::ScopedJavaGlobalRef<jobject> java_obj_;
++
++  base::android::ScopedJavaLocalRef<jobjectArray> ToJavaArrayOfPermissions(
++      JNIEnv* env);
++  base::android::ScopedJavaLocalRef<jobjectArray> ToJavaArrayOfPermissionsDetails(
++      JNIEnv* env);
++  base::android::ScopedJavaLocalRef<jobjectArray> ToJavaArrayOfRetainedFiles(
++      JNIEnv* env);
++  base::android::ScopedJavaLocalRef<jobjectArray> ToJavaArrayOfRetainedDeviceMessageStrings(
++      JNIEnv* env);
++
++  DISALLOW_COPY_AND_ASSIGN(ExtensionInstallDialogView);
++};
++
++#endif  // CHROME_BROWSER_UI_VIEWS_EXTENSIONS_EXTENSION_INSTALL_DIALOG_VIEW_H_
+--- a/chrome/android/BUILD.gn
++++ b/chrome/android/BUILD.gn
+@@ -291,6 +291,7 @@ android_library("chrome_java") {
+     "//chrome/browser/android/thin_webview:java",
+     "//chrome/browser/download/android:java",
+     "//chrome/browser/download/android:java_resources",
++    "//chrome/browser/extensions/android:java_resources",
+     "//chrome/browser/flags:java",
+     "//chrome/browser/image_editor/public:java",
+     "//chrome/browser/image_fetcher:java",
+@@ -2768,6 +2769,7 @@ generate_jni("chrome_jni_headers") {
+     "java/src/org/chromium/chrome/browser/explore_sites/ExploreSitesCategory.java",
+     "java/src/org/chromium/chrome/browser/explore_sites/ExploreSitesCategoryTile.java",
+     "java/src/org/chromium/chrome/browser/explore_sites/ExploreSitesSite.java",
++    "java/src/org/chromium/chrome/browser/extensions/ExtensionInstallDialogViewBridge.java",
+     "java/src/org/chromium/chrome/browser/feature_engagement/TrackerFactory.java",
+     "java/src/org/chromium/chrome/browser/feedback/ConnectivityChecker.java",
+     "java/src/org/chromium/chrome/browser/feedback/ProcessIdFeedbackSource.java",
+--- a/chrome/android/chrome_java_sources.gni
++++ b/chrome/android/chrome_java_sources.gni
+@@ -689,6 +689,8 @@ chrome_java_sources = [
+   "java/src/org/chromium/chrome/browser/explore_sites/ExploreSitesSite.java",
+   "java/src/org/chromium/chrome/browser/explore_sites/ExploreSitesTileView.java",
+   "java/src/org/chromium/chrome/browser/explore_sites/StableScrollLayoutManager.java",
++  "java/src/org/chromium/chrome/browser/extensions/ExtensionInstallDialogViewBridge.java",
++  "java/src/org/chromium/chrome/browser/extensions/ExtensionInstallCustomScrollView.java",
+   "java/src/org/chromium/chrome/browser/externalauth/ExternalAuthUtils.java",
+   "java/src/org/chromium/chrome/browser/externalauth/UserRecoverableErrorHandler.java",
+   "java/src/org/chromium/chrome/browser/externalauth/VerifiedHandler.java",
+--- a/chrome/browser/ui/BUILD.gn
++++ b/chrome/browser/ui/BUILD.gn
+@@ -2896,8 +2896,8 @@ jumbo_static_library("ui") {
+       "views/extensions/extension_context_menu_controller.h",
+       "views/extensions/extension_install_blocked_dialog_view.cc",
+       "views/extensions/extension_install_blocked_dialog_view.h",
+-      "views/extensions/extension_install_dialog_view.cc",
+-      "views/extensions/extension_install_dialog_view.h",
++      "views/extensions/extension_install_dialog_view_android.cc",
++      "views/extensions/extension_install_dialog_view_android.h",
+       "views/extensions/extension_installed_bubble_view.cc",
+       "views/extensions/extension_keybinding_registry_views.cc",
+       "views/extensions/extension_keybinding_registry_views.h",
+--- a/chrome/browser/ui/views/extensions/extension_install_dialog_view.cc
++++ b/chrome/browser/ui/views/extensions/extension_install_dialog_view.cc
+@@ -2,7 +2,7 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-#include "chrome/browser/ui/views/extensions/extension_install_dialog_view.h"
++#include "chrome/browser/ui/views/extensions/extension_install_dialog_view_android.h"
+ 
+ #include <string>
+ #include <utility>
+--- /dev/null
++++ b/chrome/browser/extensions/android/BUILD.gn
+@@ -0,0 +1,20 @@
++# Copyright 2019 The Chromium Authors. All rights reserved.
++# Use of this source code is governed by a BSD-style license that can be
++# found in the LICENSE file.
++
++import("//build/config/android/rules.gni")
++
++android_resources("java_resources") {
++  sources = [
++    "java/res/layout/extension_install_dialog.xml",
++  ]
++  deps = [
++    "//chrome/browser/ui/android/strings:ui_strings_grd",
++    "//components/browser_ui/modaldialog/android:java_resources",
++    "//components/browser_ui/strings/android:browser_ui_strings_grd",
++    "//components/browser_ui/styles/android:java_resources",
++    "//components/browser_ui/widget/android:java_resources",
++    "//ui/android:ui_java_resources",
++  ]
++  custom_package = "org.chromium.chrome.extensions"
++}
+--- a/chrome/browser/ui/extensions/extension_install_ui_default.cc
++++ b/chrome/browser/ui/extensions/extension_install_ui_default.cc
+@@ -46,13 +46,7 @@ namespace {
+ Browser* FindOrCreateVisibleBrowser(Profile* profile) {
+   // TODO(mpcomplete): remove this workaround for http://crbug.com/244246
+   // after fixing http://crbug.com/38676.
+-  if (!IncognitoModePrefs::CanOpenBrowser(profile))
+-    return nullptr;
+-  chrome::ScopedTabbedBrowserDisplayer displayer(profile);
+-  Browser* browser = displayer.browser();
+-  if (browser->tab_strip_model()->count() == 0)
+-    chrome::AddTabAt(browser, GURL(), -1, true);
+-  return browser;
++  return nullptr;
+ }
+ 
+ }  // namespace
+@@ -85,7 +79,7 @@ void ExtensionInstallUIDefault::OnInstal
+   if (extension->is_app()) {
+     if (use_app_installed_bubble_) {
+       if (browser)
+-        ShowPlatformBubble(extension, browser, *icon);
++        // TODO: ShowPlatformBubble(extension, browser, *icon);
+       return;
+     }
+ 
+@@ -97,7 +91,7 @@ void ExtensionInstallUIDefault::OnInstal
+     return;
+   }
+ 
+-  ShowPlatformBubble(extension, browser, *icon);
++  // TODO: ShowPlatformBubble(extension, browser, *icon);
+ }
+ 
+ void ExtensionInstallUIDefault::OnInstallFailure(
+--- a/base/android/java/src/org/chromium/base/ContentUriUtils.java
++++ b/base/android/java/src/org/chromium/base/ContentUriUtils.java
+@@ -300,6 +300,7 @@ public abstract class ContentUriUtils {
+     public static boolean delete(String uriString) {
+         assert isContentUri(uriString);
+         Uri parsedUri = Uri.parse(uriString);
++        Log.d(TAG, "parsedUri: %s", parsedUri.toString());
+         ContentResolver resolver = ContextUtils.getApplicationContext().getContentResolver();
+         return resolver.delete(parsedUri, null, null) > 0;
+     }
+--- a/base/files/file_path.cc
++++ b/base/files/file_path.cc
+@@ -499,6 +499,7 @@ bool FilePath::MatchesExtension(StringPi
+ }
+ 
+ FilePath FilePath::Append(StringPieceType component) const {
++  //LOG(INFO) << "file_path.cc: Append: component: " << component;
+   StringPieceType appended = component;
+   StringType without_nuls;
+ 
+@@ -506,6 +507,7 @@ FilePath FilePath::Append(StringPieceTyp
+   if (nul_pos != StringPieceType::npos) {
+     without_nuls = StringType(component.substr(0, nul_pos));
+     appended = StringPieceType(without_nuls);
++    //LOG(INFO) << "file_path.cc: Append: nul_pos != StringPieceType::npos: appended: " << appended.data();
+   }
+ 
+   DCHECK(!IsPathAbsolute(appended));
+@@ -524,6 +526,8 @@ FilePath FilePath::Append(StringPieceTyp
+   FilePath new_path(path_);
+   new_path.StripTrailingSeparatorsInternal();
+ 
++  //LOG(INFO) << "file_path.cc: Append: new_path: " << new_path;
++
+   // Don't append a separator if the path is empty (indicating the current
+   // directory) or if the path component is empty (indicating nothing to
+   // append).
+@@ -538,11 +542,15 @@ FilePath FilePath::Append(StringPieceTyp
+     }
+   }
+ 
++  //LOG(INFO) << "file_path.cc: Append: new_path 2: " << new_path;
++
++  //LOG(INFO) << "file_path.cc: Append: before append: appended: " << appended.data();
+   new_path.path_.append(appended.data(), appended.size());
+   return new_path;
+ }
+ 
+ FilePath FilePath::Append(const FilePath& component) const {
++  //LOG(INFO) << "file_path.cc: Append 2: component: " << component;
+   return Append(component.value());
+ }
+ 
+--- /dev/null
++++ b/chrome/android/java/src/org/chromium/chrome/browser/extensions/ExtensionInstallCustomScrollView.java
+@@ -0,0 +1,130 @@
++// Copyright 2020 The Ungoogled-Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++package org.chromium.chrome.browser.extensions;
++
++import android.content.Context;
++import android.util.AttributeSet;
++import android.view.View;
++import android.widget.CheckBox;
++import android.widget.CompoundButton;
++import android.widget.CompoundButton.OnCheckedChangeListener;
++import android.widget.ScrollView;
++import android.widget.Spinner;
++import android.widget.TextView;
++
++import androidx.annotation.Nullable;
++
++import org.chromium.chrome.browser.download.DownloadUtils;
++import org.chromium.chrome.browser.download.settings.DownloadDirectoryAdapter;
++import org.chromium.chrome.extensions.R;
++import org.chromium.components.browser_ui.widget.text.AlertDialogEditText;
++
++import java.io.File;
++import java.util.StringJoiner;
++
++/**
++ * Dialog that is displayed to ask user where they want to download the file.
++ */
++public class ExtensionInstallCustomScrollView
++        extends ScrollView implements OnCheckedChangeListener {
++    private TextView mSubtitleView;
++    private TextView mPermissionsHeading;
++    private TextView mPermissions;
++    private TextView mRetainedFilesHeading;
++    private TextView mRetainedFiles;
++    private TextView mRetainedDevicesHeading;
++    private TextView mRetainedDeviceMessage;
++    private CheckBox mWithholdPermission;
++
++    private boolean mWithholdPermissionChecked;
++
++    public ExtensionInstallCustomScrollView(Context context, AttributeSet attrs) {
++        super(context, attrs);
++        mWithholdPermissionChecked = false;
++    }
++
++    @Override
++    protected void onFinishInflate() {
++        super.onFinishInflate();
++
++        mSubtitleView = findViewById(R.id.subtitle);
++        mPermissionsHeading = findViewById(R.id.permissions_heading);
++        mPermissions = findViewById(R.id.permissions);
++        mRetainedFilesHeading = findViewById(R.id.retained_files_heading);
++        mRetainedFiles = findViewById(R.id.retained_files);
++        mRetainedDevicesHeading = findViewById(R.id.retained_devices_heading);
++        mRetainedDeviceMessage = findViewById(R.id.retained_device_message);
++        mWithholdPermission = findViewById(R.id.withhold_permission_checkbox);
++    }
++
++    void initialize(String title, String storeLink, String withholdPermissionsHeading,
++            boolean shouldDisplayWithholdingUI, boolean shouldShowPermissions, int permissionCount,
++            String[] permissions, String[] permissionsDetails, String permissionsHeading,
++            String[] retainedFiles, String retainedFilesHeading,
++            String[] retainedDeviceMessageStrings, String retainedDevicesHeading) {
++
++        if (shouldDisplayWithholdingUI) {
++            mWithholdPermission.setVisibility(View.VISIBLE);
++            mWithholdPermission.setText(withholdPermissionsHeading);
++            mWithholdPermission.setChecked(false);
++        }
++        mWithholdPermission.setOnCheckedChangeListener(this);
++
++        mSubtitleView.setText(title);
++
++        mPermissionsHeading.setText(permissionsHeading);
++        if (shouldShowPermissions) {
++            char bull = '\u2022';
++            String newline = "";
++            String indent = "    ";
++            StringBuilder sb = new StringBuilder();
++            for (int i = 0; i < permissionCount; ++i) {
++                // Format strings
++                sb.append(newline).append(bull).append(permissions[i]);
++                newline = "\n";
++                sb.append(newline).append(indent).append(permissionsDetails[i]);
++            }
++            mPermissions.setText(sb.toString());
++            mPermissions.setVisibility(View.VISIBLE);
++        }
++
++        if (retainedFiles.length > 0) {
++            String newline = "";
++            StringBuilder sb = new StringBuilder();
++            for (int i = 0; i < retainedFiles.length; ++i) {
++                // Format strings
++                sb.append(newline).append(retainedFiles[i]);
++                newline = "\n";
++            }
++            mRetainedFiles.setText(sb.toString());
++            mRetainedFiles.setVisibility(View.VISIBLE);
++            mRetainedFilesHeading.setText(retainedFilesHeading);
++            mRetainedFilesHeading.setVisibility(View.VISIBLE);
++        }
++
++        if (retainedDeviceMessageStrings.length > 0) {
++            String newline = "";
++            StringBuilder sb = new StringBuilder();
++            for (int i = 0; i < retainedDeviceMessageStrings.length; ++i) {
++                // Format strings
++                sb.append(newline).append(retainedDeviceMessageStrings[i]);
++                newline = "\n";
++            }
++            mRetainedDeviceMessage.setText(sb.toString());
++            mRetainedDeviceMessage.setVisibility(View.VISIBLE);
++            mRetainedDevicesHeading.setText(retainedDevicesHeading);
++            mRetainedDevicesHeading.setVisibility(View.VISIBLE);
++        }
++    }
++
++    protected boolean getWithholdPermissionChecked() {
++        return mWithholdPermissionChecked;
++    }
++
++    @Override
++    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
++        mWithholdPermissionChecked = isChecked;
++    }
++}
+\ No newline at end of file

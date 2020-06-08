@@ -1,0 +1,33 @@
+description: change package name to allow co-existence with original Chromium
+author: Wengling Chen <feiyu2817@gmail.com>
+
+---
+ chrome/android/BUILD.gn                                       |    4 ++--
+ chrome/android/java/res_chromium/values/channel_constants.xml |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+--- a/chrome/android/BUILD.gn
++++ b/chrome/android/BUILD.gn
+@@ -43,9 +43,9 @@ declare_args() {
+   # WebView providers which declare one of a handful of package names. See
+   # https://chromium.9oo91esource.qjz9zk/chromium/src/+/HEAD/android_webview/docs/build-instructions.md#Changing-package-name
+   # for details.
+-  chrome_public_manifest_package = "org.chromium.chrome"
++  chrome_public_manifest_package = "org.ungoogled.chromium.extensions"
+ }
+-chrome_public_test_manifest_package = "org.chromium.chrome.tests"
++chrome_public_test_manifest_package = "org.ungoogled.chromium.extensions.tests"
+ 
+ chrome_public_jinja_variables =
+     default_chrome_public_jinja_variables +
+--- a/chrome/android/java/res_chromium/values/channel_constants.xml
++++ b/chrome/android/java/res_chromium/values/channel_constants.xml
+@@ -5,7 +5,7 @@
+ 
+ <resources xmlns:android="http://schemas.android.com/apk/res/android">
+     <!-- The application name displayed to the user. -->
+-    <string name="app_name" translatable="false">Chromium</string>
++    <string name="app_name" translatable="false">Ungoogled Chromium Extensions</string>
+     <string name="bookmark_widget_title" translatable="false">Chromium bookmarks</string>
+     <string name="search_widget_title" translatable="false">Chromium search</string>
+ </resources>
