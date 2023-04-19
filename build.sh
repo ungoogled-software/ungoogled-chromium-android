@@ -112,7 +112,7 @@ function prepare_repos {
   patch_applied=false
 
   ## Clone ungoogled-chromium repo
-  git clone https://github.com/Eloston/ungoogled-chromium.git -b ${ungoogled_chromium_version}-${ungoogled_chromium_revision} \
+  git clone https://github.com/ungoogled-software/ungoogled-chromium.git -b ${ungoogled_chromium_version}-${ungoogled_chromium_revision} \
    || git clone https://github.com/wchen342/ungoogled-chromium.git -b ${ungoogled_chromium_version}-${ungoogled_chromium_revision} \
    || return $?
 

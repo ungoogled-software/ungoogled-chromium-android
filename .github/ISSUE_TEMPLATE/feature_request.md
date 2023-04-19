@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Please explain why your feature request fall into the scope of ungoogled-chromium?**
-See [ungoogled-chromium#objectives](https://github.com/Eloston/ungoogled-chromium#objectives) for a detailed list of objectives of this project. [...]
+See [ungoogled-chromium#objectives](https://github.com/ungoogled-software/ungoogled-chromium#objectives) for a detailed list of objectives of this project. [...]
 
 **Please describe the feature you would like to have**
 A clear and concise description of what the problem is. [...]

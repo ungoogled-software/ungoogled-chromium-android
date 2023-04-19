@@ -8,7 +8,7 @@ Please see [CHANGELOG](CHANGELOG.md) for latest updates.
 
 **Help is welcome!**
 
-For more information on `ungoogled-chromium`, please visit the original repo: [Eloston/ungoogled-chromium](https://github.com/Eloston/ungoogled-chromium).
+For more information on `ungoogled-chromium`, please visit the original repo: [ungoogled-software/ungoogled-chromium](https://github.com/ungoogled-software/ungoogled-chromium).
 
 ## Content Overview
 
@@ -31,7 +31,7 @@ In descending order of significance (i.e. most important objective first):
 
 1. **ungoogled-chromium is Google Chromium, sans dependency on Google web services**.
 2. **ungoogled-chromium retains the default Chromium experience as closely as possible**. Unlike other Chromium forks that have their own visions of a web browser, ungoogled-chromium is essentially a drop-in replacement for Chromium.
-3. **ungoogled-chromium features tweaks to enhance privacy, control, and transparency**. However, almost all of these features must be manually activated or enabled. For more details, see [Feature Overview](https://github.com/eloston/ungoogled-chromium#feature-overview).
+3. **ungoogled-chromium features tweaks to enhance privacy, control, and transparency**. However, almost all of these features must be manually activated or enabled. For more details, see [Feature Overview](https://github.com/ungoogled-software/ungoogled-chromium#feature-overview).
 
 ## Differences from ungoogled-chromium
 
@@ -150,7 +150,7 @@ Build time dependencies (*package names as in Fedora 33. Other distributions may
   ```
 </details>
 
-For a more customized building process, see building instructions from [the original repo](https://github.com/Eloston/ungoogled-chromium/blob/master/docs/building.md).
+For a more customized building process, see building instructions from [the original repo](https://github.com/ungoogled-software/ungoogled-chromium/blob/master/docs/building.md).
 
 ## Reporting and Contributing
 
@@ -175,7 +175,7 @@ I have set up a F-Droid repository. You can use F-Droid client and add the follo
 ## Credits
 
 * [The Chromium Project](https://www.chromium.org/)
-* [ungoogled-chromium](https://github.com/Eloston/ungoogled-chromium)
+* [ungoogled-chromium](https://github.com/ungoogled-software/ungoogled-chromium)
 * [xsmile's fork](https://github.com/xsmile/ungoogled-chromium/tree/android)
 * [Bromite](https://github.com/bromite/bromite)
 * [Kiwi Browser](https://github.com/kiwibrowser)
