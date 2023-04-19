@@ -19,10 +19,8 @@ For more information on `ungoogled-chromium`, please visit the original repo: [u
 * [Building Instructions](#building-instructions)
 * [Reporting and Contributing](#reporting-and-contributing)
 * [Extensions](#extensions)
-* [F-droid Repository](#f-droid-repository)
 * [Credits](#credits)
 * [Related Projects](#related-projects)
-* [Sponsors](#sponsors)
 * [License](#license)
 
 ## Objectives
