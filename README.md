@@ -163,15 +163,6 @@ For a more customized building process, see building instructions from [the orig
 
 The extension patches can be found at [chromium-android-extension](https://github.com/wchen342/chromium-android-extension). Anyone interested is welcomed to fork and keeps working on it.
 
-
-## F-Droid Repository
-
-I have set up a F-Droid repository. You can use F-Droid client and add the following repository, depending on your device:
-
- - For 32-bit `arm` devices, add [this repository](https://www.droidware.info/fdroid/repo?fingerprint=2144449AB1DD270EC31B6087409B5D0EA39A75A9F290DA62AC1B238A0EAAF851)
- - For 64-bit `arm64` devices, add [this repository](https://www.droidware.info/arm64/fdroid/repo?fingerprint=2144449AB1DD270EC31B6087409B5D0EA39A75A9F290DA62AC1B238A0EAAF851)
- - For `x86` devices, add [this repository](https://www.droidware.info/x86/fdroid/repo?fingerprint=2144449AB1DD270EC31B6087409B5D0EA39A75A9F290DA62AC1B238A0EAAF851)
-
 ## Credits
 
 * [The Chromium Project](https://www.chromium.org/)
@@ -184,10 +175,6 @@ I have set up a F-Droid repository. You can use F-Droid client and add the follo
 ## Related Projects
 
 * [Bromite](https://github.com/bromite/bromite) (Another build for Android. Has some own features.)
-
-## Sponsors
-
-* Thanks to [Gandi.net](https://www.gandi.net/) for kindly providing us with building servers.
 
 ## License
 
