@@ -8,10 +8,9 @@ Corrected Exit functionality
 
 License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
-diff --git a/chrome/android/java/res/values/ids.xml b/chrome/android/java/res/values/ids.xml
 --- a/chrome/android/java/res/values/ids.xml
 +++ b/chrome/android/java/res/values/ids.xml
-@@ -131,6 +131,7 @@
+@@ -137,6 +137,7 @@ found in the LICENSE file.
      <item type="id" name="ntp_feed_header_menu_item_toggle_switch" />
  
      <!-- App Menu -->
@@ -19,10 +18,29 @@ diff --git a/chrome/android/java/res/values/ids.xml b/chrome/android/java/res/va
      <item type="id" name="icon_row_menu_id" />
      <item type="id" name="submenu_header_menu_id" />
      <item type="id" name="back_menu_id" />
-diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
+--- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
+@@ -429,6 +429,8 @@ import java.util.Set;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.Supplier;
+ 
++import org.chromium.chrome.browser.lifetime.ApplicationLifetime;
++
+ /**
+  * This is the main activity for ChromeMobile when not running in document mode. All the tabs are
+  * accessible via a chrome specific tab switching UI.
+@@ -4527,6 +4529,8 @@ public class ChromeTabbedActivity extend
+                     .closeTabs(
+                             TabClosureParams.closeTab(currentTab).build(), /* allowDialog= */ true);
+             RecordUserAction.record("MobileTabClosed");
++        } else if (id == R.id.exit_id) {
++            ApplicationLifetime.terminate(false);
+         } else if (id == R.id.close_all_tabs_menu_id) {
+             boolean allowUndo = TabClosureParamsUtils.shouldAllowUndo(triggeringMotion);
+ 
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -73,6 +73,7 @@
+@@ -74,6 +74,7 @@ import org.chromium.build.annotations.Nu
  import org.chromium.chrome.R;
  import org.chromium.chrome.browser.ActivityTabProvider;
  import org.chromium.chrome.browser.ActivityUtils;
@@ -30,7 +48,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActiv
  import org.chromium.chrome.browser.ChromeActivitySessionTracker;
  import org.chromium.chrome.browser.ChromeApplicationImpl;
  import org.chromium.chrome.browser.ChromeKeyboardVisibilityDelegate;
-@@ -2825,6 +2826,11 @@
+@@ -2967,6 +2968,11 @@ public abstract class ChromeActivity ext
              return true;
          }
  
@@ -42,31 +60,9 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActiv
          if (id == R.id.update_menu_id) {
              UpdateMenuItemHelper.getInstance(
                              getProfileProviderSupplier().get().getOriginalProfile())
-diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
---- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
-+++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
-@@ -416,6 +416,8 @@
- import java.util.concurrent.atomic.AtomicBoolean;
- import java.util.function.Supplier;
- 
-+import org.chromium.chrome.browser.lifetime.ApplicationLifetime;
-+
- /**
-  * This is the main activity for ChromeMobile when not running in document mode. All the tabs are
-  * accessible via a chrome specific tab switching UI.
-@@ -4325,6 +4327,8 @@
-                     .closeTabs(
-                             TabClosureParams.closeTab(currentTab).build(), /* allowDialog= */ true);
-             RecordUserAction.record("MobileTabClosed");
-+        } else if (id == R.id.exit_id) {
-+            ApplicationLifetime.terminate(false);
-         } else if (id == R.id.close_all_tabs_menu_id) {
-             boolean allowUndo = TabClosureParamsUtils.shouldAllowUndo(triggeringMotion);
- 
-diff --git a/chrome/android/java/src/org/chromium/chrome/browser/init/ChromeLifetimeController.java b/chrome/android/java/src/org/chromium/chrome/browser/init/ChromeLifetimeController.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/init/ChromeLifetimeController.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/init/ChromeLifetimeController.java
-@@ -20,6 +20,7 @@
+@@ -20,6 +20,7 @@ import org.chromium.build.annotations.Mo
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.chrome.browser.BrowserRestartActivity;
  import org.chromium.chrome.browser.lifetime.ApplicationLifetime;
@@ -74,7 +70,7 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/init/ChromeLife
  
  /**
   * Answers requests to kill and (potentially) restart Chrome's main browser process.
-@@ -76,6 +77,7 @@
+@@ -76,6 +77,7 @@ class ChromeLifetimeController
  
      @Override
      public void onTerminate(boolean restart) {
@@ -82,33 +78,37 @@ diff --git a/chrome/android/java/src/org/chromium/chrome/browser/init/ChromeLife
          mRestartChromeOnDestroy = restart;
  
          // Tell all Chrome Activities to finish themselves.
-diff --git a/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java b/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java
-@@ -565,6 +565,13 @@
+@@ -761,6 +761,19 @@ public class TabbedAppMenuPropertiesDele
              modelList.add(buildContentFilterHelpCenterMenuItem(currentTab));
          }
  
-+        modelList.add(new MVCListAdapter.ListItem(
-+                AppMenuHandler.AppMenuItemType.STANDARD,
-+                buildModelForStandardMenuItem(
-+                        R.id.exit_id,
-+                        R.string.menu_exit,
-+                        shouldShowIconBeforeItem() ? R.drawable.ic_exit_to_app_white_24dp : 0)));
++        modelList.add(
++                new MVCListAdapter.ListItem(
++                        AppMenuHandler.AppMenuItemType.STANDARD,
++                        AppMenuItemUtils.buildModelForStandardMenuItem(
++                                mContext,
++                                getAppMenuItemTheme(),
++                                R.id.exit_id,
++                                R.string.menu_exit,
++                                shouldShowIconBeforeItem()
++                                        ? R.drawable.ic_exit_to_app_white_24dp
++                                        : 0,
++                                isMenuIconAtStart())));
 +
          // Default browser promo menu item (entry point).
          if (shouldShowDefaultBrowserPromo()) {
              // Used to track how many people saw the promo.
-diff --git a/chrome/browser/ui/android/strings/android_chrome_strings.grd b/chrome/browser/ui/android/strings/android_chrome_strings.grd
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -4324,6 +4324,9 @@
+@@ -4461,6 +4461,9 @@ To change this setting, <ph name="BEGIN_
        <message name="IDS_MENU_MORE_TOOLS" desc="Menu item to more tools. [CHAR_LIMIT=27]">
          More tools
        </message>
 +      <message name="IDS_MENU_EXIT" desc="Menu item for exit browser. [CHAR-LIMIT=27]">
 +        Exit
 +      </message>
-       <message name="IDS_MENU_READER_MODE_PREFS" desc="Menu item to show reader mode preferences pane, which allows users to change the appearance (font size, theme, etc.) of the page. [CHAR_LIMIT=27]">
-         Appearance
+       <message name="IDS_MENU_TASK_MANAGER" desc="Menu item to show the task manager. [CHAR_LIMIT=27]">
+         Task manager
        </message>

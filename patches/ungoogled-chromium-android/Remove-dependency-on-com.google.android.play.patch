@@ -11,7 +11,7 @@ Subject: Remove dependency on com.google.android.play
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -2209,9 +2209,6 @@ if (_is_default_toolchain) {
+@@ -2202,9 +2202,6 @@ if (_is_default_toolchain) {
        deps += [
          "//chrome/browser/ui/android/app_rating:play_review_aar_for_clank_java",
        ]
@@ -23,7 +23,7 @@ Subject: Remove dependency on com.google.android.play
      if (dfmify_dev_ui) {
 --- a/chrome/browser/ui/android/app_rating/BUILD.gn
 +++ b/chrome/browser/ui/android/app_rating/BUILD.gn
-@@ -60,8 +60,6 @@ android_library("impl_java") {
+@@ -57,8 +57,6 @@ android_library("impl_java") {
    ]
    if (enable_chrome_android_internal) {
      deps += [ ":play_review_aar_for_clank_java" ]
@@ -32,7 +32,7 @@ Subject: Remove dependency on com.google.android.play
    }
  }
  
-@@ -95,7 +93,5 @@ robolectric_library("junit") {
+@@ -92,7 +90,5 @@ robolectric_library("junit") {
    ]
    if (enable_chrome_android_internal) {
      deps += [ ":play_review_aar_for_clank_java" ]
@@ -42,7 +42,7 @@ Subject: Remove dependency on com.google.android.play
  }
 --- a/chrome/browser/ui/android/app_rating/java/src/org/chromium/chrome/browser/ui/app_rating/AppRatingManagerImpl.java
 +++ b/chrome/browser/ui/android/app_rating/java/src/org/chromium/chrome/browser/ui/app_rating/AppRatingManagerImpl.java
-@@ -6,17 +6,6 @@ package org.chromium.chrome.browser.ui.app_rating;
+@@ -6,17 +6,6 @@ package org.chromium.chrome.browser.ui.a
  
  import android.app.Activity;
  
@@ -60,7 +60,7 @@ Subject: Remove dependency on com.google.android.play
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.ServiceImpl;
  
-@@ -24,50 +13,10 @@ import org.chromium.build.annotations.ServiceImpl;
+@@ -24,50 +13,10 @@ import org.chromium.build.annotations.Se
  @NullMarked
  @ServiceImpl(AppRatingManager.class)
  public class AppRatingManagerImpl implements AppRatingManager {
@@ -115,12 +115,10 @@ Subject: Remove dependency on com.google.android.play
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -151,20 +151,6 @@ template("define_autorolled_targets") {
-       }
-     }
-
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
+@@ -133,20 +133,6 @@ template("define_autorolled_targets") {
+ 
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
 -    android_aar_prebuilt("com_google_android_play_review_java") {
 -      aar_path =
 -          "autorolled/cipd/libs/com_google_android_play_review/review.aar"
@@ -133,6 +131,8 @@ Subject: Remove dependency on com.google.android.play
 -      ]
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
      android_aar_prebuilt("com_google_ar_impress_java") {
+       aar_path = "autorolled/cipd/libs/com_google_ar_impress/impress.aar"
+       info_path = "autorolled/committed/libs/com_google_ar_impress/com_google_ar_impress.info"

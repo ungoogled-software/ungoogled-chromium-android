@@ -3,17 +3,17 @@ author: bearinmindcat <bearincrypto@gmail.com>
 ---
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -2753,7 +2753,6 @@
-       "//chrome/browser/profiles:misc",
-       "//chrome/browser/profiles:profiles_extra_parts_impl",
-       "//chrome/browser/push_messaging:impl",
--      "//chrome/browser/safe_browsing",
-       "//chrome/browser/signin:impl",
-       "//chrome/browser/sync",
-       "//chrome/browser/task_manager:impl",
+@@ -1021,7 +1021,6 @@ source_set("core") {
+     "//chrome/browser/profiling_host",
+     "//chrome/browser/renderer_host",
+     "//chrome/browser/resource_coordinator",
+-    "//chrome/browser/safe_browsing",
+     "//chrome/browser/safe_browsing:advanced_protection",
+     "//chrome/browser/search",
+     "//chrome/browser/search_engines",
 --- a/chrome/browser/safe_browsing/BUILD.gn
 +++ b/chrome/browser/safe_browsing/BUILD.gn
-@@ -107,6 +107,10 @@
+@@ -108,6 +108,10 @@ static_library("safe_browsing") {
      "//services/preferences/public/cpp",
    ]
    }
@@ -22,5 +22,5 @@ author: bearinmindcat <bearincrypto@gmail.com>
 +  sources = []
 +  allow_circular_includes_from = []
  
+   if (enable_extensions) {
  
-   # Note: is_android is not equivalent to safe_browsing_mode == 2.

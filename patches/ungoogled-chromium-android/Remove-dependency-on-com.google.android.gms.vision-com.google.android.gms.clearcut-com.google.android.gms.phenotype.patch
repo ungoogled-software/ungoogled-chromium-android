@@ -17,7 +17,8 @@ Subject: Remove dependency on com.google.android.gms.vision,
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -323,7 +323,5 @@ if (_is_default_toolchain) {
+@@ -313,8 +313,6 @@ if (_is_default_toolchain) {
+       "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
        "$google_play_services_package:google_play_services_tasks_java",
 -      "$google_play_services_package:google_play_services_vision_common_java",
@@ -36,7 +37,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
        "//base:base_java",
        "//base:base_java_test_support",
        "//base:base_junit_test_support",
-@@ -251,8 +249,6 @@ if (is_android) {
+@@ -250,8 +248,6 @@ if (is_android) {
      deps = [
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -78,7 +79,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
  import org.chromium.mojo.system.MojoException;
  import org.chromium.shape_detection.mojom.BarcodeDetection;
  import org.chromium.shape_detection.mojom.BarcodeDetectionResult;
-@@ -28,101 +17,16 @@ import org.chromium.shape_detection.mojom.BarcodeFormat;
+@@ -28,101 +17,16 @@ import org.chromium.shape_detection.mojo
  public class BarcodeDetectionImpl implements BarcodeDetection {
      private static final String TAG = "BarcodeDetectionImpl";
  
@@ -184,7 +185,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
  
      @Override
      public void onConnectionError(MojoException e) {
-@@ -130,34 +34,6 @@ public class BarcodeDetectionImpl implements BarcodeDetection {
+@@ -130,34 +34,6 @@ public class BarcodeDetectionImpl implem
      }
  
      private int toBarcodeFormat(int format) {
@@ -247,7 +248,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
  
  /**
   * Google Play services implementation of the FaceDetection service defined in
-@@ -35,110 +21,26 @@ public class FaceDetectionImplGmsCore implements FaceDetection {
+@@ -35,110 +21,26 @@ public class FaceDetectionImplGmsCore im
      private static final int MAX_FACES = 32;
      private final int mMaxFaces;
      private final boolean mFastMode;
@@ -391,7 +392,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
  import org.chromium.mojo.system.MojoException;
  import org.chromium.shape_detection.mojom.TextDetection;
  import org.chromium.shape_detection.mojom.TextDetectionResult;
-@@ -28,59 +16,16 @@ import org.chromium.shape_detection.mojom.TextDetectionResult;
+@@ -28,59 +16,16 @@ import org.chromium.shape_detection.mojo
  public class TextDetectionImpl implements TextDetection {
      private static final String TAG = "TextDetectionImpl";
  
@@ -455,7 +456,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
  
      @Override
      public void onConnectionError(MojoException e) {
-@@ -88,11 +33,7 @@ public class TextDetectionImpl implements TextDetection {
+@@ -88,11 +33,7 @@ public class TextDetectionImpl implement
      }
  
      public static @Nullable TextDetection create() {
@@ -471,12 +472,10 @@ Subject: Remove dependency on com.google.android.gms.vision,
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -304,38 +304,6 @@ template("define_autorolled_targets") {
-       }
-     }
+@@ -161,38 +161,6 @@ template("define_autorolled_targets") {
  
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_play_services_vision_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_vision/play-services-vision.aar"
@@ -507,14 +506,15 @@ Subject: Remove dependency on com.google.android.gms.vision,
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
      if (!defined(material_design_target)) {
-@@ -1067,30 +1035,6 @@ template("define_autorolled_targets") {
-       ]
+       android_aar_prebuilt("com_google_android_material_material_java") {
+         aar_path = "autorolled/cipd/libs/com_google_android_material_material/material.aar"
+@@ -792,30 +760,6 @@ template("define_autorolled_targets") {
      }
  
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
 -    # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_play_services_clearcut_java") {
@@ -538,9 +538,10 @@ Subject: Remove dependency on com.google.android.gms.vision,
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
+       android_aar_prebuilt("google_play_services_cloud_messaging_java") {
 --- a/third_party/cardboard/BUILD.gn
 +++ b/third_party/cardboard/BUILD.gn
 @@ -53,8 +53,6 @@ android_library("cardboard_java") {

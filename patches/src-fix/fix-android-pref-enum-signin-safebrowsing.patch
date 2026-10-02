@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/chrome/browser/preferences/BUILD.gn
 +++ b/chrome/browser/preferences/BUILD.gn
-@@ -72,7 +72,9 @@
+@@ -74,7 +74,9 @@ java_cpp_strings("java_pref_names_srcjar
      "//components/payments/core/payment_prefs.h",
      "//components/policy/core/common/policy_pref_names.h",
      "//components/privacy_sandbox/privacy_sandbox_prefs.h",

@@ -22,15 +22,15 @@ dependency.
 
 --- a/android_webview/browser/aw_browser_context.cc
 +++ b/android_webview/browser/aw_browser_context.cc
-@@ -75,7 +75,6 @@
+@@ -77,7 +77,6 @@
  #include "components/prefs/pref_service_factory.h"
  #include "components/prefs/segregated_pref_store.h"
  #include "components/profile_metrics/browser_profile_type.h"
 -#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
  #include "components/url_formatter/url_fixer.h"
  #include "components/user_prefs/user_prefs.h"
- #include "components/visitedlink/browser/visitedlink_writer.h"
-@@ -213,7 +212,6 @@
+ #include "components/visitedlink/browser/partitioned_visitedlink_writer.h"
+@@ -242,7 +241,6 @@ base::FilePath AwBrowserContext::GetCook
  
  // static
  void AwBrowserContext::RegisterPrefs(PrefRegistrySimple* registry) {
@@ -48,7 +48,7 @@ dependency.
  #include "components/safe_browsing/core/common/utils.h"
  #include "components/security_interstitials/content/security_interstitial_controller_client.h"
  #include "components/security_interstitials/content/settings_page_helper.h"
-@@ -109,16 +108,16 @@
+@@ -109,16 +108,16 @@ AwSafeBrowsingBlockingPage* AwSafeBrowsi
    BaseSafeBrowsingErrorUI::SBErrorDisplayOptions display_options =
        BaseSafeBrowsingErrorUI::SBErrorDisplayOptions(
            IsMainPageResourceLoadPending(unsafe_resources),
@@ -73,7 +73,7 @@ dependency.
    ErrorUiType errorType =
 --- a/chrome/browser/preferences/BUILD.gn
 +++ b/chrome/browser/preferences/BUILD.gn
-@@ -72,7 +72,6 @@
+@@ -74,7 +74,6 @@ java_cpp_strings("java_pref_names_srcjar
      "//components/payments/core/payment_prefs.h",
      "//components/policy/core/common/policy_pref_names.h",
      "//components/privacy_sandbox/privacy_sandbox_prefs.h",
@@ -83,7 +83,7 @@ dependency.
      "//components/supervised_user/core/common/pref_names.h",
 --- a/chrome/browser/safe_browsing/android/BUILD.gn
 +++ b/chrome/browser/safe_browsing/android/BUILD.gn
-@@ -223,7 +223,6 @@
+@@ -223,7 +223,6 @@ android_resources("java_resources") {
  
  java_cpp_enum("safe_browsing_enums") {
    sources = [
@@ -93,7 +93,7 @@ dependency.
  }
 --- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/SafeBrowsingBridge.java
 +++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/SafeBrowsingBridge.java
-@@ -67,7 +67,7 @@
+@@ -67,7 +67,7 @@ public final class SafeBrowsingBridge {
       * @return The Safe Browsing state. It can be Enhanced Protection, Standard Protection, or No
       *     Protection.
       */
@@ -102,7 +102,7 @@ dependency.
          return SafeBrowsingBridgeJni.get().getSafeBrowsingState(mProfile);
      }
  
-@@ -75,7 +75,7 @@
+@@ -75,7 +75,7 @@ public final class SafeBrowsingBridge {
       * @param state Set the Safe Browsing state. It can be Enhanced Protection, Standard Protection,
       *     or No Protection.
       */
@@ -111,7 +111,7 @@ dependency.
          SafeBrowsingBridgeJni.get().setSafeBrowsingState(mProfile, state);
      }
  
-@@ -130,10 +130,9 @@
+@@ -130,10 +130,9 @@ public final class SafeBrowsingBridge {
  
          boolean getSafeBrowsingExtendedReportingManaged(Profile profile);
  
@@ -125,7 +125,7 @@ dependency.
  
 --- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/RadioButtonGroupSafeBrowsingPreference.java
 +++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/RadioButtonGroupSafeBrowsingPreference.java
-@@ -18,7 +18,6 @@
+@@ -18,7 +18,6 @@ import androidx.preference.PreferenceVie
  import org.chromium.build.annotations.Initializer;
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.chrome.browser.safe_browsing.SafeBrowsingBridge;
@@ -133,7 +133,7 @@ dependency.
  import org.chromium.chrome.browser.safe_browsing.metrics.SettingsAccessPoint;
  import org.chromium.components.browser_ui.settings.ContainedRadioButtonGroupPreference;
  import org.chromium.components.browser_ui.settings.ManagedPreferenceDelegate;
-@@ -47,7 +46,7 @@
+@@ -47,7 +46,7 @@ public class RadioButtonGroupSafeBrowsin
           * Notify that details of a Safe Browsing mode are requested.
           * @param safeBrowsingState The Safe Browsing mode that is requested for more details.
           */
@@ -142,7 +142,7 @@ dependency.
      }
  
      private static final int HIGHLIGHT_ANIMATION_DELAY_MS = 3000;
-@@ -56,7 +55,7 @@
+@@ -56,7 +55,7 @@ public class RadioButtonGroupSafeBrowsin
      private RadioButtonWithDescriptionAndAuxButton mEnhancedProtection;
      private RadioButtonWithDescriptionAndAuxButton mStandardProtection;
      private RadioButtonWithDescription mNoProtection;
@@ -151,7 +151,7 @@ dependency.
      private @SettingsAccessPoint int mAccessPoint;
      private OnSafeBrowsingModeDetailsRequested mSafeBrowsingModeDetailsRequestedListener;
  
-@@ -73,7 +72,7 @@
+@@ -73,7 +72,7 @@ public class RadioButtonGroupSafeBrowsin
       * @param accessPoint Where this preference was triggered to be created.
       */
      public void init(
@@ -160,7 +160,7 @@ dependency.
          mSafeBrowsingState = safeBrowsingState;
          mAccessPoint = accessPoint;
      }
-@@ -81,11 +80,11 @@
+@@ -81,11 +80,11 @@ public class RadioButtonGroupSafeBrowsin
      @Override
      public void onCheckedChanged(RadioGroup group, int checkedId) {
          if (checkedId == mEnhancedProtection.getId()) {
@@ -175,7 +175,7 @@ dependency.
          } else {
              assert false : "Should not be reached.";
          }
-@@ -160,10 +159,10 @@
+@@ -160,10 +159,10 @@ public class RadioButtonGroupSafeBrowsin
                  : "The listener should be set if the aux button is clickable.";
          if (clickedButtonId == mEnhancedProtection.getId()) {
              mSafeBrowsingModeDetailsRequestedListener.onSafeBrowsingModeDetailsRequested(
@@ -188,7 +188,7 @@ dependency.
          } else {
              assert false : "Should not be reached.";
          }
-@@ -200,14 +199,14 @@
+@@ -200,14 +199,14 @@ public class RadioButtonGroupSafeBrowsin
       * @param checkedState Set the radio button of checkedState to checked, and set the radio
       *         buttons of other states to unchecked.
       */
@@ -208,32 +208,9 @@ dependency.
          return mSafeBrowsingState;
      }
  
---- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/StandardProtectionSettingsFragment.java
-+++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/StandardProtectionSettingsFragment.java
-@@ -13,7 +13,6 @@
- import org.chromium.build.annotations.NullMarked;
- import org.chromium.build.annotations.Nullable;
- import org.chromium.chrome.browser.flags.ChromeFeatureList;
--import org.chromium.chrome.browser.safe_browsing.SafeBrowsingState;
- import org.chromium.chrome.browser.settings.ChromeManagedPreferenceDelegate;
- import org.chromium.chrome.browser.settings.search.ChromeBaseSearchIndexProvider;
- import org.chromium.components.browser_ui.settings.ChromeSwitchPreference;
-@@ -60,9 +59,9 @@
-      * forced enabled in ENHANCED_PROTECTION mode and forced disabled in NO_SAFE_BROWSING mode.
-      */
-     private void updateExtendedReportingPreferences() {
--        @SafeBrowsingState int safeBrowsingState = getSafeBrowsingBridge().getSafeBrowsingState();
--        boolean isEnhancedProtection = safeBrowsingState == SafeBrowsingState.ENHANCED_PROTECTION;
--        boolean isStandardProtection = safeBrowsingState == SafeBrowsingState.STANDARD_PROTECTION;
-+        int safeBrowsingState = getSafeBrowsingBridge().getSafeBrowsingState();
-+        boolean isEnhancedProtection = safeBrowsingState == 2 /* ENHANCED_PROTECTION */;
-+        boolean isStandardProtection = safeBrowsingState == 1 /* STANDARD_PROTECTION */;
- 
-         boolean extendedReportingChecked =
-                 isEnhancedProtection
 --- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/SafeBrowsingSettingsFragment.java
 +++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/SafeBrowsingSettingsFragment.java
-@@ -20,7 +20,6 @@
+@@ -20,7 +20,6 @@ import org.chromium.chrome.browser.prefe
  import org.chromium.chrome.browser.preferences.ChromeSharedPreferences;
  import org.chromium.chrome.browser.profiles.Profile;
  import org.chromium.chrome.browser.safe_browsing.SafeBrowsingBridge;
@@ -241,7 +218,7 @@ dependency.
  import org.chromium.chrome.browser.safe_browsing.metrics.SettingsAccessPoint;
  import org.chromium.chrome.browser.safe_browsing.metrics.UserAction;
  import org.chromium.chrome.browser.settings.ChromeManagedPreferenceDelegate;
-@@ -45,16 +44,15 @@
+@@ -45,16 +44,15 @@ public class SafeBrowsingSettingsFragmen
       * @return A summary that describes the current Safe Browsing state.
       */
      public static String getSafeBrowsingSummaryString(Context context, Profile profile) {
@@ -261,7 +238,7 @@ dependency.
              return context.getString(R.string.prefs_safe_browsing_no_protection_summary);
          } else {
              assert false : "Should not be reached";
-@@ -100,16 +98,16 @@
+@@ -100,16 +98,16 @@ public class SafeBrowsingSettingsFragmen
      }
  
      @Override
@@ -281,7 +258,7 @@ dependency.
              SettingsNavigationFactory.createSettingsNavigation()
                      .startSettings(
                              getActivity(),
-@@ -140,15 +138,15 @@
+@@ -140,15 +138,15 @@ public class SafeBrowsingSettingsFragmen
      public boolean onPreferenceChange(Preference preference, Object newValue) {
          String key = preference.getKey();
          assert PREF_SAFE_BROWSING.equals(key) : "Unexpected preference key.";
@@ -300,7 +277,7 @@ dependency.
              // The user hasn't confirmed to select no protection, keep the radio button / UI checked
              // state at the currently selected level.
              mSafeBrowsingPreference.setCheckedState(currentState);
-@@ -162,16 +160,16 @@
+@@ -162,16 +160,16 @@ public class SafeBrowsingSettingsFragmen
                                      // UI checked state to no protection.
                                      getSafeBrowsingBridge()
                                              .setSafeBrowsingState(
@@ -320,7 +297,7 @@ dependency.
                  ChromeSharedPreferences.getInstance()
                          .writeBoolean(
                                  ChromePreferenceKeys.SETUP_LIST_COMPLETED_KEY_PREFIX.createKey(
-@@ -197,15 +195,15 @@
+@@ -197,15 +195,15 @@ public class SafeBrowsingSettingsFragmen
      }
  
      private void recordUserActionHistogramForNewStateClicked(
@@ -340,7 +317,7 @@ dependency.
                  recordUserActionHistogram(UserAction.DISABLE_SAFE_BROWSING_CLICKED);
                  break;
              default:
-@@ -214,12 +212,12 @@
+@@ -214,12 +212,12 @@ public class SafeBrowsingSettingsFragmen
      }
  
      private void recordUserActionHistogramForStateDetailsClicked(
@@ -356,3 +333,26 @@ dependency.
                  recordUserActionHistogram(UserAction.STANDARD_PROTECTION_EXPAND_ARROW_CLICKED);
                  break;
              default:
+--- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/StandardProtectionSettingsFragment.java
++++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/StandardProtectionSettingsFragment.java
+@@ -13,7 +13,6 @@ import org.chromium.build.annotations.In
+ import org.chromium.build.annotations.NullMarked;
+ import org.chromium.build.annotations.Nullable;
+ import org.chromium.chrome.browser.flags.ChromeFeatureList;
+-import org.chromium.chrome.browser.safe_browsing.SafeBrowsingState;
+ import org.chromium.chrome.browser.settings.ChromeManagedPreferenceDelegate;
+ import org.chromium.chrome.browser.settings.search.ChromeBaseSearchIndexProvider;
+ import org.chromium.components.browser_ui.settings.ChromeSwitchPreference;
+@@ -60,9 +59,9 @@ public class StandardProtectionSettingsF
+      * forced enabled in ENHANCED_PROTECTION mode and forced disabled in NO_SAFE_BROWSING mode.
+      */
+     private void updateExtendedReportingPreferences() {
+-        @SafeBrowsingState int safeBrowsingState = getSafeBrowsingBridge().getSafeBrowsingState();
+-        boolean isEnhancedProtection = safeBrowsingState == SafeBrowsingState.ENHANCED_PROTECTION;
+-        boolean isStandardProtection = safeBrowsingState == SafeBrowsingState.STANDARD_PROTECTION;
++        int safeBrowsingState = getSafeBrowsingBridge().getSafeBrowsingState();
++        boolean isEnhancedProtection = safeBrowsingState == 2 /* ENHANCED_PROTECTION */;
++        boolean isStandardProtection = safeBrowsingState == 1 /* STANDARD_PROTECTION */;
+ 
+         boolean extendedReportingChecked =
+                 isEnhancedProtection

@@ -7,11 +7,9 @@ Subject: [PATCH] disable article suggestions feature by default
   components/feed/core/shared_prefs/pref_names.cc | 6 +++---
   1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/components/feed/core/shared_prefs/pref_names.cc b/components/feed/core/shared_prefs/pref_names.cc
-index 50f880e..c80632a 100644
 --- a/components/feed/core/shared_prefs/pref_names.cc
 +++ b/components/feed/core/shared_prefs/pref_names.cc
-@@ -24,9 +24,9 @@ const char kArticlesListVisible[] = "ntp_snippets.list_visible";
+@@ -24,9 +24,9 @@ const char kArticlesListVisible[] = "ntp
  const char kEnableSnippetsByDse[] = "ntp_snippets_by_dse.enable";
  
  void RegisterFeedSharedProfilePrefs(PrefRegistrySimple* registry) {

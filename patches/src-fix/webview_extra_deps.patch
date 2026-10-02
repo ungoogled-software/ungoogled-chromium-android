@@ -3,10 +3,9 @@ author: Wengling Chen <feiyu2817@gmail.com>
 author: bearinmindcat <bearincrypto@gmail.com>
 date: Tue, 22 Jul 2026
 ---
-diff --git a/android_webview/lib/BUILD.gn b/android_webview/lib/BUILD.gn
 --- a/android_webview/lib/BUILD.gn
 +++ b/android_webview/lib/BUILD.gn
-@@ -24,6 +24,8 @@
+@@ -24,6 +24,8 @@ source_set("lib") {
      "//android_webview/js_sandbox/service:js_sandbox",
      "//android_webview/renderer",
      "//base",

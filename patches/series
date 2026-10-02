@@ -19,6 +19,7 @@ src-fix/fix-safebrowsing-state-enum-android.patch
 src-fix/fix-safebrowsing-bridge-android-stub.patch
 src-fix/fix-safebrowsing-prefs-lib-android.patch
 src-fix/fix-safebrowsing-suspicious-notification-android.patch
+src-fix/fix-safebrowsing-suspicious-site-dialog-152.patch
 src-fix/fix-android-pref-enum-signin-safebrowsing.patch
 src-fix/fix-android-read-prefs-registration.patch
 src-fix/fix-android-token-service-seed-before-load.patch
@@ -93,5 +94,12 @@ Bromite/Revert-flags-remove-disable-pull-to-refresh-effect.patch
 Bromite/Disable-DRM-media-origin-IDs-preprovisioning.patch
 Bromite/Add-an-always-incognito-mode.patch
 Cromite/Add-bookmark-import-export-actions.patch
+Extensions/android-extensions-support.patch
+Extensions/Ultimatum/load-crx.patch
+Extensions/misc/extensions-menu-null-guard.patch
+Extensions/misc/extension-popup-key-event-guard.patch
+Extensions/misc/fix-menu-button-reopen.patch
+Own/enable-extensions-by-default.patch
+Own/fix-extension-proxy-auth.patch
 
 #Other/debug-fix.patch

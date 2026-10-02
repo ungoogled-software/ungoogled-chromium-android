@@ -3,7 +3,6 @@ author: Wengling Chen <feiyu2817@gmail.com>
 author: bearinmindcat <bearincrypto@gmail.com>
 date: Tue, 22 Jul 2026
 ---
-diff --git a/chrome/browser/ungoogled_flag_entries.h b/chrome/browser/ungoogled_flag_entries.h
 --- a/chrome/browser/ungoogled_flag_entries.h
 +++ b/chrome/browser/ungoogled_flag_entries.h
 @@ -144,4 +144,8 @@
@@ -15,7 +14,6 @@ diff --git a/chrome/browser/ungoogled_flag_entries.h b/chrome/browser/ungoogled_
 +     "Enable save-data header without enabling Data Saver. ungoogled-chromium flag",
 +     kOsAndroid, FEATURE_VALUE_TYPE(network::features::kEnableSaveDataHeader)},
  #endif  // CHROME_BROWSER_UNGOOGLED_FLAG_ENTRIES_H_
-diff --git a/content/browser/loader/browser_initiated_resource_request.cc b/content/browser/loader/browser_initiated_resource_request.cc
 --- a/content/browser/loader/browser_initiated_resource_request.cc
 +++ b/content/browser/loader/browser_initiated_resource_request.cc
 @@ -4,11 +4,13 @@
@@ -29,10 +27,10 @@ diff --git a/content/browser/loader/browser_initiated_resource_request.cc b/cont
  #include "content/public/common/content_client.h"
  #include "net/http/http_request_headers.h"
 +#include "services/network/public/cpp/features.h"
+ #include "third_party/blink/public/common/global_privacy_control/global_privacy_control_util.h"
  #include "third_party/blink/public/common/loader/loader_constants.h"
  #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
- 
-@@ -38,7 +40,8 @@
+@@ -51,7 +53,8 @@ void UpdateAdditionalHeadersForBrowserIn
    // remove it for the time being. If you're reading this, consider building
    // permissions policies for workers and/or deprecating this inclusion.
    if (is_for_worker_script &&
@@ -42,23 +40,21 @@ diff --git a/content/browser/loader/browser_initiated_resource_request.cc b/cont
      if (should_update_existing_headers) {
        headers->RemoveHeader("Save-Data");
      }
-diff --git a/services/network/public/cpp/features.cc b/services/network/public/cpp/features.cc
 --- a/services/network/public/cpp/features.cc
 +++ b/services/network/public/cpp/features.cc
-@@ -45,6 +45,9 @@
+@@ -46,6 +46,9 @@ bool ShouldBlockAcceptClientHintsFor(con
  
  BASE_FEATURE(kNetworkErrorLogging, base::FEATURE_ENABLED_BY_DEFAULT);
  
-+// Enable save-data header separately, without enabling Data Saver.
++// Enable save-data header seprately, without enabled data reduction service
 +BASE_FEATURE(kEnableSaveDataHeader, base::FEATURE_DISABLED_BY_DEFAULT);
 +
  BASE_FEATURE(kReporting, base::FEATURE_ENABLED_BY_DEFAULT);
  
  // Based on the field trial parameters, this feature will override the value of
-diff --git a/services/network/public/cpp/features.h b/services/network/public/cpp/features.h
 --- a/services/network/public/cpp/features.h
 +++ b/services/network/public/cpp/features.h
-@@ -34,6 +34,8 @@
+@@ -34,6 +34,8 @@ bool ShouldBlockAcceptClientHintsFor(con
  COMPONENT_EXPORT(NETWORK_CPP_FLAGS_AND_SWITCHES)
  BASE_DECLARE_FEATURE(kNetworkErrorLogging);
  COMPONENT_EXPORT(NETWORK_CPP_FLAGS_AND_SWITCHES)
@@ -67,10 +63,9 @@ diff --git a/services/network/public/cpp/features.h b/services/network/public/cp
  BASE_DECLARE_FEATURE(kReporting);
  COMPONENT_EXPORT(NETWORK_CPP_FLAGS_AND_SWITCHES)
  BASE_DECLARE_FEATURE(kThrottleDelayable);
-diff --git a/third_party/blink/renderer/core/loader/frame_fetch_context.cc b/third_party/blink/renderer/core/loader/frame_fetch_context.cc
 --- a/third_party/blink/renderer/core/loader/frame_fetch_context.cc
 +++ b/third_party/blink/renderer/core/loader/frame_fetch_context.cc
-@@ -828,7 +828,9 @@
+@@ -841,7 +841,9 @@ void FrameFetchContext::AddClientHintsIf
      }
    }
  

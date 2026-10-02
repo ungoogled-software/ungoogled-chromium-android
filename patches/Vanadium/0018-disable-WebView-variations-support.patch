@@ -8,11 +8,9 @@ Subject: [PATCH 18/78] disable WebView variations support
  android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumFactoryProvider.java |    4 ----
  2 files changed, 11 deletions(-)
 
-diff --git a/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumAwInit.java b/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumAwInit.java
-index ecc9e62..a543dc4 100644
 --- a/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumAwInit.java
 +++ b/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumAwInit.java
-@@ -684,13 +684,6 @@ public class WebViewChromiumAwInit {
+@@ -762,13 +762,6 @@ public class WebViewChromiumAwInit {
                                      && delegate.isNativeWebViewZygoteEnabled(
                                              mFactory.getWebViewDelegate());
                      AwBrowserProcess.configureChildProcessLauncher(isNativeWebViewZygoteEnabled);
@@ -26,11 +24,9 @@ index ecc9e62..a543dc4 100644
                  });
  
          addBrowserProcessStartTasksToQueue(
-diff --git a/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumFactoryProvider.java b/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumFactoryProvider.java
-index 9650640..d3737f9 100644
 --- a/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumFactoryProvider.java
 +++ b/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumFactoryProvider.java
-@@ -692,10 +692,6 @@ public class WebViewChromiumFactoryProvider implements WebViewFactoryProvider {
+@@ -676,10 +676,6 @@ public class WebViewChromiumFactoryProvi
              // This must happen after pref value has been read and SafeMode setup has completed.
              setupStartupTaskExperiments(androidXConfig);
  
@@ -39,5 +35,5 @@ index 9650640..d3737f9 100644
 -            }
 -
              if (WebViewCachedFlags.get()
-                     .isCachedFeatureEnabled(AwFeatures.WEBVIEW_MOVE_WORK_TO_PROVIDER_INIT)) {
-                 mAwInit.runNonUiThreadCapableStartupTasks();
+                             .isCachedFeatureEnabled(AwFeatures.WEBVIEW_MOVE_WORK_TO_PROVIDER_INIT)
+                     && !WebViewCachedFlags.get()

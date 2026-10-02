@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/components/safe_browsing/core/browser/safe_browsing_metrics_collector.cc
 +++ b/components/safe_browsing/core/browser/safe_browsing_metrics_collector.cc
-@@ -24,12 +24,12 @@
+@@ -24,12 +24,12 @@ using UserState = safe_browsing::SafeBro
  const int kMetricsLoggingIntervalDay = 1;
  
  // The max length of event timestamps stored in pref.
@@ -17,7 +17,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  // The ESB enabled duration is considered short if it's under 1 hour, long if
  // it's at least 24 hours, and medium if it's in between.
  const int kEsbShortEnabledUpperBoundHours = 1;
-@@ -39,11 +39,11 @@
+@@ -39,11 +39,11 @@ std::string EventTypeToPrefKey(const Eve
    return base::NumberToString(static_cast<int>(type));
  }
  

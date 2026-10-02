@@ -5,11 +5,9 @@ author: Wengling Chen <feiyu2817@gmail.com>
  components/search_engines/android/template_url_service_android.cc |    5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/components/search_engines/android/template_url_service_android.cc b/components/search_engines/android/template_url_service_android.cc
-index 627f419..3045862 100644
 --- a/components/search_engines/android/template_url_service_android.cc
 +++ b/components/search_engines/android/template_url_service_android.cc
-@@ -449,7 +449,7 @@ bool TemplateUrlServiceAndroid::SetPlayAPISearchEngine(
+@@ -450,7 +450,7 @@ bool TemplateUrlServiceAndroid::SetPlayA
      if (regulatory_api_turl->safe_for_autoreplace()) {
        template_url_service_->ResetTemplateURL(
            regulatory_api_turl, regulatory_api_turl->short_name(),
@@ -18,7 +16,7 @@ index 627f419..3045862 100644
      }
    }
  
-@@ -504,7 +504,8 @@ bool TemplateUrlServiceAndroid::EditSearchEngine(
+@@ -505,7 +505,8 @@ bool TemplateUrlServiceAndroid::EditSear
    }
  
    template_url_service_->ResetTemplateURL(template_url, short_name, new_keyword,

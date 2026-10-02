@@ -1,5 +1,14 @@
 author: bearinmindcat <bearincrypto@gmail.com>
 
+--- a/chrome/browser/safe_browsing/android/BUILD.gn
++++ b/chrome/browser/safe_browsing/android/BUILD.gn
+@@ -224,5 +224,6 @@ android_resources("java_resources") {
+ java_cpp_enum("safe_browsing_enums") {
+   sources = [
+     "//components/safe_browsing/core/common/safe_browsing_settings_metrics.h",
++    "//components/safe_browsing/core/common/safe_browsing_state.h",
+   ]
+ }
 --- /dev/null
 +++ b/components/safe_browsing/core/common/safe_browsing_state.h
 @@ -0,0 +1,21 @@
@@ -24,12 +33,3 @@ author: bearinmindcat <bearincrypto@gmail.com>
 +}  // namespace safe_browsing
 +
 +#endif  // COMPONENTS_SAFE_BROWSING_CORE_COMMON_SAFE_BROWSING_STATE_H_
---- a/chrome/browser/safe_browsing/android/BUILD.gn
-+++ b/chrome/browser/safe_browsing/android/BUILD.gn
-@@ -224,5 +224,6 @@ java_cpp_enum("safe_browsing_enums") {
- java_cpp_enum("safe_browsing_enums") {
-   sources = [
-     "//components/safe_browsing/core/common/safe_browsing_settings_metrics.h",
-+    "//components/safe_browsing/core/common/safe_browsing_state.h",
-   ]
- }

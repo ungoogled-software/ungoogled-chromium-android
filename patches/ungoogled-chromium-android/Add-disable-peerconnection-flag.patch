@@ -23,7 +23,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
       "Forces the result of the browser's IPv6 probing (i.e. IPv6 connectivity test) to be unsuccessful. This causes IPv4 addresses to be prioritized over IPv6 addresses. Without this flag, the probing result is set to be successful, which causes IPv6 to be used over IPv4 when possible. ungoogled-chromium flag.",
 --- a/third_party/blink/common/features.cc
 +++ b/third_party/blink/common/features.cc
-@@ -705,6 +705,9 @@ BASE_FEATURE(kDevToolsWebMCPSupport, base::FEATURE_ENABLED_BY_DEFAULT);
+@@ -700,6 +700,9 @@ BASE_FEATURE(kDevToolsWebMCPSupport, bas
  
  BASE_FEATURE(kDevToolsAdsPanel, base::FEATURE_DISABLED_BY_DEFAULT);
  
@@ -35,7 +35,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
      BUILDFLAG(IS_WIN)
 --- a/third_party/blink/public/common/features.h
 +++ b/third_party/blink/public/common/features.h
-@@ -444,6 +444,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDevToolsWebMCPSupport);
+@@ -445,6 +445,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE
  // Enables the DevTools 'Application > Application > Ads' panel.
  BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDevToolsAdsPanel);
  
@@ -47,7 +47,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
  BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDirectCompositorThreadIpc);
 --- a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.cc
 +++ b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.cc
-@@ -562,6 +562,14 @@ RTCPeerConnection* RTCPeerConnection::Create(
+@@ -642,6 +642,14 @@ RTCPeerConnection* RTCPeerConnection::Cr
      ExecutionContext* context,
      const RTCConfiguration* rtc_configuration,
      ExceptionState& exception_state) {

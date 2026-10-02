@@ -29,7 +29,7 @@ Barcode, face and text detection APIs
      deps = [
 --- a/services/shape_detection/android/java/src/org/chromium/shape_detection/BitmapUtils.java
 +++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/BitmapUtils.java
-@@ -7,8 +7,6 @@ import org.chromium.build.annotations.NullMarked;
+@@ -7,8 +7,6 @@ import org.chromium.build.annotations.Nu
  
  import android.graphics.Bitmap;
  
@@ -63,7 +63,7 @@ Barcode, face and text detection APIs
  import org.chromium.mojo.bindings.InterfaceRequest;
  import org.chromium.mojo.system.MojoException;
  import org.chromium.shape_detection.mojom.FaceDetection;
-@@ -21,15 +20,6 @@ public class FaceDetectionProviderImpl implements FaceDetectionProvider {
+@@ -21,15 +20,6 @@ public class FaceDetectionProviderImpl i
      @Override
      public void createFaceDetection(
              InterfaceRequest<FaceDetection> request, FaceDetectorOptions options) {

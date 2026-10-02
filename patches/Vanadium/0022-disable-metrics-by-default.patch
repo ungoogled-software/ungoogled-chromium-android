@@ -7,11 +7,9 @@ Subject: [PATCH 22/78] disable metrics by default
  .../browser/ui/signin/fullscreen_signin/FullscreenSigninMediator.java |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/fullscreen_signin/FullscreenSigninMediator.java b/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/fullscreen_signin/FullscreenSigninMediator.java
-index 61d5838..0b7f124 100644
 --- a/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/fullscreen_signin/FullscreenSigninMediator.java
 +++ b/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/fullscreen_signin/FullscreenSigninMediator.java
-@@ -316,7 +316,7 @@ public class FullscreenSigninMediator
+@@ -318,7 +318,7 @@ public class FullscreenSigninMediator
                              ? mForcedSigninStatusProvider.showForcedSigninScreen()
                              : TokenHolder.INVALID_TOKEN;
          } else {

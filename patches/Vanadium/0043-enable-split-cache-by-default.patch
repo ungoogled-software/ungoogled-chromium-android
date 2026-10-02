@@ -7,7 +7,7 @@ date: Tue, 22 Jul 2026
 ---
 --- a/net/base/features.cc
 +++ b/net/base/features.cc
-@@ -136,13 +136,13 @@
+@@ -197,13 +197,13 @@ BASE_FEATURE(kSplitCacheByIncludeCredent
               base::FEATURE_DISABLED_BY_DEFAULT);
  
  BASE_FEATURE(kSplitCacheByNetworkIsolationKey,

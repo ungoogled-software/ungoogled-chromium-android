@@ -7,8 +7,6 @@ Subject: [PATCH] enable stack clash protection for arm64 targets
  build/config/compiler/BUILD.gn | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
-index e1da114..6e72e79 100644
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
 @@ -463,6 +463,10 @@ config("compiler") {

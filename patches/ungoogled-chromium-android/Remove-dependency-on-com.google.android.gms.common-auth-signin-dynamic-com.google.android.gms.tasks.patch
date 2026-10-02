@@ -45,7 +45,7 @@ Subject: Remove dependency on
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -320,9 +320,6 @@ if (_is_default_toolchain) {
+@@ -310,9 +310,6 @@ if (_is_default_toolchain) {
        ":screenshot_provider_java",
        ":usage_stats_proto_java",
        ":xr_java",
@@ -55,9 +55,46 @@ Subject: Remove dependency on
        "//base:content_uri_utils_java",
        "//base:flagged_apis_java",
        "//base:process_launcher_java",
+--- a/chrome/android/java/src/org/chromium/chrome/browser/PlayServicesVersionInfo.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/PlayServicesVersionInfo.java
+@@ -5,12 +5,9 @@
+ package org.chromium.chrome.browser;
+ 
+ 
+-import com.google.android.gms.common.GoogleApiAvailability;
+-
+ import org.jni_zero.CalledByNative;
+ import org.jni_zero.JniType;
+ 
+-import org.chromium.base.PackageUtils;
+ import org.chromium.build.annotations.NullMarked;
+ import org.chromium.components.externalauth.ExternalAuthUtils;
+ 
+@@ -27,7 +24,7 @@ public class PlayServicesVersionInfo {
+      */
+     @CalledByNative
+     public static @JniType("std::string") String getGmsInfo() {
+-        final long sdkVersion = GoogleApiAvailability.GOOGLE_PLAY_SERVICES_VERSION_CODE;
++        final long sdkVersion = 12600000;
+         final long installedGmsVersion = getApkVersionNumber();
+ 
+         final String accessType;
+@@ -52,11 +49,6 @@ public class PlayServicesVersionInfo {
+      *     package is not found.
+      */
+     public static int getApkVersionNumber() {
+-        int ret =
+-                PackageUtils.getPackageVersion(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE);
+-        if (ret < 0) {
+-            ret = 0;
+-        }
+-        return ret;
++        return 0;
+     }
+ }
 --- a/chrome/android/javatests/BUILD.gn
 +++ b/chrome/android/javatests/BUILD.gn
-@@ -50,9 +50,6 @@ android_library("chrome_test_java_helper") {
+@@ -51,9 +51,6 @@ android_library("chrome_test_java_helper
    ]
  
    public_deps = [
@@ -138,7 +175,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//base:resetters_java",
      "//base:tasks_java",
-@@ -301,8 +298,6 @@ robolectric_binary("password_manager_junit_tests") {
+@@ -301,8 +298,6 @@ robolectric_binary("password_manager_jun
      ":test_support_java",
      ":unified_password_manager_proto_java",
      ":utils_java",
@@ -168,7 +205,7 @@ Subject: Remove dependency on
      "//third_party/androidx:androidx_annotation_annotation_java",
 --- a/chrome/browser/ui/android/omnibox/BUILD.gn
 +++ b/chrome/browser/ui/android/omnibox/BUILD.gn
-@@ -210,7 +210,6 @@ android_library("java") {
+@@ -212,7 +212,6 @@ android_library("java") {
  
    deps = [
      ":java_resources",
@@ -176,7 +213,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//base:supplier_java",
      "//base/version_info/android:version_constants_java",
-@@ -588,7 +587,6 @@ robolectric_library("junit") {
+@@ -612,7 +611,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":java_resources",
@@ -196,16 +233,16 @@ Subject: Remove dependency on
      "//chrome/android:chrome_app_java_resources",
 --- a/chrome/browser/webid/BUILD.gn
 +++ b/chrome/browser/webid/BUILD.gn
-@@ -16,8 +16,6 @@ if (is_android) {
-       "android/java/src/org/chromium/chrome/browser/webid/TestIdP.java",
+@@ -19,8 +19,6 @@ if (is_android) {
+       "android/java/src/org/chromium/chrome/browser/webid/VerifiedOriginResolver.java",
      ]
      deps = [
 -      "$google_play_services_package:google_play_services_identity_credentials_java",
 -      "$google_play_services_package:google_play_services_tasks_java",
        "//base:base_java",
        "//base:service_loader_java",
-       "//content/public/android:content_java",
-@@ -49,7 +47,6 @@ if (is_android) {
+       "//chrome/browser/android/browserservices/verification:java",
+@@ -57,7 +55,6 @@ if (is_android) {
  
      deps = [
        ":java",
@@ -215,7 +252,7 @@ Subject: Remove dependency on
        "//content/public/android:content_java",
 --- a/chrome/test/android/BUILD.gn
 +++ b/chrome/test/android/BUILD.gn
-@@ -401,8 +401,6 @@ android_library("chrome_java_integration_test_support") {
+@@ -399,8 +399,6 @@ android_library("chrome_java_integration
  
    deps = [
      ":chrome_java_test_support_common",
@@ -226,7 +263,7 @@ Subject: Remove dependency on
      "//base:holder_java",
 --- a/components/externalauth/android/BUILD.gn
 +++ b/components/externalauth/android/BUILD.gn
-@@ -6,8 +6,6 @@ import("//build/config/android/rules.gni")
+@@ -6,8 +6,6 @@ import("//build/config/android/rules.gni
  
  android_library("java") {
    deps = [
@@ -303,7 +340,7 @@ Subject: Remove dependency on
  import org.chromium.base.ThreadUtils;
  import org.chromium.base.metrics.RecordUserAction;
  import org.chromium.build.annotations.NullMarked;
-@@ -90,7 +88,6 @@ public abstract class UserRecoverableErrorHandler {
+@@ -90,7 +88,6 @@ public abstract class UserRecoverableErr
              if (!sNotificationShown.getAndSet(true)) {
                  return;
              }
@@ -311,7 +348,7 @@ Subject: Remove dependency on
          }
      }
  
-@@ -178,17 +175,10 @@ public abstract class UserRecoverableErrorHandler {
+@@ -178,17 +175,10 @@ public abstract class UserRecoverableErr
              }
              Dialog dialog = mDialog;
              if (dialog == null) {
@@ -352,7 +389,7 @@ Subject: Remove dependency on
      "//base:base_junit_test_support",
 --- a/components/media_router/browser/android/java/src/org/chromium/components/media_router/BrowserMediaRouter.java
 +++ b/components/media_router/browser/android/java/src/org/chromium/components/media_router/BrowserMediaRouter.java
-@@ -9,9 +9,6 @@ import static org.chromium.build.NullUtil.assumeNonNull;
+@@ -9,9 +9,6 @@ import static org.chromium.build.NullUti
  import androidx.annotation.VisibleForTesting;
  import androidx.mediarouter.media.MediaRouter;
  
@@ -362,7 +399,7 @@ Subject: Remove dependency on
  import org.jni_zero.CalledByNative;
  import org.jni_zero.JNINamespace;
  import org.jni_zero.JniType;
-@@ -47,23 +44,7 @@ public class BrowserMediaRouter implements MediaRouteManager {
+@@ -47,23 +44,7 @@ public class BrowserMediaRouter implemen
              new MediaRouteProvider.Factory() {
                  @Override
                  public void addProviders(MediaRouteManager manager) {
@@ -389,7 +426,7 @@ Subject: Remove dependency on
  
 --- a/components/module_installer/android/BUILD.gn
 +++ b/components/module_installer/android/BUILD.gn
-@@ -26,7 +26,6 @@ android_library("module_installer_java") {
+@@ -26,7 +26,6 @@ android_library("module_installer_java")
    ]
  
    deps = [
@@ -397,7 +434,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//components/crash/android:java",
      "//third_party/android_deps:playcore_java",
-@@ -47,7 +46,6 @@ robolectric_binary("module_installer_junit_tests") {
+@@ -47,7 +46,6 @@ robolectric_binary("module_installer_jun
    ]
    deps = [
      ":module_installer_java",
@@ -433,7 +470,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//build/android:build_java",
      "//components/one_time_tokens/android/backend/common:java",
-@@ -73,7 +72,6 @@ robolectric_binary("one_time_tokens_junit_tests") {
+@@ -73,7 +72,6 @@ robolectric_binary("one_time_tokens_juni
    deps = [
      ":java",
      ":sms_otp_fetching_interface_java",
@@ -441,7 +478,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//base:base_java_test_support",
      "//base:base_junit_test_support",
-@@ -85,7 +83,6 @@ robolectric_binary("one_time_tokens_junit_tests") {
+@@ -85,7 +83,6 @@ robolectric_binary("one_time_tokens_juni
  
  android_library("sms_otp_fetching_interface_java") {
    deps = [
@@ -451,7 +488,7 @@ Subject: Remove dependency on
    ]
 --- a/components/signin/public/android/BUILD.gn
 +++ b/components/signin/public/android/BUILD.gn
-@@ -3,7 +3,6 @@ import("//third_party/jni_zero/jni_zero.gni")
+@@ -3,7 +3,6 @@ import("//third_party/jni_zero/jni_zero.
  
  android_library("java") {
    deps = [
@@ -483,7 +520,7 @@ Subject: Remove dependency on
      "//base:base_junit_test_support",
 --- a/content/public/android/BUILD.gn
 +++ b/content/public/android/BUILD.gn
-@@ -160,9 +160,6 @@ android_library("content_full_java") {
+@@ -163,9 +163,6 @@ android_library("content_full_java") {
      ":content_java_resources",
      ":content_main_dex_java",
      ":content_util_java",
@@ -495,7 +532,7 @@ Subject: Remove dependency on
      "//base:process_launcher_java",
 --- a/content/public/android/java/src/org/chromium/content/browser/sms/SmsProviderGms.java
 +++ b/content/public/android/java/src/org/chromium/content/browser/sms/SmsProviderGms.java
-@@ -6,9 +6,6 @@ package org.chromium.content.browser.sms;
+@@ -6,9 +6,6 @@ package org.chromium.content.browser.sms
  
  import androidx.annotation.VisibleForTesting;
  
@@ -521,7 +558,7 @@ Subject: Remove dependency on
  
 --- a/content/test/BUILD.gn
 +++ b/content/test/BUILD.gn
-@@ -3919,9 +3919,6 @@ if (is_android) {
+@@ -3811,9 +3811,6 @@ if (is_android) {
      testonly = true
      sources = content_java_sources_needing_jni
      deps = [
@@ -533,7 +570,7 @@ Subject: Remove dependency on
        "//third_party/jni_zero:jni_zero_java",
 --- a/device/BUILD.gn
 +++ b/device/BUILD.gn
-@@ -530,8 +530,6 @@ if (is_android) {
+@@ -538,8 +538,6 @@ if (is_android) {
        "vr/public/junit/src/org/chromium/device/vr/XrFeatureStatusTest.java",
      ]
      deps = [
@@ -565,7 +602,7 @@ Subject: Remove dependency on
        "//mojo/public/java:base_java",
 --- a/services/device/geolocation/BUILD.gn
 +++ b/services/device/geolocation/BUILD.gn
-@@ -161,9 +161,6 @@ if (is_android) {
+@@ -160,9 +160,6 @@ if (is_android) {
  
      deps = [
        ":geolocation_jni_headers",
@@ -577,7 +614,7 @@ Subject: Remove dependency on
        "//components/location/android:location_java",
 --- a/services/shape_detection/BUILD.gn
 +++ b/services/shape_detection/BUILD.gn
-@@ -135,8 +135,6 @@ if (is_android) {
+@@ -130,8 +130,6 @@ if (is_android) {
      ]
  
      deps = [
@@ -588,7 +625,7 @@ Subject: Remove dependency on
        "//mojo/public/java:bindings_java",
 --- a/services/shape_detection/android/java/src/org/chromium/shape_detection/BarcodeDetectionProviderImpl.java
 +++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/BarcodeDetectionProviderImpl.java
-@@ -7,8 +7,6 @@ import org.chromium.build.annotations.NullMarked;
+@@ -7,8 +7,6 @@ import org.chromium.build.annotations.Nu
  
  import android.content.Context;
  
@@ -597,7 +634,7 @@ Subject: Remove dependency on
  import org.chromium.base.ContextUtils;
  import org.chromium.base.Log;
  import org.chromium.base.PackageUtils;
-@@ -64,22 +62,7 @@ public class BarcodeDetectionProviderImpl implements BarcodeDetectionProvider {
+@@ -64,22 +62,7 @@ public class BarcodeDetectionProviderImp
      public void onConnectionError(MojoException e) {}
  
      public static @Nullable BarcodeDetectionProvider create() {
@@ -635,12 +672,10 @@ Subject: Remove dependency on
      }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -72,93 +72,6 @@ template("define_autorolled_targets") {
-       ]
-     }
+@@ -74,93 +74,6 @@ template("define_autorolled_targets") {
  
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_play_services_base_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_base/play-services-base.aar"
@@ -726,10 +761,12 @@ Subject: Remove dependency on
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
      if (!defined(material_design_target)) {
-@@ -351,9 +260,6 @@ template("define_autorolled_targets") {
+       android_aar_prebuilt("com_google_android_material_material_java") {
+         aar_path = "autorolled/cipd/libs/com_google_android_material_material/material.aar"
+@@ -353,9 +266,6 @@ template("define_autorolled_targets") {
        info_path = "autorolled/committed/libs/com_google_mlkit_common/com_google_mlkit_common.info"
        enable_bytecode_checks = false
        deps = [
@@ -739,7 +776,7 @@ Subject: Remove dependency on
          "//third_party/androidx:androidx_appcompat_appcompat_java",
          "//third_party/androidx:androidx_core_core_java",
        ]
-@@ -367,7 +273,6 @@ template("define_autorolled_targets") {
+@@ -369,7 +279,6 @@ template("define_autorolled_targets") {
        info_path = "autorolled/committed/libs/com_google_mlkit_genai_common/com_google_mlkit_genai_common.info"
        enable_bytecode_checks = false
        deps = [
@@ -747,7 +784,7 @@ Subject: Remove dependency on
          "//third_party/android_deps:org_jetbrains_kotlinx_kotlinx_coroutines_core_java",
          "//third_party/android_deps:org_jetbrains_kotlinx_kotlinx_coroutines_guava_java",
          "//third_party/kotlin_stdlib:kotlin_stdlib_java",
-@@ -382,8 +287,6 @@ template("define_autorolled_targets") {
+@@ -384,8 +293,6 @@ template("define_autorolled_targets") {
        info_path = "autorolled/committed/libs/com_google_mlkit_genai_prompt/com_google_mlkit_genai_prompt.info"
        enable_bytecode_checks = false
        deps = [
@@ -755,13 +792,11 @@ Subject: Remove dependency on
 -        "$google_play_services_package:google_play_services_tasks_java",
          "//third_party/android_deps:com_google_mlkit_common_java",
          "//third_party/android_deps:com_google_mlkit_genai_common_java",
-         "//third_party/android_deps:guava_java",
-@@ -846,50 +749,6 @@ template("define_autorolled_targets") {
-       ]
-     }
+         "//third_party/android_deps:com_google_mlkit_genai_schema_java",
+@@ -761,51 +668,6 @@ template("define_autorolled_targets") {
  
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_play_services_cloud_messaging_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_cloud_messaging/play-services-cloud-messaging.aar"
@@ -775,6 +810,7 @@ Subject: Remove dependency on
 -          "//third_party/androidx:*",
 -        ]
 -        deps = [
+-          "$google_play_services_package:google_play_services_base_java",
 -          "$google_play_services_package:google_play_services_basement_java",
 -          "$google_play_services_package:google_play_services_tasks_java",
 -        ]
@@ -804,14 +840,15 @@ Subject: Remove dependency on
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
      android_aar_prebuilt("com_google_android_play_core_common_java") {
-@@ -1487,29 +1346,6 @@ template("define_autorolled_targets") {
-       deps = [ "//third_party/android_deps:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_java" ]
+       aar_path = "autorolled/cipd/libs/com_google_android_play_core_common/core-common.aar"
+       info_path = "autorolled/committed/libs/com_google_android_play_core_common/com_google_android_play_core_common.info"
+@@ -1493,29 +1355,6 @@ template("define_autorolled_targets") {
      }
  
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
 -    # instead.
 -    java_prebuilt(
 -        "org_jetbrains_kotlinx_kotlinx_coroutines_play_services_java") {
@@ -834,9 +871,10 @@ Subject: Remove dependency on
 -      ]
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      java_group("org_jetbrains_kotlinx_kotlinx_coroutines_test_java") {
+       # To remove visibility constraint, add this dependency to
 --- a/third_party/android_deps/local_modifications/preconditions/javatests/BUILD.gn
 +++ b/third_party/android_deps/local_modifications/preconditions/javatests/BUILD.gn
 @@ -8,7 +8,6 @@ android_library("javatests") {
@@ -859,7 +897,7 @@ Subject: Remove dependency on
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
  import org.chromium.base.ResettersForTesting;
-@@ -45,9 +42,7 @@ public final class ChromiumPlayServicesAvailability {
+@@ -45,9 +42,7 @@ public final class ChromiumPlayServicesA
          if (sIsAvailableForTesting != null) {
              return sIsAvailableForTesting;
          }
@@ -870,7 +908,7 @@ Subject: Remove dependency on
      }
  
      /**
-@@ -66,9 +61,8 @@ public final class ChromiumPlayServicesAvailability {
+@@ -66,9 +61,8 @@ public final class ChromiumPlayServicesA
       */
      public static int getGooglePlayServicesConnectionResult(final Context context) {
          if (sIsAvailableForTesting != null) {
@@ -893,40 +931,3 @@ Subject: Remove dependency on
      "//third_party/android_deps:protobuf_lite_runtime_java",
      "//third_party/androidx:androidx_annotation_annotation_jvm_java",
      "//third_party/androidx:androidx_appcompat_appcompat_java",
---- a/chrome/android/java/src/org/chromium/chrome/browser/PlayServicesVersionInfo.java
-+++ b/chrome/android/java/src/org/chromium/chrome/browser/PlayServicesVersionInfo.java
-@@ -5,12 +5,9 @@
- package org.chromium.chrome.browser;
- 
- 
--import com.google.android.gms.common.GoogleApiAvailability;
--
- import org.jni_zero.CalledByNative;
- import org.jni_zero.JniType;
- 
--import org.chromium.base.PackageUtils;
- import org.chromium.build.annotations.NullMarked;
- import org.chromium.components.externalauth.ExternalAuthUtils;
- 
-@@ -27,7 +24,7 @@
-      */
-     @CalledByNative
-     public static @JniType("std::string") String getGmsInfo() {
--        final long sdkVersion = GoogleApiAvailability.GOOGLE_PLAY_SERVICES_VERSION_CODE;
-+        final long sdkVersion = 12600000;
-         final long installedGmsVersion = getApkVersionNumber();
- 
-         final String accessType;
-@@ -52,11 +49,6 @@
-      *     package is not found.
-      */
-     public static int getApkVersionNumber() {
--        int ret =
--                PackageUtils.getPackageVersion(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE);
--        if (ret < 0) {
--            ret = 0;
--        }
--        return ret;
-+        return 0;
-     }
- }

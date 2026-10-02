@@ -22,7 +22,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -322,7 +322,6 @@ if (_is_default_toolchain) {
+@@ -312,7 +312,6 @@ if (_is_default_toolchain) {
        ":xr_java",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -32,7 +32,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
        "$google_play_services_package:google_play_services_vision_java",
 --- a/chrome/android/javatests/BUILD.gn
 +++ b/chrome/android/javatests/BUILD.gn
-@@ -52,7 +52,6 @@ android_library("chrome_test_java_helper") {
+@@ -53,7 +53,6 @@ android_library("chrome_test_java_helper
    public_deps = [
      "$google_play_services_package:google_play_services_base_java",
      "$google_play_services_package:google_play_services_basement_java",
@@ -42,7 +42,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
      "//base:base_java_test_support",
 --- a/chrome/browser/ui/android/omnibox/BUILD.gn
 +++ b/chrome/browser/ui/android/omnibox/BUILD.gn
-@@ -210,7 +210,6 @@ android_library("java") {
+@@ -212,7 +212,6 @@ android_library("java") {
  
    deps = [
      ":java_resources",
@@ -50,7 +50,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
      "$google_play_services_package:google_play_services_tasks_java",
      "//base:base_java",
      "//base:supplier_java",
-@@ -589,7 +588,6 @@ robolectric_library("junit") {
+@@ -613,7 +612,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":java_resources",
@@ -147,7 +147,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
          return geoHeaderStateForUrl(
 --- a/components/gcm_driver/instance_id/android/BUILD.gn
 +++ b/components/gcm_driver/instance_id/android/BUILD.gn
-@@ -16,7 +16,6 @@ generate_jni("test_support_jni_headers") {
+@@ -16,7 +16,6 @@ generate_jni("test_support_jni_headers")
  
  android_library("instance_id_driver_java") {
    deps = [
@@ -155,7 +155,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
      "//base:base_java",
      "//build/android:build_java",
      "//components/gcm_driver/android:gcm_driver_java",
-@@ -38,7 +37,6 @@ android_library("instance_id_driver_java") {
+@@ -38,7 +37,6 @@ android_library("instance_id_driver_java
  android_library("instance_id_driver_test_support_java") {
    deps = [
      ":instance_id_driver_java",
@@ -253,7 +253,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
      /** Fake subclasses can set {@link #sFakeFactoryForTesting} to an implementation of this. */
 --- a/components/omnibox/common/BUILD.gn
 +++ b/components/omnibox/common/BUILD.gn
-@@ -63,7 +63,6 @@ if (is_android) {
+@@ -64,7 +64,6 @@ if (is_android) {
        ":jni_headers",
      ]
      deps = [
@@ -272,7 +272,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
  import org.chromium.base.ContextUtils;
  import org.chromium.base.SysUtils;
  import org.chromium.base.TimeUtils;
-@@ -216,7 +214,7 @@ public class OmniboxFeatures {
+@@ -235,7 +233,7 @@ public class OmniboxFeatures {
              newIntParam(
                      sUseFusedLocationProvider,
                      "geolocation_request_priority",
@@ -283,7 +283,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
              newIntParam(
 --- a/device/BUILD.gn
 +++ b/device/BUILD.gn
-@@ -532,7 +532,6 @@ if (is_android) {
+@@ -540,7 +540,6 @@ if (is_android) {
      deps = [
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -303,7 +303,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
        "$google_play_services_package:google_play_services_vision_java",
 --- a/services/device/geolocation/BUILD.gn
 +++ b/services/device/geolocation/BUILD.gn
-@@ -163,7 +163,6 @@ if (is_android) {
+@@ -162,7 +162,6 @@ if (is_android) {
        ":geolocation_jni_headers",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -313,7 +313,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
        "//build/android:build_java",
 --- a/services/device/geolocation/android/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java
 +++ b/services/device/geolocation/android/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java
-@@ -4,27 +4,11 @@
+@@ -4,35 +4,13 @@
  
  package org.chromium.device.geolocation;
  
@@ -323,6 +323,10 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -import android.location.Location;
 -import android.os.SystemClock;
 -
+-import androidx.annotation.IntDef;
+-
+-import com.google.android.gms.common.ConnectionResult;
+-import com.google.android.gms.common.GoogleApiAvailability;
 -import com.google.android.gms.location.FusedLocationProviderClient;
 -import com.google.android.gms.location.Granularity;
 -import com.google.android.gms.location.LocationCallback;
@@ -340,14 +344,37 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -import org.chromium.device.DeviceFeatureList;
  import org.chromium.gms.ChromiumPlayServicesAvailability;
  
+-import java.lang.annotation.Retention;
+-import java.lang.annotation.RetentionPolicy;
+ 
  /**
-@@ -36,171 +20,28 @@ import org.chromium.gms.ChromiumPlayServicesAvailability;
+  * This is a LocationProvider using Google Play Services.
+@@ -43,243 +21,28 @@ import java.lang.annotation.RetentionPol
  public class LocationProviderGmsCore implements LocationProvider {
      private static final String TAG = "LocationProvider";
  
 -    // Values for the LocationRequest's setInterval for normal and high accuracy, respectively.
 -    private static final long UPDATE_INTERVAL_MS = 1000;
 -    private static final long UPDATE_INTERVAL_FAST_MS = 500;
+-
+-    // Minimum GMS Core version that guaranteed supports and enforces LocationRequest Granularity
+-    // (Year 2022, Week 44).
+-    private static final int MIN_GMS_CORE_VERSION_WITH_GRANULARITY = 224400000;
+-
+-    // Threshold below which a location accuracy (in meters) is considered "precise" for the
+-    // purpose of leak detection on approximate location requests.
+-    static final float PRECISE_LOCATION_ACCURACY_THRESHOLD_METERS = 2000f;
+-
+-    @IntDef({
+-        GmsCoreGranularitySupportState.GRANULARITY_UNSUPPORTED,
+-        GmsCoreGranularitySupportState.GRANULARITY_SUPPORTED
+-    })
+-    @Retention(RetentionPolicy.SOURCE)
+-    public @interface GmsCoreGranularitySupportState {
+-        int GRANULARITY_UNSUPPORTED = 0;
+-        int GRANULARITY_SUPPORTED = 1;
+-        int NUM_ENTRIES = 2;
+-    }
 -
 -    private final Context mContext;
 -    private final FusedLocationProviderClient mClient;
@@ -357,6 +384,20 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -    private boolean mFirstPositionReceived;
 -
 -    private @Nullable LocationCallback mLocationCallback;
+-
+-    private boolean isGranularitySupportedByGmsCore() {
+-        try {
+-            if (mContext.getPackageManager() == null) {
+-                return false;
+-            }
+-            return GoogleApiAvailability.getInstance()
+-                            .isGooglePlayServicesAvailable(
+-                                    mContext, MIN_GMS_CORE_VERSION_WITH_GRANULARITY)
+-                    == ConnectionResult.SUCCESS;
+-        } catch (Exception e) {
+-            return false;
+-        }
+-    }
 -
      public static boolean isGooglePlayServicesAvailable(Context context) {
          return ChromiumPlayServicesAvailability.isGooglePlayServicesAvailable(context);
@@ -461,6 +502,45 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -                                RecordHistogram.recordCount100000Histogram(
 -                                        histogramName, (int) location.getAccuracy());
 -                            }
+-
+-                            // When approximate location is requested but Chrome holds the
+-                            // app-level precise location permission in the OS, we rely on
+-                            // GMS Core's `setGranularity(COARSE)` API to coarsen the location.
+-                            // However, if we detect a precise location leak (accuracy < 2000m)
+-                            // despite requesting coarse location, report a position error and
+-                            // fail closed for ALL GMS Core versions. We distinguish them in UMA
+-                            // to monitor for service-side leaks.
+-                            if (PermissionsAndroidFeatureMap.isEnabled(
+-                                            PermissionsAndroidFeatureList
+-                                                    .APPROXIMATE_GEOLOCATION_PERMISSION)
+-                                    && !mEffectiveHighAccuracy
+-                                    && mContext.checkCallingOrSelfPermission(
+-                                                    Manifest.permission.ACCESS_FINE_LOCATION)
+-                                            == PackageManager.PERMISSION_GRANTED) {
+-                                if (location.hasAccuracy()
+-                                        && location.getAccuracy()
+-                                                < PRECISE_LOCATION_ACCURACY_THRESHOLD_METERS) {
+-                                    int leakCase =
+-                                            isGranularitySupportedByGmsCore()
+-                                                    ? GmsCoreGranularitySupportState
+-                                                            .GRANULARITY_SUPPORTED
+-                                                    : GmsCoreGranularitySupportState
+-                                                            .GRANULARITY_UNSUPPORTED;
+-                                    RecordHistogram.recordEnumeratedHistogram(
+-                                            "Geolocation.GMSCoreLocationProvider"
+-                                                    + ".CoarseRequest.PreciseLocationReceived",
+-                                            leakCase,
+-                                            GmsCoreGranularitySupportState.NUM_ENTRIES);
+-                                    if (DeviceFeatureList.sGmsCoreFailClosedOnPreciseLeak
+-                                            .isEnabled()) {
+-                                        stop();
+-                                        LocationProviderAdapter.newErrorAvailable(
+-                                                "Cannot generate approximate location.");
+-                                        return;
+-                                    }
+-                                }
+-                            }
+-
 -                            // Using `requestedHighAccuracy` for location update cause
 -                            // `mEffectiveHighAccuracy` can be override by app-level permission
 -                            // check.
@@ -516,13 +596,10 @@ Subject: Remove dependency on com.google.android.gms.fido,
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -115,23 +115,6 @@ template("define_autorolled_targets") {
-       }
-     }
- 
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
--    if (google_play_services_package == "//third_party/android_deps") {
+@@ -118,23 +118,6 @@ template("define_autorolled_targets") {
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
+     if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_play_services_fido_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_fido/play-services-fido.aar"
 -        info_path = "autorolled/committed/libs/com_google_android_gms_play_services_fido/com_google_android_gms_play_services_fido.info"
@@ -537,13 +614,18 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
-     if (google_play_services_package == "//third_party/android_deps") {
-@@ -148,56 +131,6 @@ template("define_autorolled_targets") {
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
+-    if (google_play_services_package == "//third_party/android_deps") {
+       android_aar_prebuilt("google_play_services_identity_credentials_java") {
+         aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_identity_credentials/play-services-identity-credentials.aar"
+         info_path = "autorolled/committed/libs/com_google_android_gms_play_services_identity_credentials/com_google_android_gms_play_services_identity_credentials.info"
+@@ -146,56 +129,6 @@ template("define_autorolled_targets") {
+           "//third_party/kotlin_stdlib:kotlin_stdlib_java",
+         ]
        }
-     }
- 
+-    }
+-
 -    # This is generated, do not edit. Update BuildConfigGenerator.groovy
 -    # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
@@ -592,8 +674,6 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -          "//third_party/kotlin_stdlib:kotlin_stdlib_java",
 -        ]
 -      }
--    }
--
+     }
+ 
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
-     if (google_play_services_package == "//third_party/android_deps") {

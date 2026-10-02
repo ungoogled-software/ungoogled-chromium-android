@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/net/dns/host_resolver_manager.cc
 +++ b/net/dns/host_resolver_manager.cc
-@@ -151,7 +151,7 @@
+@@ -151,7 +151,7 @@ const size_t kMaxHostLength = 4096;
  
  // Time between IPv6 probes, i.e. for how long results of each IPv6 probe are
  // cached.
@@ -11,7 +11,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  
  // True if |hostname| ends with either ".local" or ".local.".
  bool ResemblesMulticastDNSName(std::string_view hostname) {
-@@ -174,7 +174,8 @@
+@@ -174,7 +174,8 @@ bool ConfigureAsyncDnsNoFallbackFieldTri
    return kDefault;
  }
  

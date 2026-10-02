@@ -9,13 +9,10 @@ Subject: Remove dependency on com.google.android.gms.flags,
 
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -1254,27 +1254,6 @@ template("define_autorolled_targets") {
-       }
-     }
- 
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
--    if (google_play_services_package == "//third_party/android_deps") {
+@@ -784,27 +784,6 @@ template("define_autorolled_targets") {
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
+     if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_play_services_flags_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_flags/play-services-flags.aar"
 -        info_path = "autorolled/committed/libs/com_google_android_gms_play_services_flags/com_google_android_gms_play_services_flags.info"
@@ -34,13 +31,17 @@ Subject: Remove dependency on com.google.android.gms.flags,
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
-     if (google_play_services_package == "//third_party/android_deps") {
-@@ -1298,27 +1277,6 @@ template("define_autorolled_targets") {
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
+-    if (google_play_services_package == "//third_party/android_deps") {
+       android_aar_prebuilt("google_play_services_phenotype_java") {
+         aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_phenotype/play-services-phenotype.aar"
+         info_path = "autorolled/committed/libs/com_google_android_gms_play_services_phenotype/com_google_android_gms_play_services_phenotype.info"
+@@ -824,27 +803,6 @@ template("define_autorolled_targets") {
+         ]
        }
      }
- 
+-
 -    # This is generated, do not edit. Update BuildConfigGenerator.groovy
 -    # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
@@ -61,7 +62,6 @@ Subject: Remove dependency on com.google.android.gms.flags,
 -        ]
 -      }
 -    }
--
+ 
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
-     android_aar_prebuilt("com_google_android_play_core_common_java") {

@@ -9,15 +9,37 @@ clicked links to launch as incognito.
 Make sure initial incognito status is correctly recognized.
 Enable incognito custom tabs and fix crashes for incognito/custom tab intents (credits to @uazo)
 ---
-diff --git a/chrome/android/java/src/org/chromium/chrome/browser/AlwaysIncognitoLinkInterceptor.java b/chrome/android/java/src/org/chromium/chrome/browser/AlwaysIncognitoLinkInterceptor.java
-new file mode 100644
-index 0000000000000..7921458cc4920
+--- a/chrome/android/chrome_java_sources.gni
++++ b/chrome/android/chrome_java_sources.gni
+@@ -8,6 +8,7 @@ chrome_java_sources = [
+   "java/src/com/google/android/apps/chrome/appwidget/bookmarks/BookmarkThumbnailWidgetProvider.java",
+   "java/src/org/chromium/chrome/browser/ActivityTabProvider.java",
+   "java/src/org/chromium/chrome/browser/ActivityUtils.java",
++  "java/src/org/chromium/chrome/browser/AlwaysIncognitoLinkInterceptor.java",
+   "java/src/org/chromium/chrome/browser/AppHooks.java",
+   "java/src/org/chromium/chrome/browser/AutofillOptionsLauncher.java",
+   "java/src/org/chromium/chrome/browser/BrowserExitReasonTracker.java",
+--- a/chrome/android/java/res/xml/privacy_preferences.xml
++++ b/chrome/android/java/res/xml/privacy_preferences.xml
+@@ -52,6 +52,12 @@ found in the LICENSE file.
+         android:summary="@string/close_tabs_on_exit_summary"
+         android:defaultValue="false" />
+ 
++    <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
++        android:key="always_incognito"
++        android:title="@string/always_incognito_title"
++        android:summary="@string/always_incognito_summary"
++        android:defaultValue="false" />
++
+     <PreferenceCategory
+         android:key="security_section"
+       android:title="@string/security_section_title" />
 --- /dev/null
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/AlwaysIncognitoLinkInterceptor.java
-@@ -0,0 +1,73 @@
-+// Copyright 2017 The Chromium Authors
-+// Use of this source code is governed by a BSD-style license that can be
-+// found in the LICENSE file.
+@@ -0,0 +1,75 @@
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
 +package org.chromium.chrome.browser;
 +
@@ -34,8 +56,10 @@ index 0000000000000..7921458cc4920
 +import java.util.Map;
 +import java.util.Set;
 +
-+/** A TabObserver implementing the always-incognito preference: intercepts links opened in
-+ *  non-incognito tabs and reopens them in new incognito tabs when the preference is set. */
++/**
++ * A {@link TabObserver} that implements the always-incognito preference behavior for links. When the preference is set
++ * to true, it intercepts links opened within observed {@link Tab}s and opens them in new incognito <code>Tab</code>s instead.
++ */
 +public class AlwaysIncognitoLinkInterceptor extends EmptyTabObserver {
 +    public static final String PREF_ALWAYS_INCOGNITO = "always_incognito";
 +
@@ -88,23 +112,9 @@ index 0000000000000..7921458cc4920
 +        }
 +    }
 +}
-diff --git a/chrome/android/chrome_java_sources.gni b/chrome/android/chrome_java_sources.gni
-index 3148d3452db86..5eb98c75e239c 100644
---- a/chrome/android/chrome_java_sources.gni
-+++ b/chrome/android/chrome_java_sources.gni
-@@ -8,6 +8,7 @@ chrome_java_sources = [
-   "java/src/com/google/android/apps/chrome/appwidget/bookmarks/BookmarkThumbnailWidgetProvider.java",
-   "java/src/org/chromium/chrome/browser/ActivityTabProvider.java",
-   "java/src/org/chromium/chrome/browser/ActivityUtils.java",
-+  "java/src/org/chromium/chrome/browser/AlwaysIncognitoLinkInterceptor.java",
-   "java/src/org/chromium/chrome/browser/AppHooks.java",
-   "java/src/org/chromium/chrome/browser/AutofillOptionsLauncher.java",
-   "java/src/org/chromium/chrome/browser/BrowserExitReasonTracker.java",
-diff --git a/chrome/android/java/src/org/chromium/chrome/browser/tabmodel/ChromeTabCreator.java b/chrome/android/java/src/org/chromium/chrome/browser/tabmodel/ChromeTabCreator.java
-index c1274859d59da..928322393a7eb 100644
 --- a/chrome/android/java/src/org/chromium/chrome/browser/tabmodel/ChromeTabCreator.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/tabmodel/ChromeTabCreator.java
-@@ -34,6 +34,8 @@ import org.chromium.chrome.browser.tab.Tab;
+@@ -35,6 +35,8 @@ import org.chromium.chrome.browser.tab.T
  import org.chromium.chrome.browser.tab.TabAssociatedApp;
  import org.chromium.chrome.browser.tab.TabBuilder;
  import org.chromium.chrome.browser.tab.TabCreationState;
@@ -113,7 +123,7 @@ index c1274859d59da..928322393a7eb 100644
  import org.chromium.chrome.browser.tab.TabDelegateFactory;
  import org.chromium.chrome.browser.tab.TabId;
  import org.chromium.chrome.browser.tab.TabLaunchType;
-@@ -69,6 +71,7 @@ public class ChromeTabCreator implements TabCreator, NeedsTabModel, NeedsTabMode
+@@ -70,6 +72,7 @@ public class ChromeTabCreator implements
      private final Supplier<TabDelegateFactory> mTabDelegateFactorySupplier;
      private final OneshotSupplier<ProfileProvider> mProfileProviderSupplier;
      protected final boolean mIncognito;
@@ -121,7 +131,7 @@ index c1274859d59da..928322393a7eb 100644
      protected final AsyncTabParamsManager mAsyncTabParamsManager;
      private final Supplier<TabModelSelector> mTabModelSelectorSupplier;
      private final Supplier<@Nullable CompositorViewHolder> mCompositorViewHolderSupplier;
-@@ -90,6 +93,7 @@ public class ChromeTabCreator implements TabCreator, NeedsTabModel, NeedsTabMode
+@@ -91,6 +94,7 @@ public class ChromeTabCreator implements
          mTabDelegateFactorySupplier = tabDelegateFactory;
          mProfileProviderSupplier = profileProviderSupplier;
          mIncognito = incognito;
@@ -129,7 +139,7 @@ index c1274859d59da..928322393a7eb 100644
          mAsyncTabParamsManager = asyncTabParamsManager;
          mTabModelSelectorSupplier = tabModelSelectorSupplier;
          mCompositorViewHolderSupplier = compositorViewHolderSupplier;
-@@ -478,6 +482,7 @@ public class ChromeTabCreator implements TabCreator, NeedsTabModel, NeedsTabMode
+@@ -478,6 +482,7 @@ public class ChromeTabCreator implements
              if (creationState == TabCreationState.LIVE_IN_FOREGROUND && !openInForeground) {
                  creationState = TabCreationState.LIVE_IN_BACKGROUND;
              }
@@ -137,24 +147,9 @@ index c1274859d59da..928322393a7eb 100644
              mTabModel.addTab(tab, position, type, creationState);
              return tab;
          }
---- a/chrome/android/java/res/xml/privacy_preferences.xml
-+++ b/chrome/android/java/res/xml/privacy_preferences.xml
-@@ -52,6 +52,12 @@
-         android:summary="@string/close_tabs_on_exit_summary"
-         android:defaultValue="false" />
- 
-+    <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
-+        android:key="always_incognito"
-+        android:title="@string/always_incognito_title"
-+        android:summary="@string/always_incognito_summary"
-+        android:defaultValue="false" />
-+
-     <PreferenceCategory
-         android:key="security_section"
-       android:title="@string/security_section_title" />
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -367,6 +367,12 @@
+@@ -362,6 +362,12 @@ CHAR_LIMIT guidelines:
        <message name ="IDS_SETTINGS_INCOGNITO_TAB_LOCK_TITLE" desc = "Title for a toggle in Settings that allows users to lock their existing Incognito tabs with a device reauthentication mechanism.">
          Lock Incognito tabs when you leave Chrome
        </message>

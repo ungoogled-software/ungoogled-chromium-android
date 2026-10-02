@@ -7,11 +7,9 @@ Subject: [PATCH] enable -ftrivial-auto-var-init=zero
  build/config/compiler/BUILD.gn | 8 ++-----
  1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
-index e1da114..d14b8a2 100644
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
-@@ -3165,12 +3165,8 @@ if (is_android) {
+@@ -3195,12 +3195,8 @@ if (is_android) {
  # Initialize all variables on the stack if needed.
  config("default_init_stack_vars") {
    cflags = []

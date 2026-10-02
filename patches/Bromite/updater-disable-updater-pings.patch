@@ -10,8 +10,6 @@ Chromium would still send background requests. Kill it.
  components/component_updater/configurator_impl.cc               | 6 +-----
  components/component_updater/configurator_impl.h                | 1 -
 
-diff --git a/components/component_updater/component_updater_url_constants.cc b/components/component_updater/component_updater_url_constants.cc
-index 44834fe..50112da 100644
 --- a/components/component_updater/component_updater_url_constants.cc
 +++ b/components/component_updater/component_updater_url_constants.cc
 @@ -15,9 +15,9 @@ namespace component_updater {
@@ -26,11 +24,9 @@ index 44834fe..50112da 100644
 +    "about:blank";
  
  }  // namespace component_updater
-diff --git a/components/component_updater/configurator_impl.cc b/components/component_updater/configurator_impl.cc
-index e8d0a04..b1fc642 100644
 --- a/components/component_updater/configurator_impl.cc
 +++ b/components/component_updater/configurator_impl.cc
-@@ -40,8 +40,7 @@ ConfiguratorImpl::ConfiguratorImpl(
+@@ -39,8 +39,7 @@ ConfiguratorImpl::ConfiguratorImpl(
      : background_downloads_enabled_(config_policy.BackgroundDownloadsEnabled()),
        deltas_enabled_(config_policy.DeltaUpdatesEnabled()),
        fast_update_(config_policy.FastUpdate()),
@@ -40,7 +36,7 @@ index e8d0a04..b1fc642 100644
        url_source_override_(config_policy.UrlSourceOverride()),
        initial_delay_(config_policy.InitialDelay()) {
    if (config_policy.TestRequest()) {
-@@ -83,9 +82,6 @@ std::vector<GURL> ConfiguratorImpl::UpdateUrl() const {
+@@ -82,9 +81,6 @@ std::vector<GURL> ConfiguratorImpl::Upda
  
    std::vector<GURL> urls{GURL(kUpdaterJSONDefaultUrl),
                           GURL(kUpdaterJSONFallbackUrl)};
@@ -50,8 +46,6 @@ index e8d0a04..b1fc642 100644
  
    return urls;
  }
-diff --git a/components/component_updater/configurator_impl.h b/components/component_updater/configurator_impl.h
-index 6296737..6523dbf 100644
 --- a/components/component_updater/configurator_impl.h
 +++ b/components/component_updater/configurator_impl.h
 @@ -107,7 +107,6 @@ class ConfiguratorImpl {

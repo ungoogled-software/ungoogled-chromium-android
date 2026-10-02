@@ -17,7 +17,7 @@ Subject: Remove dependency on com.google.android.gms.auth
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -320,7 +320,6 @@ if (_is_default_toolchain) {
+@@ -310,7 +310,6 @@ if (_is_default_toolchain) {
        ":screenshot_provider_java",
        ":usage_stats_proto_java",
        ":xr_java",
@@ -27,7 +27,7 @@ Subject: Remove dependency on com.google.android.gms.auth
        "$google_play_services_package:google_play_services_cast_framework_java",
 --- a/components/signin/public/android/BUILD.gn
 +++ b/components/signin/public/android/BUILD.gn
-@@ -3,7 +3,6 @@ import("//third_party/jni_zero/jni_zero.gni")
+@@ -3,7 +3,6 @@ import("//third_party/jni_zero/jni_zero.
  
  android_library("java") {
    deps = [
@@ -35,7 +35,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      "$google_play_services_package:google_play_services_base_java",
      "//base:base_java",
      "//base:service_loader_java",
-@@ -196,7 +195,6 @@ robolectric_library("junit") {
+@@ -198,7 +197,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":signin_java_test_support",
@@ -45,7 +45,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      "//base:base_java_test_support_uncommon",
 --- a/content/public/android/BUILD.gn
 +++ b/content/public/android/BUILD.gn
-@@ -160,7 +160,6 @@ android_library("content_full_java") {
+@@ -163,7 +163,6 @@ android_library("content_full_java") {
      ":content_java_resources",
      ":content_main_dex_java",
      ":content_util_java",
@@ -95,7 +95,7 @@ Subject: Remove dependency on com.google.android.gms.auth
  import org.chromium.base.Log;
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
-@@ -49,13 +39,9 @@ public class SmsUserConsentReceiver extends BroadcastReceiver {
+@@ -49,13 +39,9 @@ public class SmsUserConsentReceiver exte
          // this registration expire after the SMS message is received.
          if (DEBUG) Log.d(TAG, "Registering intent filters.");
          IntentFilter filter = new IntentFilter();
@@ -111,7 +111,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      }
  
      public void destroy() {
-@@ -73,59 +59,19 @@ public class SmsUserConsentReceiver extends BroadcastReceiver {
+@@ -73,59 +59,19 @@ public class SmsUserConsentReceiver exte
              return;
          }
  
@@ -204,7 +204,7 @@ Subject: Remove dependency on com.google.android.gms.auth
  import org.chromium.base.Log;
  import org.chromium.base.metrics.RecordHistogram;
  import org.chromium.build.annotations.NullMarked;
-@@ -81,18 +67,15 @@ public class SmsVerificationReceiver extends BroadcastReceiver {
+@@ -81,18 +67,15 @@ public class SmsVerificationReceiver ext
          // message is received.
          if (DEBUG) Log.i(TAG, "Registering intent filters.");
          IntentFilter filter = new IntentFilter();
@@ -226,7 +226,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      }
  
      public void destroy() {
-@@ -110,30 +93,14 @@ public class SmsVerificationReceiver extends BroadcastReceiver {
+@@ -110,30 +93,14 @@ public class SmsVerificationReceiver ext
              return;
          }
  
@@ -259,7 +259,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      }
  
      public void onPermissionDone(int resultCode, boolean isLocalRequest) {
-@@ -154,70 +121,10 @@ public class SmsVerificationReceiver extends BroadcastReceiver {
+@@ -154,70 +121,10 @@ public class SmsVerificationReceiver ext
       */
      public void onRetrieverTaskFailure(boolean isLocalRequest, Exception e) {
          if (DEBUG) Log.d(TAG, "Task failed. Attempting recovery.", e);
@@ -318,7 +318,7 @@ Subject: Remove dependency on com.google.android.gms.auth
 -        Task<Void> task = client.startSmsCodeBrowserRetriever();
 -
 -        task.addOnSuccessListener(
--                unused -> {
+-                _ -> {
 -                    this.reportBackendAvailability(BackendAvailability.AVAILABLE);
 -                    mProvider.verificationReceiverSucceeded(isLocalRequest);
 -                });
@@ -402,7 +402,7 @@ Subject: Remove dependency on com.google.android.gms.auth
                  mUserConsentReceiver = receiver;
 --- a/content/test/BUILD.gn
 +++ b/content/test/BUILD.gn
-@@ -3919,7 +3919,6 @@ if (is_android) {
+@@ -3811,7 +3811,6 @@ if (is_android) {
      testonly = true
      sources = content_java_sources_needing_jni
      deps = [
@@ -412,13 +412,10 @@ Subject: Remove dependency on com.google.android.gms.auth
        "$google_play_services_package:google_play_services_tasks_java",
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -72,77 +72,6 @@ template("define_autorolled_targets") {
-       ]
-     }
- 
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
--    if (google_play_services_package == "//third_party/android_deps") {
+@@ -75,77 +75,6 @@ template("define_autorolled_targets") {
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
+     if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_play_services_auth_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_auth/play-services-auth.aar"
 -        info_path = "autorolled/committed/libs/com_google_android_gms_play_services_auth/com_google_android_gms_play_services_auth.info"
@@ -487,14 +484,16 @@ Subject: Remove dependency on com.google.android.gms.auth
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
-     if (google_play_services_package == "//third_party/android_deps") {
-@@ -378,19 +307,6 @@ template("define_autorolled_targets") {
-       }
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
+-    if (google_play_services_package == "//third_party/android_deps") {
+       android_aar_prebuilt("google_play_services_base_java") {
+         aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_base/play-services-base.aar"
+         info_path = "autorolled/committed/libs/com_google_android_gms_play_services_base/com_google_android_gms_play_services_base.info"
+@@ -377,19 +306,6 @@ template("define_autorolled_targets") {
      }
  
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
 -    # instead.
 -    android_aar_prebuilt(
 -        "com_google_android_libraries_identity_googleid_googleid_java") {
@@ -507,17 +506,16 @@ Subject: Remove dependency on com.google.android.gms.auth
 -      ]
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (!defined(material_design_target)) {
+       android_aar_prebuilt("com_google_android_material_material_java") {
 --- a/third_party/androidx/BUILD.gn
 +++ b/third_party/androidx/BUILD.gn
-@@ -588,24 +588,6 @@ if (!limit_android_deps) {
-     ]
-   }
+@@ -615,24 +615,6 @@ if (!limit_android_deps) {
  
--  # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
--  androidx_android_aar_prebuilt(
+   # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
+   androidx_android_aar_prebuilt(
 -      "androidx_credentials_credentials_play_services_auth_java") {
 -    aar_path = "../androidx/cipd/libs/androidx_credentials_credentials_play_services_auth/credentials-play-services-auth.aar"
 -    info_path = "../androidx/committed/libs/androidx_credentials_credentials_play_services_auth/androidx_credentials_credentials_play_services_auth.info"
@@ -534,13 +532,16 @@ Subject: Remove dependency on com.google.android.gms.auth
 -    ]
 -  }
 -
-   # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
-   androidx_android_aar_prebuilt(
+-  # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
+-  androidx_android_aar_prebuilt(
        "androidx_credentials_registry_registry_provider_java") {
-@@ -620,19 +602,6 @@ if (!limit_android_deps) {
+     aar_path = "../androidx/cipd/libs/androidx_credentials_registry_registry_provider/registry-provider.aar"
+     info_path = "../androidx/committed/libs/androidx_credentials_registry_registry_provider/androidx_credentials_registry_registry_provider.info"
+@@ -644,19 +626,6 @@ if (!limit_android_deps) {
+       "//third_party/kotlin_stdlib:kotlin_stdlib_java",
      ]
    }
- 
+-
 -  # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
 -  androidx_android_aar_prebuilt(
 -      "androidx_credentials_registry_registry_provider_play_services_java") {
@@ -553,7 +554,6 @@ Subject: Remove dependency on com.google.android.gms.auth
 -      "//third_party/kotlin_stdlib:kotlin_stdlib_java",
 -    ]
 -  }
--
+ 
    # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
    androidx_android_aar_prebuilt("androidx_customview_customview_java") {
-     aar_path =

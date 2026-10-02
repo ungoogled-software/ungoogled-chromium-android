@@ -1,14 +1,12 @@
 author: bearinmindcat <bearincrypto@gmail.com>
 
-diff --git a/components/signin/internal/identity_manager/profile_oauth2_token_service_delegate_android.cc b/components/signin/internal/identity_manager/profile_oauth2_token_service_delegate_android.cc
 --- a/components/signin/internal/identity_manager/profile_oauth2_token_service_delegate_android.cc
 +++ b/components/signin/internal/identity_manager/profile_oauth2_token_service_delegate_android.cc
-@@ -251,7 +251,10 @@
+@@ -251,7 +251,9 @@ void ProfileOAuth2TokenServiceDelegateAn
    // should always be true, as `SigninManagerImpl depends on IdentityManager,
    // which in turn triggers loading tokens in its creation process. This check
    // ensures that this invariant doesn't change in the future.
 -  CHECK_NE(fire_refresh_token_loaded_, RT_LOAD_NOT_START);
-+  // credentials may not be loaded yet without GMS; skip instead of CHECK
 +  if (fire_refresh_token_loaded_ == RT_LOAD_NOT_START) {
 +    return;
 +  }

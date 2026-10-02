@@ -7,8 +7,6 @@ Subject: [PATCH] Only enable shadow_call_stack on android arm64 target
   build/config/compiler/BUILD.gn | 6 ++++++
   1 file changed, 6 insertions(+)
 
-diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
-index e1da114..57666f1 100644
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
 @@ -428,6 +428,12 @@ config("compiler") {

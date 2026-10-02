@@ -7,7 +7,7 @@ date: Tue, 22 Jul 2026
 ---
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
-@@ -473,6 +473,10 @@
+@@ -473,6 +473,10 @@ config("compiler") {
      if (current_cpu == "arm64") {
        cflags += [ "-fstack-clash-protection" ]
      }

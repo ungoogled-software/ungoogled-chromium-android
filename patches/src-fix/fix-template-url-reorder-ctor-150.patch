@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/components/search_engines/template_url_service.cc
 +++ b/components/search_engines/template_url_service.cc
-@@ -607,9 +607,9 @@
+@@ -607,9 +607,9 @@ TemplateURLService::TemplateURLService(
      std::unique_ptr<TemplateURLServiceClient> client,
      const base::RepeatingClosure& dsp_change_callback)
      : prefs_(prefs),

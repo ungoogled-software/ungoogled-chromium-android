@@ -10,7 +10,7 @@ Subject: kill Translate
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/firstrun/FirstRunActivity.java
 @@ -319,7 +319,7 @@ public class FirstRunActivity extends Fi
                  () -> mFreProperties.getBoolean(SHOW_SEARCH_ENGINE_PAGE);
-
+ 
          // An optional page to select a default search engine.
 -        if (showSearchEnginePromo.getAsBoolean()) {
 +        if (true) {

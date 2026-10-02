@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/chrome/browser/navigation_predictor/navigation_predictor.cc
 +++ b/chrome/browser/navigation_predictor/navigation_predictor.cc
-@@ -104,11 +104,11 @@
+@@ -104,11 +104,11 @@ base::TimeDelta MLModelExecutionTimerSta
  }
  
  
@@ -18,7 +18,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      std::optional<double> sampling_likelihood,
 --- a/chrome/browser/page_content_annotations/page_content_annotations_service_factory.cc
 +++ b/chrome/browser/page_content_annotations/page_content_annotations_service_factory.cc
-@@ -60,7 +60,7 @@
+@@ -60,7 +60,7 @@ bool IsEphemeralProfile(Profile* profile
    return entry && entry->IsEphemeral();
  }
  
@@ -29,7 +29,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      // mode, so we can skip.
 --- a/chrome/browser/profiles/profile_avatar_downloader.cc
 +++ b/chrome/browser/profiles/profile_avatar_downloader.cc
-@@ -20,7 +20,7 @@
+@@ -19,7 +19,7 @@
  #include "ui/gfx/image/image.h"
  
  namespace {
@@ -40,11 +40,10 @@ author: bearinmindcat <bearincrypto@gmail.com>
  
 --- a/chrome/browser/safe_browsing/chrome_safe_browsing_blocking_page_factory.cc
 +++ b/chrome/browser/safe_browsing/chrome_safe_browsing_blocking_page_factory.cc
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,8 @@
  // Use of this source code is governed by a BSD-style license that can be
  // found in the LICENSE file.
  
-+// safe-browsing removal shadows a prefs var
 +#pragma clang diagnostic ignored "-Wshadow"
 +
  #include "chrome/browser/safe_browsing/chrome_safe_browsing_blocking_page_factory.h"
@@ -52,7 +51,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  #include "chrome/browser/browser_process.h"
 --- a/chrome/browser/search/search.cc
 +++ b/chrome/browser/search/search.cc
-@@ -97,7 +97,7 @@
+@@ -96,7 +96,7 @@ enum NewTabURLState {
    NEW_TAB_URL_MAX
  };
  
@@ -61,7 +60,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
    if (profile) {
      TemplateURLService* template_url_service =
          TemplateURLServiceFactory::GetForProfile(profile);
-@@ -144,7 +144,7 @@
+@@ -143,7 +143,7 @@ bool IsNTPOrRelatedURLHelper(const GURL&
                                      IsMatchingServiceWorker(url, new_tab_url));
  }
  
@@ -72,7 +71,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
    }
 --- a/chrome/browser/ssl/https_upgrades_util.cc
 +++ b/chrome/browser/ssl/https_upgrades_util.cc
-@@ -92,7 +92,7 @@
+@@ -92,7 +92,7 @@ ComputeInterstitialState(content::WebCon
      interstitial_state.enabled_in_balanced_mode = true;
  
      // Determine if Balanced Mode was enabled specifically due to ESB pairing.
@@ -83,7 +82,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
    }
 --- a/chrome/browser/ui/safety_hub/revoked_permissions_service.cc
 +++ b/chrome/browser/ui/safety_hub/revoked_permissions_service.cc
-@@ -165,7 +165,7 @@
+@@ -167,7 +167,7 @@ RevokedPermissionsService::RevokedPermis
            base::Unretained(this)));
  #endif  // BUILDFLAG(IS_ANDROID)
  
@@ -94,7 +93,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
                  GetForProfile(Profile::FromBrowserContext(browser_context_));
 --- a/components/autofill/core/browser/crowdsourcing/autofill_crowdsourcing_manager.cc
 +++ b/components/autofill/core/browser/crowdsourcing/autofill_crowdsourcing_manager.cc
-@@ -96,7 +96,7 @@
+@@ -96,7 +96,7 @@ constexpr std::pair<int, int> kAutofillE
  constexpr size_t kAutofillCrowdsourcingManagerMaxFormCacheSize = 16;
  constexpr size_t kMaxFieldsPerQueryRequest = 100;
  
@@ -103,7 +102,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  
  constexpr net::BackoffEntry::Policy kAutofillBackoffPolicy = {
      // Number of initial errors (in sequence) to ignore before applying
-@@ -128,7 +128,7 @@
+@@ -128,7 +128,7 @@ constexpr char kDefaultAutofillServerURL
      "https://content-autofill.9oo91eapis.qjz9zk/";
  
  // Header to get base64 encoded serialized proto from API for safety.
@@ -112,7 +111,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      "X-Goog-Encode-Response-If-Executable";
  
  // The default number of days after which to reset the registry of autofill
-@@ -217,7 +217,7 @@
+@@ -217,7 +217,7 @@ std::string GetMetricName(CrowdsourcingR
    return base::StrCat({"Autofill.", TypeToName(request_type), ".", suffix});
  }
  
@@ -121,7 +120,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      CrowdsourcingRequestType request_type) {
    switch (request_type) {
      case CrowdsourcingRequestType::kRequestQuery:
-@@ -548,7 +548,7 @@
+@@ -548,7 +548,7 @@ std::string GetAPIMethodUrl(Crowdsourcin
  }
  
  // Gets HTTP body payload for API POST request.
@@ -130,46 +129,14 @@ author: bearinmindcat <bearincrypto@gmail.com>
                                               CrowdsourcingRequestType type) {
    // Don't do anything for payloads not related to Query.
    if (type != CrowdsourcingRequestType::kRequestQuery) {
---- a/components/browsing_data/content/browsing_data_model.cc
-+++ b/components/browsing_data/content/browsing_data_model.cc
-@@ -471,7 +471,7 @@
-   std::move(loaded_callback).Run();
- }
- 
--void OnInterestGroupsLoaded(
-+[[maybe_unused]] void OnInterestGroupsLoaded(
-     BrowsingDataModel* model,
-     base::OnceClosure loaded_callback,
-     std::vector<content::InterestGroupManager::InterestGroupDataKey>
-@@ -484,7 +484,7 @@
-   std::move(loaded_callback).Run();
- }
- 
--void OnAttributionReportingLoaded(
-+[[maybe_unused]] void OnAttributionReportingLoaded(
-     BrowsingDataModel* model,
-     base::OnceClosure loaded_callback,
-     std::set<content::AttributionDataModel::DataKey> attribution_reporting) {
-@@ -496,7 +496,7 @@
-   std::move(loaded_callback).Run();
- }
- 
--void OnPrivateAggregationLoaded(
-+[[maybe_unused]] void OnPrivateAggregationLoaded(
-     BrowsingDataModel* model,
-     base::OnceClosure loaded_callback,
-     std::set<content::PrivateAggregationDataModel::DataKey>
 --- a/components/safe_browsing/core/browser/realtime/url_lookup_service.cc
 +++ b/components/safe_browsing/core/browser/realtime/url_lookup_service.cc
-@@ -38,9 +38,9 @@
+@@ -36,7 +36,7 @@ namespace {
  constexpr int kDefaultRealTimeUrlLookupReferrerLength = 2;
  
  // Probability for sending protego requests for urls on the allowlist
 -const float kProbabilityForSendingSampledRequests = 0.01;
 +[[maybe_unused]] const float kProbabilityForSendingSampledRequests = 0.01;
- 
--constexpr char kCookieHistogramPrefix[] = "SafeBrowsing.RT.Request.HadCookie";
-+[[maybe_unused]] constexpr char kCookieHistogramPrefix[] = "SafeBrowsing.RT.Request.HadCookie";
  
  GURL* GetRealTimeLookupUrlTestOverride() {
    static base::NoDestructor<GURL> test_override;
@@ -186,30 +153,18 @@ author: bearinmindcat <bearincrypto@gmail.com>
  }  // namespace
 --- a/components/translate/core/browser/translate_ranker_impl.cc
 +++ b/components/translate/core/browser/translate_ranker_impl.cc
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,8 @@
  // Use of this source code is governed by a BSD-style license that can be
  // found in the LICENSE file.
  
-+// kill-Translate returns early, leaving dead ranker code
 +#pragma clang diagnostic ignored "-Wunreachable-code"
 +
  #include "components/translate/core/browser/translate_ranker_impl.h"
  
  #include <cmath>
---- a/content/browser/attribution_reporting/attribution_suitable_context.cc
-+++ b/content/browser/attribution_reporting/attribution_suitable_context.cc
-@@ -34,7 +34,7 @@
- 
- using attribution_reporting::SuitableOrigin;
- 
--bool UkmSourceIdAllowed(RenderFrameHostImpl* rfh) {
-+[[maybe_unused]] bool UkmSourceIdAllowed(RenderFrameHostImpl* rfh) {
-   return rfh->GetLifecycleState() !=
-          RenderFrameHost::LifecycleState::kPrerendering;
- }
 --- a/content/browser/file_system_access/file_system_access_safe_move_helper.h
 +++ b/content/browser/file_system_access/file_system_access_safe_move_helper.h
-@@ -93,7 +93,7 @@
+@@ -93,7 +93,7 @@ class CONTENT_EXPORT FileSystemAccessSaf
    download::QuarantineConnectionCallback quarantine_connection_callback_
        GUARDED_BY_CONTEXT(sequence_checker_);
  

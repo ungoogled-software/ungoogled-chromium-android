@@ -16,7 +16,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -809,7 +809,6 @@ if (_is_default_toolchain) {
+@@ -795,7 +795,6 @@ if (_is_default_toolchain) {
        "//third_party/android_deps:com_google_errorprone_error_prone_annotations_java",
        "//third_party/android_deps:guava_android_java",
        "//third_party/android_deps:material_design_java",
@@ -24,17 +24,17 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
        "//third_party/android_deps:protobuf_lite_runtime_java",
        "//third_party/android_media:android_media_java",
        "//third_party/android_swipe_refresh:android_swipe_refresh_java",
-@@ -2176,7 +2175,6 @@ if (_is_default_toolchain) {
-       "//components/module_installer/android:module_installer_java",
+@@ -2167,7 +2166,6 @@ if (_is_default_toolchain) {
        "//components/policy/android:policy_java",
        "//components/variations/android:variations_java",
+       "//third_party/android_deps:material_design_java",
 -      "//third_party/android_deps:playcore_java",
        "//third_party/androidx:androidx_annotation_annotation_java",
+       "//third_party/androidx:androidx_appcompat_appcompat_java",
        "//third_party/androidx:androidx_collection_collection_java",
-       "//third_party/jni_zero:jni_zero_java",
 --- a/chrome/browser/language/android/BUILD.gn
 +++ b/chrome/browser/language/android/BUILD.gn
-@@ -18,7 +18,6 @@ android_library("base_module_java") {
+@@ -17,7 +17,6 @@ android_library("base_module_java") {
      "//build/android:build_java",
      "//chrome/browser/preferences:java",
      "//components/language/android:java",
@@ -44,7 +44,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
    ]
 --- a/chrome/browser/language/android/java/src/org/chromium/chrome/browser/language/LanguageSplitInstaller.java
 +++ b/chrome/browser/language/android/java/src/org/chromium/chrome/browser/language/LanguageSplitInstaller.java
-@@ -8,22 +8,13 @@ import static org.chromium.build.NullUtil.assumeNonNull;
+@@ -8,22 +8,13 @@ import static org.chromium.build.NullUti
  
  import androidx.annotation.IntDef;
  
@@ -194,14 +194,15 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
                  "LanguageSettings.SplitInstallFinalStatus",
 --- a/components/module_installer/android/BUILD.gn
 +++ b/components/module_installer/android/BUILD.gn
-@@ -30,6 +30,5 @@ android_library("module_installer_java") {
+@@ -28,7 +28,6 @@ android_library("module_installer_java")
+   deps = [
      "//base:base_java",
      "//components/crash/android:java",
 -    "//third_party/android_deps:playcore_java",
      "//third_party/androidx:androidx_annotation_annotation_java",
      "//third_party/jni_zero:jni_zero_java",
    ]
-@@ -51,7 +50,6 @@ robolectric_binary("module_installer_junit_tests") {
+@@ -49,7 +48,6 @@ robolectric_binary("module_installer_jun
      "//base:base_java",
      "//base:base_java_test_support",
      "//base:base_junit_test_support",
@@ -237,7 +238,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
      private static final Map<String, List<InstallListener>> sSessions = new HashMap<>();
  
      public SplitCompatEngine() {
-@@ -46,14 +39,11 @@ class SplitCompatEngine implements InstallEngine {
+@@ -46,14 +39,11 @@ class SplitCompatEngine implements Insta
  
      @Override
      public boolean isInstalled(String moduleName) {
@@ -254,7 +255,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
  
      @Override
      public void install(String moduleName, InstallListener listener) {
-@@ -71,38 +61,7 @@ class SplitCompatEngine implements InstallEngine {
+@@ -71,38 +61,7 @@ class SplitCompatEngine implements Insta
          listeners.add(listener);
          sSessions.put(moduleName, listeners);
  
@@ -294,7 +295,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
      }
  
      private void notifyListeners(String moduleName, boolean success) {
-@@ -123,17 +82,9 @@ class SplitCompatEngine implements InstallEngine {
+@@ -123,17 +82,9 @@ class SplitCompatEngine implements Insta
          listener.onComplete(success);
      }
  
@@ -316,7 +317,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
      public void resetSessionQueue() {
 --- a/components/module_installer/android/java/src/org/chromium/components/module_installer/engine/SplitCompatEngineFacade.java
 +++ b/components/module_installer/android/java/src/org/chromium/components/module_installer/engine/SplitCompatEngineFacade.java
-@@ -6,12 +6,6 @@ package org.chromium.components.module_installer.engine;
+@@ -6,12 +6,6 @@ package org.chromium.components.module_i
  
  import android.app.Activity;
  
@@ -329,7 +330,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.components.module_installer.util.ModuleUtil;
  
-@@ -21,34 +15,17 @@ import org.chromium.components.module_installer.util.ModuleUtil;
+@@ -21,34 +15,17 @@ import org.chromium.components.module_in
   */
  @NullMarked
  class SplitCompatEngineFacade {
@@ -389,7 +390,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
      public static boolean isInitialized() {
 --- a/third_party/android_deps/BUILD.gn
 +++ b/third_party/android_deps/BUILD.gn
-@@ -103,8 +103,6 @@ if (!limit_android_deps) {
+@@ -101,8 +101,6 @@ if (!limit_android_deps) {
      preferred_dep = true
      if (defined(playcore_target)) {
        deps = [ playcore_target ]
@@ -400,12 +401,10 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -115,25 +115,6 @@ template("define_autorolled_targets") {
-       }
-     }
-
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
+@@ -114,25 +114,6 @@ template("define_autorolled_targets") {
+ 
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
 -    if (!defined(playcore_target)) {
 -      android_aar_prebuilt("com_google_android_play_feature_delivery_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_android_play_feature_delivery/feature-delivery.aar"
@@ -423,14 +422,15 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
-     android_aar_prebuilt("com_google_ar_impress_java") {
-@@ -737,21 +737,6 @@ template("define_autorolled_targets") {
-       ]
-     }
-
 -    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
+     android_aar_prebuilt("com_google_ar_impress_java") {
+       aar_path = "autorolled/cipd/libs/com_google_ar_impress/impress.aar"
+       info_path = "autorolled/committed/libs/com_google_ar_impress/com_google_ar_impress.info"
+@@ -653,21 +634,6 @@ template("define_autorolled_targets") {
+     }
+ 
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
 -    # instead.
 -    android_aar_prebuilt("com_google_android_play_core_common_java") {
 -      aar_path = "autorolled/cipd/libs/com_google_android_play_core_common/core-common.aar"
@@ -445,6 +445,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
 -      ]
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
-     java_prebuilt("com_google_auto_value_auto_value_annotations_java") {
+     java_prebuilt("com_google_auto_auto_common_java") {
+       jar_path =

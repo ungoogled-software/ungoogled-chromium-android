@@ -10,7 +10,7 @@ Subject: Remove dependency on firebase
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -2160,7 +2160,6 @@ if (_is_default_toolchain) {
+@@ -2157,7 +2157,6 @@ if (_is_default_toolchain) {
      ]
      deps = [
        ":chrome_base_module_resources",
@@ -18,14 +18,86 @@ Subject: Remove dependency on firebase
        "//base:base_java",
        "//chrome/browser/autofill/android:third_party_provider_java",
        "//chrome/browser/download/android:file_provider_java",
---- a/third_party/android_deps/autorolled/BUILD.gn
-+++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -532,38 +532,6 @@ template("define_autorolled_targets") {
-       preferred_dep = true
+--- a/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatGcmListenerService.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatGcmListenerService.java
+@@ -4,12 +4,8 @@
+ 
+ package org.chromium.chrome.browser.base;
+ 
+-import android.content.Context;
+ import android.os.Bundle;
+ 
+-import com.google.firebase.messaging.FirebaseMessagingService;
+-import com.google.firebase.messaging.RemoteMessage;
+-
+ import org.chromium.build.annotations.NullMarked;
+ import org.chromium.build.annotations.Nullable;
+ 
+@@ -18,57 +14,13 @@ import org.chromium.build.annotations.Nu
+  * be present in the base module, while the Impl can be in the chrome module.
+  */
+ @NullMarked
+-public class SplitCompatGcmListenerService extends FirebaseMessagingService {
++public class SplitCompatGcmListenerService {
+     private final String mServiceClassName;
+-    private Impl mImpl;
+ 
+     public SplitCompatGcmListenerService(String serviceClassName) {
+         mServiceClassName = serviceClassName;
      }
  
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
+-    @Override
+-    protected void attachBaseContext(Context baseContext) {
+-        mImpl =
+-                (Impl)
+-                        SplitCompatUtils.loadClassAndAdjustContextChrome(
+-                                baseContext, mServiceClassName);
+-        mImpl.setService(this);
+-        super.attachBaseContext(baseContext);
+-    }
+-
+-    @Override
+-    public void onCreate() {
+-        super.onCreate();
+-        mImpl.onCreate();
+-    }
+-
+-    @Override
+-    public void onMessageReceived(RemoteMessage message) {
+-        String from = message.getFrom();
+-        Bundle data = message.toIntent().getExtras();
+-        mImpl.onMessageReceived(from, data);
+-    }
+-
+-    @Override
+-    public void onMessageSent(String msgId) {
+-        mImpl.onMessageSent(msgId);
+-    }
+-
+-    @Override
+-    public void onSendError(String msgId, Exception error) {
+-        mImpl.onSendError(msgId, error);
+-    }
+-
+-    @Override
+-    public void onDeletedMessages() {
+-        mImpl.onDeletedMessages();
+-    }
+-
+-    @Override
+-    public void onNewToken(String token) {
+-        mImpl.onNewToken(token);
+-    }
+-
+     /**
+      * Holds the implementation of service logic. Will be called by {@link
+      * SplitCompatGcmListenerService}.
+--- a/third_party/android_deps/autorolled/BUILD.gn
++++ b/third_party/android_deps/autorolled/BUILD.gn
+@@ -534,38 +534,6 @@ template("define_autorolled_targets") {
+ 
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
 -      android_aar_prebuilt("google_firebase_firebase_messaging_java") {
 -        aar_path = "autorolled/cipd/libs/com_google_firebase_firebase_messaging/firebase-messaging.aar"
@@ -56,10 +128,12 @@ Subject: Remove dependency on firebase
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
      if (!defined(guava_android_target)) {
-@@ -619,7 +586,6 @@ template("define_autorolled_targets") {
+       java_prebuilt("com_google_guava_guava_java") {
+         jar_path = "autorolled/cipd/libs/com_google_guava_guava/guava.jar"
+@@ -618,7 +586,6 @@ template("define_autorolled_targets") {
          "$google_play_services_package:google_android_datatransport_transport_api_java",
          "$google_play_services_package:google_android_datatransport_transport_backend_cct_java",
          "$google_play_services_package:google_android_datatransport_transport_runtime_java",
@@ -67,13 +141,10 @@ Subject: Remove dependency on firebase
          "$google_play_services_package:google_firebase_firebase_encoders_java",
          "$google_play_services_package:google_firebase_firebase_encoders_json_java",
          "$google_play_services_package:google_play_services_base_java",
-@@ -1333,99 +1299,6 @@ template("define_autorolled_targets") {
-       testonly = true
-     }
- 
--    # This is generated, do not edit. Update BuildConfigGenerator.groovy
--    # instead.
--    if (google_play_services_package == "//third_party/android_deps") {
+@@ -1293,99 +1260,6 @@ template("define_autorolled_targets") {
+     # This is generated, do not edit. Update BuildConfigGenerator.groovy
+     # instead.
+     if (google_play_services_package == "//third_party/android_deps") {
 -      java_prebuilt("google_firebase_firebase_annotations_java") {
 -        jar_path = "autorolled/cipd/libs/com_google_firebase_firebase_annotations/firebase-annotations.jar"
 -        output_name = "com_google_firebase_firebase_annotations"
@@ -164,13 +235,17 @@ Subject: Remove dependency on firebase
 -      }
 -    }
 -
-     # This is generated, do not edit. Update BuildConfigGenerator.groovy
-     # instead.
-     if (google_play_services_package == "//third_party/android_deps") {
-@@ -1490,96 +1363,6 @@ template("define_autorolled_targets") {
+-    # This is generated, do not edit. Update BuildConfigGenerator.groovy
+-    # instead.
+-    if (google_play_services_package == "//third_party/android_deps") {
+       java_prebuilt("google_firebase_firebase_encoders_java") {
+         jar_path = "autorolled/cipd/libs/com_google_firebase_firebase_encoders/firebase-encoders.jar"
+         output_name = "com_google_firebase_firebase_encoders"
+@@ -1446,96 +1320,6 @@ template("define_autorolled_targets") {
+         ]
        }
      }
- 
+-
 -    # This is generated, do not edit. Update BuildConfigGenerator.groovy
 -    # instead.
 -    if (google_play_services_package == "//third_party/android_deps") {
@@ -260,81 +335,6 @@ Subject: Remove dependency on firebase
 -        ]
 -      }
 -    }
--
+ 
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
-     java_prebuilt("com_google_guava_failureaccess_java") {
---- a/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatGcmListenerService.java
-+++ b/chrome/android/java/src/org/chromium/chrome/browser/base/SplitCompatGcmListenerService.java
-@@ -4,12 +4,8 @@
- 
- package org.chromium.chrome.browser.base;
- 
--import android.content.Context;
- import android.os.Bundle;
- 
--import com.google.firebase.messaging.FirebaseMessagingService;
--import com.google.firebase.messaging.RemoteMessage;
--
- import org.chromium.build.annotations.NullMarked;
- import org.chromium.build.annotations.Nullable;
- 
-@@ -18,57 +14,13 @@
-  * be present in the base module, while the Impl can be in the chrome module.
-  */
- @NullMarked
--public class SplitCompatGcmListenerService extends FirebaseMessagingService {
-+public class SplitCompatGcmListenerService {
-     private final String mServiceClassName;
--    private Impl mImpl;
- 
-     public SplitCompatGcmListenerService(String serviceClassName) {
-         mServiceClassName = serviceClassName;
-     }
- 
--    @Override
--    protected void attachBaseContext(Context baseContext) {
--        mImpl =
--                (Impl)
--                        SplitCompatUtils.loadClassAndAdjustContextChrome(
--                                baseContext, mServiceClassName);
--        mImpl.setService(this);
--        super.attachBaseContext(baseContext);
--    }
--
--    @Override
--    public void onCreate() {
--        super.onCreate();
--        mImpl.onCreate();
--    }
--
--    @Override
--    public void onMessageReceived(RemoteMessage message) {
--        String from = message.getFrom();
--        Bundle data = message.toIntent().getExtras();
--        mImpl.onMessageReceived(from, data);
--    }
--
--    @Override
--    public void onMessageSent(String msgId) {
--        mImpl.onMessageSent(msgId);
--    }
--
--    @Override
--    public void onSendError(String msgId, Exception error) {
--        mImpl.onSendError(msgId, error);
--    }
--
--    @Override
--    public void onDeletedMessages() {
--        mImpl.onDeletedMessages();
--    }
--
--    @Override
--    public void onNewToken(String token) {
--        mImpl.onNewToken(token);
--    }
--
-     /**
-      * Holds the implementation of service logic. Will be called by {@link
-      * SplitCompatGcmListenerService}.

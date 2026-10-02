@@ -7,11 +7,9 @@ Subject: Add flag to disable WebGL
  chrome/browser/flag-metadata.json  | 5 +++++
  chrome/browser/flag_descriptions.h | 4 ++++
 
-diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 44d58ab..a5a455f 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -4718,6 +4718,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -4878,6 +4878,9 @@ const FeatureEntry kFeatureEntries[] = {
  // //tools/flags/generate_unexpire_flags.py.
  #include "build/chromeos_buildflags.h"
  #include "chrome/browser/unexpire_flags_gen.inc"
@@ -21,27 +19,22 @@ index 44d58ab..a5a455f 100644
      {switches::kEnableBenchmarking, flag_descriptions::kEnableBenchmarkingName,
       flag_descriptions::kEnableBenchmarkingDescription, kOsAll,
       MULTI_VALUE_TYPE(kEnableBenchmarkingChoices)},
-diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.json
-index f5fcf87..3397703 100644
 --- a/chrome/browser/flag-metadata.json
 +++ b/chrome/browser/flag-metadata.json
-@@ -2543,6 +2543,11 @@
-     "owners": [ "dvallet@ch40m1um.qjz9zk", "essential-inputs-team@9oo91e.qjz9zk" ],
+@@ -2736,6 +2736,10 @@
      "expiry_milestone": 116
    },
-+  {
+   {
 +    "name": "disable-webgl",
-+    // "owners": [ "your-team" ],
 +    "expiry_milestone": -1
 +  },
-   {
++  {
      "name": "disallow-doc-written-script-loads",
      "owners": [ "//chrome/browser/data_saver/OWNERS" ],
-diff --git a/chrome/browser/flag_descriptions.h b/chrome/browser/flag_descriptions.h
-index 02a660b..c221ba3 100644
+     // This is a web-developer facing flag and should not be removed.
 --- a/chrome/browser/flag_descriptions.h
 +++ b/chrome/browser/flag_descriptions.h
-@@ -528,6 +528,10 @@ inline constexpr char kDisableAutofillStrikeSystemDescription[] =
+@@ -556,6 +556,10 @@ inline constexpr char kDisableAutofillSt
      "When enabled, the Autofill strike system will not block a feature from "
      "being offered.";
  

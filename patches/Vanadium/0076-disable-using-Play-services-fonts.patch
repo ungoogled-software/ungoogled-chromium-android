@@ -7,11 +7,9 @@ Subject: [PATCH] disable using Play services fonts
  .../chromium/content/browser/font/AndroidFontLookupImpl.java    | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/content/public/android/java/src/org/chromium/content/browser/font/AndroidFontLookupImpl.java b/content/public/android/java/src/org/chromium/content/browser/font/AndroidFontLookupImpl.java
-index 6ac7868..107da20 100644
 --- a/content/public/android/java/src/org/chromium/content/browser/font/AndroidFontLookupImpl.java
 +++ b/content/public/android/java/src/org/chromium/content/browser/font/AndroidFontLookupImpl.java
-@@ -182,7 +182,7 @@ public class AndroidFontLookupImpl implements AndroidFontLookup {
+@@ -182,7 +182,7 @@ public class AndroidFontLookupImpl imple
       * @param fontUniqueName The ICU case folded unique full font name to fetch.
       */
      private @Nullable ReadOnlyFile fetchFontInBackground(String fontUniqueName, Core core) {

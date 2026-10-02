@@ -7,24 +7,9 @@ Subject: DoH secure mode by default
  chrome/browser/net/default_dns_over_https_config_source.cc                                        |  2 +-
  chrome/browser/net/stub_resolver_config_reader.cc                                                 | 15 ---------------
 
-diff --git a/chrome/browser/enterprise/util/android/java/src/org/chromium/chrome/browser/enterprise/util/EnterpriseInfoImpl.java b/chrome/browser/enterprise/util/android/java/src/org/chromium/chrome/browser/enterprise/util/EnterpriseInfoImpl.java
-index 0ecf52f..b59fbb9 100644
---- a/chrome/browser/enterprise/util/android/java/src/org/chromium/chrome/browser/enterprise/util/EnterpriseInfoImpl.java
-+++ b/chrome/browser/enterprise/util/android/java/src/org/chromium/chrome/browser/enterprise/util/EnterpriseInfoImpl.java
-@@ -47,7 +47,7 @@ public class EnterpriseInfoImpl extends EnterpriseInfo {
-     private @MonotonicNonNull OwnedState mOwnedState;
-     private final Queue<Callback<@Nullable OwnedState>> mCallbackList;
- 
--    private boolean mSkipAsyncCheckForTesting;
-+    private boolean mSkipAsyncCheckForTesting = true;
- 
-     EnterpriseInfoImpl() {
-         mCallbackList = new ArrayDeque<>();
-diff --git a/chrome/browser/net/default_dns_over_https_config_source.cc b/chrome/browser/net/default_dns_over_https_config_source.cc
-index 9be2f1b..d9cf06c 100644
 --- a/chrome/browser/net/default_dns_over_https_config_source.cc
 +++ b/chrome/browser/net/default_dns_over_https_config_source.cc
-@@ -29,7 +29,7 @@ DefaultDnsOverHttpsConfigSource::DefaultDnsOverHttpsConfigSource(
+@@ -29,7 +29,7 @@ DefaultDnsOverHttpsConfigSource::Default
    if (set_up_pref_defaults) {
      local_state->SetDefaultPrefValue(prefs::kDnsOverHttpsMode,
                                       base::Value(SecureDnsConfig::ModeToString(
@@ -33,11 +18,9 @@ index 9be2f1b..d9cf06c 100644
    }
  }
  
-diff --git a/chrome/browser/net/stub_resolver_config_reader.cc b/chrome/browser/net/stub_resolver_config_reader.cc
-index 3d9047c..2e827aa 100644
 --- a/chrome/browser/net/stub_resolver_config_reader.cc
 +++ b/chrome/browser/net/stub_resolver_config_reader.cc
-@@ -396,22 +396,7 @@ SecureDnsConfig StubResolverConfigReader::GetAndUpdateConfiguration(
+@@ -396,22 +396,7 @@ SecureDnsConfig StubResolverConfigReader
      check_parental_controls = false;
    }
  
@@ -60,3 +43,14 @@ index 3d9047c..2e827aa 100644
      parental_controls_checked_ = true;
    }
  
+--- a/components/policy/android/java/src/org/chromium/components/policy/EnterpriseInfoImpl.java
++++ b/components/policy/android/java/src/org/chromium/components/policy/EnterpriseInfoImpl.java
+@@ -45,7 +45,7 @@ public class EnterpriseInfoImpl extends
+     private @MonotonicNonNull OwnedState mOwnedState;
+     private final Queue<Callback<@Nullable OwnedState>> mCallbackList;
+ 
+-    private boolean mSkipAsyncCheckForTesting;
++    private boolean mSkipAsyncCheckForTesting = true;
+ 
+     EnterpriseInfoImpl() {
+         mCallbackList = new ArrayDeque<>();

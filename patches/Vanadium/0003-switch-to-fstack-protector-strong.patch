@@ -7,8 +7,6 @@ Subject: [PATCH 03/78] switch to -fstack-protector-strong
  build/config/compiler/BUILD.gn |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
-index f2a1c27..8360e29 100644
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
 @@ -459,7 +459,7 @@ config("compiler") {

@@ -8,9 +8,10 @@ Subject: Remove all sync and account permissions/features from manifest
 
 --- a/chrome/android/java/AndroidManifest.xml
 +++ b/chrome/android/java/AndroidManifest.xml
-@@ -84,8 +84,6 @@ by a child template that "extends" this
+@@ -83,9 +83,7 @@ by a child template that "extends" this
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" tools:ignore="SystemPermissionTypo" />
      <uses-permission android:name="android.permission.RUN_USER_INITIATED_JOBS" />
-
+ 
 -    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
      <uses-permission android:name="android.permission.INTERNET"/>
 -    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
@@ -25,10 +26,12 @@ Subject: Remove all sync and account permissions/features from manifest
      <uses-permission-sdk-23 android:name="android.permission.USE_BIOMETRIC"/>
      <uses-permission-sdk-23 android:name="android.permission.USE_FINGERPRINT"/>
      <uses-permission android:name="android.permission.VIBRATE"/>
-@@ -162,6 +159,4 @@ by a child template that "extends" this
+@@ -161,8 +158,6 @@ by a child template that "extends" this
+     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
      <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
-
+ 
 -    <uses-permission android:name="com.google.android.apps.now.CURRENT_ACCOUNT_ACCESS" />
 -
      <!-- Permission for using pinned windowing layer for document picture-in-picture. -->
      <uses-permission android:name="android.permission.USE_PINNED_WINDOWING_LAYER" />
+ 

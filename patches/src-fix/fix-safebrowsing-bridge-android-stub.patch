@@ -1,9 +1,5 @@
 author: bearinmindcat <bearincrypto@gmail.com>
 
-diff --git a/chrome/browser/safe_browsing/android/safe_browsing_bridge.cc b/chrome/browser/safe_browsing/android/safe_browsing_bridge.cc
-index 2329d7f33d912..2e1b170c4df57 100644
-diff --git a/chrome/browser/safe_browsing/android/safe_browsing_bridge.cc b/chrome/browser/safe_browsing/android/safe_browsing_bridge.cc
-index 2329d7f33d912..438db4f614b8c 100644
 --- a/chrome/browser/safe_browsing/android/safe_browsing_bridge.cc
 +++ b/chrome/browser/safe_browsing/android/safe_browsing_bridge.cc
 @@ -16,7 +16,6 @@
@@ -24,7 +20,7 @@ index 2329d7f33d912..438db4f614b8c 100644
    return Profile::FromJavaObject(j_profile)->GetPrefs();
  }
  
-@@ -37,61 +37,46 @@ namespace safe_browsing {
+@@ -37,61 +37,45 @@ namespace safe_browsing {
  static int32_t JNI_SafeBrowsingBridge_UmaValueForFile(
      JNIEnv* env,
      const JavaRef<jstring>& path) {
@@ -65,7 +61,6 @@ index 2329d7f33d912..438db4f614b8c 100644
      const JavaRef<jobject>& j_profile) {
 -  return static_cast<int32_t>(
 -      safe_browsing::GetSafeBrowsingState(*GetPrefService(j_profile)));
-+  // NO_SAFE_BROWSING
 +  return 0;
  }
  
@@ -95,7 +90,7 @@ index 2329d7f33d912..438db4f614b8c 100644
  }
  
  static bool JNI_SafeBrowsingBridge_IsHashRealTimeLookupEligibleInSession(
-@@ -105,9 +95,6 @@ static void JNI_SafeBrowsingBridge_ReportIntent(
+@@ -105,9 +89,6 @@ static void JNI_SafeBrowsingBridge_Repor
      content::WebContents* web_contents,
      const std::string& package_name,
      const std::string& uri) {

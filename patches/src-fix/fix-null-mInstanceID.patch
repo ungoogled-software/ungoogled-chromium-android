@@ -4,7 +4,7 @@
 
 --- a/components/gcm_driver/instance_id/android/java/src/org/chromium/components/gcm_driver/instance_id/InstanceIDBridge.java
 +++ b/components/gcm_driver/instance_id/android/java/src/org/chromium/components/gcm_driver/instance_id/InstanceIDBridge.java
-@@ -121,7 +121,10 @@ public class InstanceIDBridge {
+@@ -130,7 +130,10 @@ public class InstanceIDBridge {
                              SubscriptionFlagManager.buildSubscriptionUniqueId(
                                      mSubtype, authorizedEntity),
                              flags);

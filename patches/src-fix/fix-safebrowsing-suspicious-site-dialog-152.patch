@@ -1,0 +1,68 @@
+author: bearinmindcat <bearincrypto@gmail.com>
+
+---
+--- a/chrome/browser/ui/android/safe_browsing/suspicious_site_dialog_view_android.cc
++++ b/chrome/browser/ui/android/safe_browsing/suspicious_site_dialog_view_android.cc
+@@ -32,36 +32,26 @@ void SuspiciousSiteDialogViewAndroid::Sh
+   java_object_.Reset(Java_SafeBrowsingSuspiciousSiteDialogBridge_create(
+       env, window_android.GetJavaObject(), reinterpret_cast<intptr_t>(this)));
+ 
+-  Java_SafeBrowsingSuspiciousSiteDialogBridge_showDialog(
+-      env, java_object_, controller_->GetTitle(),
+-      controller_->GetWarningDetailText(), controller_->GetPrimaryButtonText(),
+-      controller_->GetSecondaryButtonText());
+ }
+ 
+ void SuspiciousSiteDialogViewAndroid::ContinueAnyway(JNIEnv* env) {
+-  controller_->OnContinueButtonClicked();
+ }
+ 
+ void SuspiciousSiteDialogViewAndroid::GoBack(JNIEnv* env) {
+-  controller_->OnGoBackButtonClicked();
+ }
+ 
+ void SuspiciousSiteDialogViewAndroid::OnLearnMoreClicked(JNIEnv* env) {
+-  controller_->OnHelpCenterLinkClicked();
+ }
+ 
+ void SuspiciousSiteDialogViewAndroid::Close(
+     JNIEnv* env,
+     ui::ModalDialogWrapper::DismissalCause dismissalCause) {
+-  controller_->CloseDialog(dismissalCause);
+ }
+ 
+ static void
+ JNI_SafeBrowsingSuspiciousSiteDialogBridge_CreateControllerForTesting(  // IN-TEST
+     JNIEnv* env,
+     content::WebContents* web_contents) {
+-  safe_browsing::SuspiciousSiteControllerAndroid::CreateForWebContents(
+-      web_contents);
+ }
+ 
+ }  // namespace safe_browsing
+--- a/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
++++ b/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
+@@ -444,23 +444,9 @@ void ChromePageInfoDelegate::OpenSafeBro
+ }
+ 
+ void ChromePageInfoDelegate::OnSuspiciousSiteBackToSafety() {
+-#if BUILDFLAG(IS_ANDROID)
+-  if (auto* ssc =
+-          safe_browsing::SuspiciousSiteControllerAndroid::FromWebContents(
+-              web_contents_)) {
+-    ssc->OnGoBackButtonClicked();
+-  }
+-#endif
+ }
+ 
+ void ChromePageInfoDelegate::OnSuspiciousSiteMarkAsSafe() {
+-#if BUILDFLAG(IS_ANDROID)
+-  if (auto* ssc =
+-          safe_browsing::SuspiciousSiteControllerAndroid::FromWebContents(
+-              web_contents_)) {
+-    ssc->OnContinueButtonClicked();
+-  }
+-#endif
+ }
+ 
+ std::u16string ChromePageInfoDelegate::GetSubjectName(const GURL& url) {

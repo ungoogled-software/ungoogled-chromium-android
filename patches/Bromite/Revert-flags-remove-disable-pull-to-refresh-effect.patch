@@ -8,11 +8,9 @@ This reverts commit 4e598f38a0e6dd3dbede009c6a99b2a520a94e1f.
  chrome/browser/flag-metadata.json  | 5 +++++
  chrome/browser/flag_descriptions.h | 5 +++++
 
-diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 44d58ab..bc9a05e 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -5342,6 +5342,10 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -5512,6 +5512,10 @@ const FeatureEntry kFeatureEntries[] = {
       FEATURE_VALUE_TYPE(ash::features::kOngoingProcesses)},
  #endif  // BUILDFLAG(IS_CHROMEOS)
  #if BUILDFLAG(IS_ANDROID)
@@ -23,27 +21,23 @@ index 44d58ab..bc9a05e 100644
      {"reader-mode-blur-transition-animation",
       flag_descriptions::kReaderModeBlurTransitionAnimationName,
       flag_descriptions::kReaderModeBlurTransitionAnimationDescription,
-diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.json
-index f5fcf87..37383ba 100644
 --- a/chrome/browser/flag-metadata.json
 +++ b/chrome/browser/flag-metadata.json
-@@ -2533,6 +2533,11 @@
-       "alexmos@9oo91e.qjz9zk", "creis@9oo91e.qjz9zk", "lbrady@9oo91e.qjz9zk" ],
+@@ -2726,6 +2726,11 @@
      "expiry_milestone": 170
    },
-+  {
+   {
 +    "name": "disable-pull-to-refresh-effect",
 +    // "owners": [ "your-team" ],
 +    "expiry_milestone": -1
 +  },
-   {
++  {
      "name": "disable-u18-feedback-desktop",
      "owners": [ "chrome-signin-team@9oo91e.qjz9zk" ],
-diff --git a/chrome/browser/flag_descriptions.h b/chrome/browser/flag_descriptions.h
-index 02a660b..ce58b68 100644
+     "expiry_milestone": 160
 --- a/chrome/browser/flag_descriptions.h
 +++ b/chrome/browser/flag_descriptions.h
-@@ -546,6 +546,11 @@ inline constexpr char kDisableU18FeedbackDesktopName[] =
+@@ -578,6 +578,11 @@ inline constexpr char kDisableU18Feedbac
  inline constexpr char kDisableU18FeedbackDesktopDescription[] =
      "Disables the feedback for U18 users on desktop platforms.";
  

@@ -8,7 +8,7 @@ Subject: kill TOS and metrics opt-out
 
 --- a/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/fullscreen_signin/FullscreenSigninMediator.java
 +++ b/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/fullscreen_signin/FullscreenSigninMediator.java
-@@ -308,8 +308,7 @@ public class FullscreenSigninMediator
+@@ -310,8 +310,7 @@ public class FullscreenSigninMediator
          // 1. Update all fields.
          mIsSigninSupported = isSigninSupported(profile);
          if (hasPolicies) {
@@ -18,7 +18,7 @@ Subject: kill TOS and metrics opt-out
              mIsSigninForcedByPolicy = ForcedSigninController.isForcedSigninPolicyEnabled();
              mForcedSigninToken =
                      mIsSigninForcedByPolicy
-@@ -914,7 +913,7 @@ public class FullscreenSigninMediator
+@@ -926,7 +925,7 @@ public class FullscreenSigninMediator
       * line has a TOS link. Second line appears only if MetricsReporting is not disabled by policy.
       */
      private @Nullable SpannableString getFooterString(boolean isMetricsReportingDisabled) {

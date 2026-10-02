@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/components/signin/internal/identity_manager/account_tracker_service.cc
 +++ b/components/signin/internal/identity_manager/account_tracker_service.cc
-@@ -106,7 +106,7 @@
+@@ -106,7 +106,7 @@ void RemoveImage(const base::FilePath& i
    }
  }
  

@@ -7,8 +7,6 @@ Subject: [PATCH] disable first run welcome page
   .../java/src/org/chromium/chrome/browser/firstrun/FirstRunStatus.java  | 3 +--
   1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/chrome/browser/first_run/android/java/src/org/chromium/chrome/browser/firstrun/FirstRunStatus.java b/chrome/browser/first_run/android/java/src/org/chromium/chrome/browser/firstrun/FirstRunStatus.java
-index ae781f1..d4dfde1 100644
 --- a/chrome/browser/first_run/android/java/src/org/chromium/chrome/browser/firstrun/FirstRunStatus.java
 +++ b/chrome/browser/first_run/android/java/src/org/chromium/chrome/browser/firstrun/FirstRunStatus.java
 @@ -52,8 +52,7 @@ public class FirstRunStatus {

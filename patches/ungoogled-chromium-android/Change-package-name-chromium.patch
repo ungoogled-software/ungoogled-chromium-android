@@ -20,16 +20,16 @@ author: Wengling Chen <feiyu2817@gmail.com>
 @@ -33,7 +33,7 @@ declare_args() {
    }
  }
-
+ 
 -chrome_public_test_manifest_package = "org.chromium.chrome.tests"
 +chrome_public_test_manifest_package = "org.ungoogled.chromium.tests"
-
+ 
  default_chrome_public_jinja_variables = [
    "channel=$android_channel",
 --- a/chrome/android/java/res_chromium_base/values/channel_constants.xml
 +++ b/chrome/android/java/res_chromium_base/values/channel_constants.xml
-@@ -7,7 +7,7 @@
-
+@@ -7,7 +7,7 @@ found in the LICENSE file.
+ 
  <resources xmlns:android="http://schemas.android.com/apk/res/android">
      <!-- The application name displayed to the user. -->
 -    <string name="app_name" translatable="false">Chromium</string>

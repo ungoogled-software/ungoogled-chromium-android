@@ -1,10 +1,8 @@
 author: bearinmindcat <bearincrypto@gmail.com>
 
-diff --git a/chrome/browser/notifications/persistent_notification_handler.cc b/chrome/browser/notifications/persistent_notification_handler.cc
-index 347e84a189399..18a758ade6734 100644
 --- a/chrome/browser/notifications/persistent_notification_handler.cc
 +++ b/chrome/browser/notifications/persistent_notification_handler.cc
-@@ -393,26 +393,6 @@ void PersistentNotificationHandler::OnShowOriginalNotification(
+@@ -393,26 +393,6 @@ void PersistentNotificationHandler::OnSh
      const GURL& url,
      const std::string& notification_id,
      Profile* profile) {

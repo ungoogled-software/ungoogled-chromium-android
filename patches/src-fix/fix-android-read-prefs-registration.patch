@@ -1,22 +1,19 @@
 author: bearinmindcat <bearincrypto@gmail.com>
 
-diff --git a/components/signin/internal/identity_manager/primary_account_manager.cc b/components/signin/internal/identity_manager/primary_account_manager.cc
 --- a/components/signin/internal/identity_manager/primary_account_manager.cc
 +++ b/components/signin/internal/identity_manager/primary_account_manager.cc
-@@ -266,6 +266,9 @@
+@@ -272,6 +272,8 @@ PrimaryAccountManager::~PrimaryAccountMa
  
  // static
  void PrimaryAccountManager::RegisterProfilePrefs(PrefRegistrySimple* registry) {
-+  // registered by literal path: signin_pref_names.cc is not built here
 +  registry->RegisterBooleanPref("signin.allowed", true);
 +  registry->RegisterStringPref("google.services.last_username", std::string());
  }
  
  // static
-diff --git a/components/signin/public/base/signin_prefs.cc b/components/signin/public/base/signin_prefs.cc
 --- a/components/signin/public/base/signin_prefs.cc
 +++ b/components/signin/public/base/signin_prefs.cc
-@@ -190,6 +190,8 @@
+@@ -194,6 +194,8 @@ SigninPrefs::~SigninPrefs() = default;
  void SigninPrefs::RegisterProfilePrefs(PrefRegistrySimple* registry) {
    registry->RegisterDictionaryPref(kSigninAccountPrefs);
    registry->RegisterIntegerPref(kAccountMetricsNextUnassignedId, 0);

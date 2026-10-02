@@ -3,21 +3,9 @@ author: Wengling Chen <feiyu2817@gmail.com>
 
 ---
 diff '--color=auto' -ur orig/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java new/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
---- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-+++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -2824,7 +2824,7 @@
-         }
- 
-         if (id == R.id.exit_id) {
--            ApplicationLifetime.terminate(false);
-+            ApplicationLifetime.terminateAndroid();
-             return true;
-         }
- 
-diff '--color=auto' -ur orig/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java new/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
-@@ -4331,7 +4331,7 @@
+@@ -4530,7 +4530,7 @@ public class ChromeTabbedActivity extend
                              TabClosureParams.closeTab(currentTab).build(), /* allowDialog= */ true);
              RecordUserAction.record("MobileTabClosed");
          } else if (id == R.id.exit_id) {
@@ -26,7 +14,17 @@ diff '--color=auto' -ur orig/chrome/android/java/src/org/chromium/chrome/browser
          } else if (id == R.id.close_all_tabs_menu_id) {
              boolean allowUndo = TabClosureParamsUtils.shouldAllowUndo(triggeringMotion);
  
-diff '--color=auto' -ur orig/chrome/browser/lifetime/android/java/src/org/chromium/chrome/browser/lifetime/ApplicationLifetime.java new/chrome/browser/lifetime/android/java/src/org/chromium/chrome/browser/lifetime/ApplicationLifetime.java
+--- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
+@@ -2969,7 +2969,7 @@ public abstract class ChromeActivity ext
+         }
+ 
+         if (id == R.id.exit_id) {
+-            ApplicationLifetime.terminate(false);
++            ApplicationLifetime.terminateAndroid();
+             return true;
+         }
+ 
 --- a/chrome/browser/lifetime/android/java/src/org/chromium/chrome/browser/lifetime/ApplicationLifetime.java
 +++ b/chrome/browser/lifetime/android/java/src/org/chromium/chrome/browser/lifetime/ApplicationLifetime.java
 @@ -5,12 +5,15 @@
@@ -45,7 +43,7 @@ diff '--color=auto' -ur orig/chrome/browser/lifetime/android/java/src/org/chromi
  public class ApplicationLifetime {
      /** Interface to be implemented to be notified of application termination. */
      public interface Observer {
-@@ -47,4 +50,13 @@
+@@ -47,4 +50,13 @@ public class ApplicationLifetime {
              observer.onTerminate(restart);
          }
      }
@@ -59,7 +57,6 @@ diff '--color=auto' -ur orig/chrome/browser/lifetime/android/java/src/org/chromi
 +        void terminateAndroid();
 +    }
  }
-diff '--color=auto' -ur orig/chrome/browser/lifetime/application_lifetime_android.cc new/chrome/browser/lifetime/application_lifetime_android.cc
 --- a/chrome/browser/lifetime/application_lifetime_android.cc
 +++ b/chrome/browser/lifetime/application_lifetime_android.cc
 @@ -8,8 +8,11 @@
@@ -74,7 +71,7 @@ diff '--color=auto' -ur orig/chrome/browser/lifetime/application_lifetime_androi
  #include "chrome/common/pref_names.h"
  #include "components/prefs/pref_service.h"
  #include "content/public/browser/browser_context.h"
-@@ -34,10 +37,24 @@
+@@ -34,10 +37,23 @@ void TerminateAndroid() {
      prefs->ClearPref(prefs::kRestartLastSessionOnShutdown);
    }
  
@@ -82,8 +79,7 @@ diff '--color=auto' -ur orig/chrome/browser/lifetime/application_lifetime_androi
 +      ChromeBrowsingDataLifetimeManagerFactory::GetForProfile(
 +          ProfileManager::GetActiveUserProfile());
 +  if (browsing_data_lifetime_manager) {
-+    // Delete browsing data as set by the clear-data-on-exit flag or the
-+    // ClearBrowsingDataOnExitList policy.
++    // Delete browsing data set by the ClearBrowsingDataOnExitList policy.
 +    browsing_data_lifetime_manager->ClearBrowsingDataForOnExitPolicy(
 +        /*keep_browser_alive=*/true);
 +  }
@@ -99,7 +95,6 @@ diff '--color=auto' -ur orig/chrome/browser/lifetime/application_lifetime_androi
  }  // namespace chrome
  
  DEFINE_JNI(ApplicationLifetime)
-diff '--color=auto' -ur orig/chrome/browser/ungoogled_flag_entries.h new/chrome/browser/ungoogled_flag_entries.h
 --- a/chrome/browser/ungoogled_flag_entries.h
 +++ b/chrome/browser/ungoogled_flag_entries.h
 @@ -63,7 +63,7 @@
@@ -108,6 +103,6 @@ diff '--color=auto' -ur orig/chrome/browser/ungoogled_flag_entries.h new/chrome/
       "Clears all browsing data on exit. ungoogled-chromium flag",
 -     kOsDesktop, FEATURE_VALUE_TYPE(features::kClearDataOnExit)},
 +     kOsAll, FEATURE_VALUE_TYPE(features::kClearDataOnExit)},
-     {"remove-tabsearch-button",
-      "Remove Tabsearch Button",
-      "Removes the tabsearch button from the tabstrip. ungoogled-chromium flag",
+     {"disable-qr-generator",
+      "Disable QR Generator",
+      "Disables the QR generator for sharing page links. ungoogled-chromium flag",

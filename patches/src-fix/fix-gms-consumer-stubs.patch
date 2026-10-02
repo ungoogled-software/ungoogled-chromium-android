@@ -1,9 +1,8 @@
 author: bearinmindcat <bearincrypto@gmail.com>
 
-diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/GmsUpdateLauncher.java b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/GmsUpdateLauncher.java
 --- a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/GmsUpdateLauncher.java
 +++ b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/GmsUpdateLauncher.java
-@@ -9,8 +9,6 @@
+@@ -9,8 +9,6 @@ import android.content.Context;
  import android.content.Intent;
  import android.net.Uri;
  
@@ -12,7 +11,7 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
  import org.chromium.build.annotations.NullMarked;
  
  /** Launches the UI through which the user can update Google Play Services/ */
-@@ -25,31 +23,5 @@
+@@ -25,31 +23,5 @@ public class GmsUpdateLauncher {
       * @param context to start the new store Activity from.
       */
      public static void launch(Context context) {
@@ -44,10 +43,9 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
 -        }
      }
  }
-diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerAndroidBackendUtil.java b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerAndroidBackendUtil.java
 --- a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerAndroidBackendUtil.java
 +++ b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerAndroidBackendUtil.java
-@@ -5,10 +5,6 @@
+@@ -5,10 +5,6 @@ package org.chromium.chrome.browser.pass
  
  import android.app.PendingIntent;
  
@@ -58,7 +56,7 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
  import org.chromium.base.Log;
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
-@@ -28,9 +24,6 @@
+@@ -28,9 +24,6 @@ class PasswordManagerAndroidBackendUtil
          if (exception instanceof PasswordStoreAndroidBackend.BackendException) {
              return ((PasswordStoreAndroidBackend.BackendException) exception).errorCode;
          }
@@ -68,7 +66,7 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
          return AndroidBackendErrorType.UNCATEGORIZED;
      }
  
-@@ -38,41 +31,14 @@
+@@ -38,41 +31,14 @@ class PasswordManagerAndroidBackendUtil
          if (exception instanceof PasswordCheckupClientHelper.PasswordManagerUnavailableException) {
              return CredentialManagerError.PASSWORD_MANAGER_NOT_AVAILABLE;
          }
@@ -112,10 +110,9 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
 +        return null;
      }
  }
-diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerHelper.java b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerHelper.java
 --- a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerHelper.java
 +++ b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordManagerHelper.java
-@@ -16,8 +16,6 @@
+@@ -16,8 +16,6 @@ import androidx.annotation.IntDef;
  import androidx.annotation.VisibleForTesting;
  import androidx.fragment.app.FragmentActivity;
  
@@ -124,7 +121,7 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
  import org.jni_zero.JniType;
  import org.jni_zero.NativeMethods;
  
-@@ -491,13 +489,6 @@
+@@ -491,13 +489,6 @@ public class PasswordManagerHelper {
          // If the exception is not a Chrome-defined one, it means that the call failed at the
          // API call level. It could have either failed with a known ApiException or because of a
          // different error (e.g. a different exception thrown by the implementation of the API).
@@ -138,7 +135,6 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
  
          RecordHistogram.recordEnumeratedHistogram(
                  kGetIntentErrorHistogram,
-diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordSyncControllerDelegateBridgeImpl.java b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordSyncControllerDelegateBridgeImpl.java
 --- a/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordSyncControllerDelegateBridgeImpl.java
 +++ b/chrome/browser/password_manager/android/java/src/org/chromium/chrome/browser/password_manager/PasswordSyncControllerDelegateBridgeImpl.java
 @@ -4,8 +4,6 @@
@@ -150,7 +146,7 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
  import org.jni_zero.CalledByNative;
  import org.jni_zero.NativeMethods;
  
-@@ -78,11 +76,6 @@
+@@ -78,11 +76,6 @@ class PasswordSyncControllerDelegateBrid
              error = ((PasswordStoreAndroidBackend.BackendException) exception).errorCode;
          }
  
@@ -162,10 +158,9 @@ diff --git a/chrome/browser/password_manager/android/java/src/org/chromium/chrom
          PasswordSyncControllerDelegateBridgeImplJni.get()
                  .onCredentialManagerError(mNativeDelegateBridgeImpl, error, apiErrorCode);
      }
-diff --git a/chrome/browser/webauthn/android/java/src/org/chromium/chrome/browser/webauthn/CableAuthenticatorModuleProvider.java b/chrome/browser/webauthn/android/java/src/org/chromium/chrome/browser/webauthn/CableAuthenticatorModuleProvider.java
 --- a/chrome/browser/webauthn/android/java/src/org/chromium/chrome/browser/webauthn/CableAuthenticatorModuleProvider.java
 +++ b/chrome/browser/webauthn/android/java/src/org/chromium/chrome/browser/webauthn/CableAuthenticatorModuleProvider.java
-@@ -9,8 +9,6 @@
+@@ -9,8 +9,6 @@ import android.bluetooth.BluetoothAdapte
  import android.content.Context;
  import android.os.Parcel;
  
@@ -174,15 +169,15 @@ diff --git a/chrome/browser/webauthn/android/java/src/org/chromium/chrome/browse
  import org.jni_zero.CalledByNative;
  import org.jni_zero.NativeMethods;
  
-@@ -23,7 +21,6 @@
- import org.chromium.chrome.browser.enterprise.util.EnterpriseInfo;
+@@ -23,7 +21,6 @@ import org.chromium.build.annotations.Nu
+ import org.chromium.components.policy.EnterpriseInfo;
  import org.chromium.components.browser_ui.notifications.NotificationProxyUtils;
  import org.chromium.components.externalauth.ExternalAuthUtils;
 -import org.chromium.components.webauthn.Fido2ApiCall;
  
  /**
   * Provides linking information to the native side.
-@@ -83,37 +80,7 @@
+@@ -83,37 +80,7 @@ public class CableAuthenticatorModulePro
              ok = false;
          }
  
@@ -221,10 +216,9 @@ diff --git a/chrome/browser/webauthn/android/java/src/org/chromium/chrome/browse
      }
  
      @NativeMethods
-diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsCreationDelegate.java b/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsCreationDelegate.java
 --- a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsCreationDelegate.java
 +++ b/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsCreationDelegate.java
-@@ -20,10 +20,6 @@
+@@ -20,10 +20,6 @@ import androidx.credentials.exceptions.C
  import androidx.credentials.exceptions.CreateCredentialUnknownException;
  import androidx.credentials.provider.PendingIntentHandler;
  
@@ -235,7 +229,7 @@ diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/w
  import org.json.JSONException;
  import org.json.JSONObject;
  
-@@ -53,173 +49,7 @@
+@@ -53,173 +49,7 @@ public class DigitalCredentialsCreationD
      @OptIn(markerClass = ExperimentalDigitalCredentialApi.class)
      public Promise<DigitalCredential> create(
              WindowAndroid windowAndroid, String origin, String request) {
@@ -312,7 +306,7 @@ diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/w
 -                                            "Response doesn't contain responseJson"));
 -                            return;
 -                        }
--                        Log.d(TAG, "Response JSON: " + responseJson);
+-                        Log.d(TAG, "Response JSON: %s", responseJson);
 -
 -                        DigitalCredential digitalCredential = parseResponse(responseJson);
 -                        if (digitalCredential == null) {
@@ -410,10 +404,9 @@ diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/w
      }
  
      private static @Nullable DigitalCredential parseResponse(String responseJson) {
-diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsPresentationDelegate.java b/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsPresentationDelegate.java
 --- a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsPresentationDelegate.java
 +++ b/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/webid/DigitalCredentialsPresentationDelegate.java
-@@ -7,25 +7,15 @@
+@@ -7,25 +7,15 @@ package org.chromium.chrome.browser.webi
  import android.app.Activity;
  import android.content.Intent;
  import android.os.Bundle;
@@ -439,7 +432,7 @@ diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/w
  
  import org.json.JSONException;
  import org.json.JSONObject;
-@@ -38,7 +28,6 @@
+@@ -38,7 +28,6 @@ import org.chromium.build.annotations.Nu
  import org.chromium.chrome.browser.webid.IdentityCredentialsDelegate.DigitalCredential;
  import org.chromium.ui.base.WindowAndroid;
  
@@ -447,7 +440,7 @@ diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/w
  
  @NullMarked
  public class DigitalCredentialsPresentationDelegate {
-@@ -51,8 +40,6 @@
+@@ -51,8 +40,6 @@ public class DigitalCredentialsPresentat
      public static final String BUNDLE_KEY_PROVIDER_DATA =
              "androidx.identitycredentials.BUNDLE_KEY_PROVIDER_DATA";
  
@@ -456,7 +449,7 @@ diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/w
  
      @VisibleForTesting
      public static final String EXTRA_PASS_IT_BY_RESULT_RECEIVER =
-@@ -67,150 +54,11 @@
+@@ -67,150 +54,11 @@ public class DigitalCredentialsPresentat
      private static final String TYPE_INTERRUPTED =
              "android.credentials.GetCredentialException.TYPE_INTERRUPTED";
  
@@ -608,10 +601,9 @@ diff --git a/chrome/browser/webid/android/java/src/org/chromium/chrome/browser/w
      }
  
      @VisibleForTesting
-diff --git a/components/one_time_tokens/android/backend/common/java/src/org/chromium/components/one_time_tokens/backend/OneTimeTokensMetricsRecorder.java b/components/one_time_tokens/android/backend/common/java/src/org/chromium/components/one_time_tokens/backend/OneTimeTokensMetricsRecorder.java
 --- a/components/one_time_tokens/android/backend/common/java/src/org/chromium/components/one_time_tokens/backend/OneTimeTokensMetricsRecorder.java
 +++ b/components/one_time_tokens/android/backend/common/java/src/org/chromium/components/one_time_tokens/backend/OneTimeTokensMetricsRecorder.java
-@@ -6,9 +6,6 @@
+@@ -6,9 +6,6 @@ package org.chromium.components.one_time
  
  import android.os.SystemClock;
  
@@ -621,7 +613,7 @@ diff --git a/components/one_time_tokens/android/backend/common/java/src/org/chro
  import org.chromium.base.metrics.RecordHistogram;
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
-@@ -62,18 +59,5 @@
+@@ -62,18 +59,5 @@ public class OneTimeTokensMetricsRecorde
      }
  
      private void reportErrorMetrics(Exception exception) {
@@ -640,7 +632,6 @@ diff --git a/components/one_time_tokens/android/backend/common/java/src/org/chro
 -        RecordHistogram.recordSparseHistogram(getHistogramName(API_ERROR_METRIC_NAME), errorCode);
      }
  }
-diff --git a/components/one_time_tokens/android/backend/sms/java/src/org/chromium/components/one_time_tokens/backend/sms/AndroidSmsOtpFetchReceiverBridge.java b/components/one_time_tokens/android/backend/sms/java/src/org/chromium/components/one_time_tokens/backend/sms/AndroidSmsOtpFetchReceiverBridge.java
 --- a/components/one_time_tokens/android/backend/sms/java/src/org/chromium/components/one_time_tokens/backend/sms/AndroidSmsOtpFetchReceiverBridge.java
 +++ b/components/one_time_tokens/android/backend/sms/java/src/org/chromium/components/one_time_tokens/backend/sms/AndroidSmsOtpFetchReceiverBridge.java
 @@ -4,9 +4,6 @@
@@ -653,7 +644,7 @@ diff --git a/components/one_time_tokens/android/backend/sms/java/src/org/chromiu
  import org.jni_zero.CalledByNative;
  import org.jni_zero.JNINamespace;
  import org.jni_zero.NativeClassQualifiedName;
-@@ -42,13 +39,7 @@
+@@ -42,13 +39,7 @@ class AndroidSmsOtpFetchReceiverBridge {
      void onOtpValueRetrievalError(Exception exception) {
          if (mNativeReceiverBridge == 0) return;
  
@@ -668,10 +659,9 @@ diff --git a/components/one_time_tokens/android/backend/sms/java/src/org/chromiu
          AndroidSmsOtpFetchReceiverBridgeJni.get()
                  .onOtpValueRetrievalError(mNativeReceiverBridge, errorCode);
      }
-diff --git a/components/webauthn/android/BUILD.gn b/components/webauthn/android/BUILD.gn
 --- a/components/webauthn/android/BUILD.gn
 +++ b/components/webauthn/android/BUILD.gn
-@@ -41,8 +41,6 @@
+@@ -41,8 +41,6 @@ android_library("java") {
      "java/src/org/chromium/components/webauthn/Barrier.java",
      "java/src/org/chromium/components/webauthn/CreateConfirmationUiDelegate.java",
      "java/src/org/chromium/components/webauthn/Fido2Api.java",
@@ -680,10 +670,9 @@ diff --git a/components/webauthn/android/BUILD.gn b/components/webauthn/android/
      "java/src/org/chromium/components/webauthn/Fido2CredentialRequest.java",
      "java/src/org/chromium/components/webauthn/FidoIntentSender.java",
      "java/src/org/chromium/components/webauthn/GetMatchingCredentialIdsDelegate.java",
-diff --git a/components/webauthn/android/java/src/org/chromium/components/webauthn/Fido2CredentialRequest.java b/components/webauthn/android/java/src/org/chromium/components/webauthn/Fido2CredentialRequest.java
 --- a/components/webauthn/android/java/src/org/chromium/components/webauthn/Fido2CredentialRequest.java
 +++ b/components/webauthn/android/java/src/org/chromium/components/webauthn/Fido2CredentialRequest.java
-@@ -27,8 +27,6 @@
+@@ -27,8 +27,6 @@ import androidx.annotation.IntDef;
  import androidx.annotation.RequiresApi;
  import androidx.annotation.VisibleForTesting;
  
@@ -692,7 +681,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
  import org.jni_zero.JNINamespace;
  import org.jni_zero.NativeMethods;
  
-@@ -50,7 +48,6 @@
+@@ -50,7 +48,6 @@ import org.chromium.blink.mojom.Resident
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
  import org.chromium.components.password_manager.BrowserAssistedLoginType;
@@ -700,7 +689,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
  import org.chromium.components.webauthn.cred_man.CredManHelper;
  import org.chromium.components.webauthn.cred_man.CredManSupportProvider;
  import org.chromium.content_public.browser.ClientDataJson;
-@@ -152,12 +149,7 @@
+@@ -156,12 +153,7 @@ public class Fido2CredentialRequest impl
       */
      public Fido2CredentialRequest(AuthenticationContextProvider authenticationContextProvider) {
          mAuthenticationContextProvider = authenticationContextProvider;
@@ -714,7 +703,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
          mPlayServicesAvailable = playServicesAvailable;
          mCredManHelper =
                  new CredManHelper(mAuthenticationContextProvider, this, mPlayServicesAvailable);
-@@ -352,29 +344,6 @@
+@@ -359,29 +351,6 @@ public class Fido2CredentialRequest impl
                              /* credentialRequestResult= */ null);
                      return;
                  }
@@ -744,7 +733,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
                  return;
              }
              int result =
-@@ -431,27 +400,6 @@
+@@ -438,27 +407,6 @@ public class Fido2CredentialRequest impl
                      /* credentialRequestResult= */ null);
              return;
          }
@@ -772,7 +761,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      @SuppressWarnings("NewApi")
-@@ -927,32 +875,6 @@
+@@ -936,32 +884,6 @@ public class Fido2CredentialRequest impl
              callback.onIsUserVerifyingPlatformAuthenticatorAvailableResponse(false);
              return;
          }
@@ -805,7 +794,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      public void handleReportRequest(PublicKeyCredentialReportOptions options, Origin origin) {
-@@ -1296,16 +1218,6 @@
+@@ -1305,16 +1227,6 @@ public class Fido2CredentialRequest impl
          if (options.mediation == Mediation.CONDITIONAL) {
              mCancellableUiState = CancellableUiState.REQUEST_SENT_TO_PLATFORM;
          }
@@ -822,7 +811,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      private void handleNonCredentialReturn(GetCredentialOptions options, Integer reason) {
-@@ -1350,29 +1262,6 @@
+@@ -1357,29 +1269,6 @@ public class Fido2CredentialRequest impl
          assert mCancellableUiState == CancellableUiState.NONE
                  || mCancellableUiState == CancellableUiState.REQUEST_SENT_TO_PLATFORM
                  || mCancellableUiState == CancellableUiState.WAITING_FOR_SELECTION;
@@ -852,18 +841,17 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      // Handles a PendingIntent from the GMSCore FIDO library.
-diff --git a/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreGetCredentialsHelper.java b/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreGetCredentialsHelper.java
 --- a/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreGetCredentialsHelper.java
 +++ b/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreGetCredentialsHelper.java
-@@ -8,7 +8,6 @@
+@@ -10,7 +10,6 @@ import android.os.SystemClock;
  
- import android.os.SystemClock;
+ import androidx.annotation.IntDef;
  
 -import com.google.android.gms.tasks.OnFailureListener;
  
  import org.chromium.base.ResettersForTesting;
  import org.chromium.base.metrics.RecordHistogram;
-@@ -80,6 +79,9 @@
+@@ -92,6 +91,9 @@ public class GmsCoreGetCredentialsHelper
      public interface GetCredentialsCallback {
          void onCredentialsReceived(List<WebauthnCredentialDetails> credentials);
      }
@@ -873,10 +861,10 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
  
      public static GmsCoreGetCredentialsHelper getInstance() {
          if (sInstance == null) {
-@@ -106,72 +108,7 @@
-             String relyingPartyId, Reason reason, GetCredentialsCallback successCallback,
+@@ -121,72 +123,7 @@ public class GmsCoreGetCredentialsHelper
+             GetCredentialsCallback successCallback,
              OnFailureListener failureCallback) {
-         log(TAG, "getCredentials with reason: " + reason);
+         log(TAG, "getCredentials with reason: %s", getReasonName(reason));
 -        final long startTimeMs = SystemClock.elapsedRealtime();
 -        if (reason == Reason.GET_ASSERTION_NON_GOOGLE && GmsCoreUtils.isPasskeyCacheSupported()) {
 -            Fido2ApiCallHelper.getInstance()
@@ -920,7 +908,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
 -    private void getCredentialsFromFido2Api(
 -            AuthenticationContextProvider authenticationContextProvider,
 -            String relyingPartyId,
--            Reason reason,
+-            @Reason int reason,
 -            GetCredentialsCallback successCallback,
 -            OnFailureListener failureCallback,
 -            @GmsCoreGetCredentialsResult int successMetric,
@@ -947,7 +935,6 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      private void recordSuccessMetrics(
-diff --git a/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreUtils.java b/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreUtils.java
 --- a/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreUtils.java
 +++ b/components/webauthn/android/java/src/org/chromium/components/webauthn/GmsCoreUtils.java
 @@ -4,9 +4,6 @@
@@ -960,7 +947,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
  import org.chromium.base.PackageUtils;
  import org.chromium.base.ResettersForTesting;
  import org.chromium.base.task.PostTask;
-@@ -15,28 +12,13 @@
+@@ -15,28 +12,13 @@ import org.chromium.build.annotations.Nu
  
  @NullMarked
  public class GmsCoreUtils {
@@ -991,7 +978,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      /**
-@@ -45,28 +27,22 @@
+@@ -45,28 +27,22 @@ public class GmsCoreUtils {
       * version.
       */
      public static boolean isGetMatchingCredentialIdsSupported() {
@@ -1024,7 +1011,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      /**
-@@ -74,30 +50,30 @@
+@@ -74,30 +50,10 @@ public class GmsCoreUtils {
       * inner callback's invocation to the UI thread to avoid contention over state. Intent callbacks
       * can be run on a different thread from the one on which they were originally invoked.
       */
@@ -1037,15 +1024,6 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
 -                    });
 -        };
 -    }
-+    // public static <T> OnSuccessListener<T> wrapSuccessCallback(OnSuccessListener<T> callback) {
-+    //     return (result) -> {
-+    //         PostTask.runOrPostTask(
-+    //                 TaskTraits.UI_USER_VISIBLE,
-+    //                 () -> {
-+    //                     callback.onSuccess(result);
-+    //                 });
-+    //     };
-+    // }
  
      /**
       * Returns a FailureListener callback that wraps another FailureListener callback, but posts the
@@ -1063,22 +1041,10 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
 -                    });
 -        };
 -    }
-+    // public static OnFailureListener wrapFailureCallback(OnFailureListener callback) {
-+    //     // Post callbacks to UI thread to avoid contention over state, since this can be called
-+    //     // on a different thread than was originally used to invoke the Intent.
-+    //     return (e) -> {
-+    //         PostTask.runOrPostTask(
-+    //                 TaskTraits.UI_USER_VISIBLE,
-+    //                 () -> {
-+    //                     callback.onFailure(e);
-+    //                 });
-+    //     };
-+    // }
  }
-diff --git a/components/webauthn/android/java/src/org/chromium/components/webauthn/IdentityCredentialsHelper.java b/components/webauthn/android/java/src/org/chromium/components/webauthn/IdentityCredentialsHelper.java
 --- a/components/webauthn/android/java/src/org/chromium/components/webauthn/IdentityCredentialsHelper.java
 +++ b/components/webauthn/android/java/src/org/chromium/components/webauthn/IdentityCredentialsHelper.java
-@@ -13,12 +13,6 @@
+@@ -13,12 +13,6 @@ import android.os.Bundle;
  
  import androidx.annotation.VisibleForTesting;
  
@@ -1091,7 +1057,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
  import org.jni_zero.JNINamespace;
  
  import org.chromium.blink.mojom.AuthenticatorStatus;
-@@ -57,70 +51,15 @@
+@@ -57,70 +51,15 @@ public class IdentityCredentialsHelper {
          log(TAG, "handleConditionalCreateRequest");
          WebauthnRequestCallback callback =
                  assertNonNull(mAuthenticationContextProvider.getRequestCallback());
@@ -1171,7 +1137,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
      }
  
      private void onConditionalCreateFailure(Exception e) {
-@@ -154,70 +93,5 @@
+@@ -154,70 +93,5 @@ public class IdentityCredentialsHelper {
      // Dispatches a Report request.
      public void handleReportRequest(
              PublicKeyCredentialReportOptions options, @Nullable String origin) {
@@ -1242,10 +1208,9 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
 -                null);
      }
  }
-diff --git a/components/webauthn/android/java/src/org/chromium/components/webauthn/WebauthnModeProvider.java b/components/webauthn/android/java/src/org/chromium/components/webauthn/WebauthnModeProvider.java
 --- a/components/webauthn/android/java/src/org/chromium/components/webauthn/WebauthnModeProvider.java
 +++ b/components/webauthn/android/java/src/org/chromium/components/webauthn/WebauthnModeProvider.java
-@@ -9,7 +9,6 @@
+@@ -9,7 +9,6 @@ import org.jni_zero.NativeMethods;
  
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
@@ -1253,7 +1218,7 @@ diff --git a/components/webauthn/android/java/src/org/chromium/components/webaut
  import org.chromium.components.webauthn.cred_man.AppCredManRequestDecorator;
  import org.chromium.components.webauthn.cred_man.BrowserCredManRequestDecorator;
  import org.chromium.components.webauthn.cred_man.CredManRequestDecorator;
-@@ -48,20 +47,6 @@
+@@ -48,20 +47,6 @@ public class WebauthnModeProvider {
          } else {
              assert false : "WebauthnMode not set! See this class's JavaDoc.";
          }
