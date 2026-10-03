@@ -18,7 +18,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
      <dimen name="ntp_search_box_transition_start_offset">60dp</dimen>
 --- a/chrome/android/java/res/values/dimens.xml
 +++ b/chrome/android/java/res/values/dimens.xml
-@@ -147,6 +147,7 @@ found in the LICENSE file.
+@@ -152,6 +152,7 @@ found in the LICENSE file.
  
      <!-- Should match toolbar_height_no_shadow -->
      <dimen name="control_container_height">@dimen/default_action_bar_height</dimen>
@@ -107,7 +107,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
      /**
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -896,7 +896,10 @@ public abstract class ChromeActivity ext
+@@ -897,7 +897,10 @@ public abstract class ChromeActivity ext
              // Inflate the correct toolbar layout for the device.
              int toolbarLayoutId = getToolbarLayoutId();
              if (toolbarLayoutId != ActivityUtils.NO_RESOURCE_ID && controlContainer != null) {
@@ -121,8 +121,8 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
          }
 --- a/chrome/android/java/src/org/chromium/chrome/browser/compositor/overlays/strip/StripLayoutHelper.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/compositor/overlays/strip/StripLayoutHelper.java
-@@ -143,6 +143,7 @@ import org.chromium.components.tab_group
- import org.chromium.components.tab_groups.TabGroupColorId;
+@@ -144,6 +144,7 @@ import org.chromium.components.tab_group
+ import org.chromium.components.tabs.TabAlert;
  import org.chromium.ui.accessibility.AccessibilityState;
  import org.chromium.ui.base.ActivityResultTracker;
 +import org.chromium.ui.base.DeviceFormFactor;
@@ -131,7 +131,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.ui.util.MotionEventUtils;
 --- a/chrome/android/java/src/org/chromium/chrome/browser/compositor/overlays/strip/StripLayoutHelperManager.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/compositor/overlays/strip/StripLayoutHelperManager.java
-@@ -118,6 +118,7 @@ import org.chromium.components.browser_u
+@@ -115,6 +115,7 @@ import org.chromium.components.tabs.TabA
  import org.chromium.content_public.browser.LoadUrlParams;
  import org.chromium.ui.base.ActivityResultTracker;
  import org.chromium.ui.base.ActivityWindowAndroid;
@@ -139,7 +139,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.ui.base.PageTransition;
  import org.chromium.ui.display.DisplayUtil;
  import org.chromium.ui.dragdrop.DragAndDropDelegate;
-@@ -571,7 +572,10 @@ public class StripLayoutHelperManager
+@@ -556,7 +557,10 @@ public class StripLayoutHelperManager
          mIsHeaderCustomizationSupported =
                  ToolbarFeatures.isAppHeaderCustomizationSupported(
                          /* isTablet= */ true, DisplayUtil.isContextInDefaultDisplay(mContext));
@@ -188,17 +188,17 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.chrome.browser.profiles.ProfileManager;
  import org.chromium.chrome.browser.signin.SigninCheckerProvider;
  import org.chromium.components.background_task_scheduler.BackgroundTaskSchedulerFactory;
-@@ -110,6 +111,7 @@ public class ChromeBrowserInitializer {
+@@ -109,6 +110,7 @@ public class ChromeBrowserInitializer {
      public void handlePreNativeStartupAndLoadLibraries(final BrowserParts parts) {
          ThreadUtils.checkUiThread();
          if (parts.isActivityFinishingOrDestroyed()) return;
 +        ChromeSharedPreferences.warmUp();
          ProcessInitializationHandler.getInstance().initializePreNative();
          ProcessInitializationHandler.getInstance().initializePreNativeLibraryLoad();
-         try (TraceEvent e = TraceEvent.scoped("ChromeBrowserInitializer.preInflationStartup")) {
+         try (TraceEvent _ = TraceEvent.scoped("ChromeBrowserInitializer.preInflationStartup")) {
 --- a/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedRootUiCoordinator.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedRootUiCoordinator.java
-@@ -1055,6 +1055,8 @@ public class TabbedRootUiCoordinator ext
+@@ -1125,6 +1125,8 @@ public class TabbedRootUiCoordinator ext
  
      @Override
      public int getControlContainerHeightResource() {
@@ -209,7 +209,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ui/RootUiCoordinator.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ui/RootUiCoordinator.java
-@@ -143,6 +143,8 @@ import org.chromium.chrome.browser.paint
+@@ -145,6 +145,8 @@ import org.chromium.chrome.browser.paint
  import org.chromium.chrome.browser.password_manager.ManagePasswordsReferrer;
  import org.chromium.chrome.browser.password_manager.PasswordManagerLauncher;
  import org.chromium.chrome.browser.pdf.PdfPage;
@@ -218,7 +218,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.chrome.browser.profiles.Profile;
  import org.chromium.chrome.browser.quick_delete.QuickDeleteController;
  import org.chromium.chrome.browser.quick_delete.QuickDeleteDelegateImpl;
-@@ -2335,7 +2337,9 @@ public class RootUiCoordinator
+@@ -2455,7 +2457,9 @@ public class RootUiCoordinator
  
      protected int getFindToolbarStub() {
          int stubId = R.id.find_toolbar_stub;
@@ -241,7 +241,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
    srcjar_deps = [
 --- a/chrome/browser/preferences/android/java/src/org/chromium/chrome/browser/preferences/ChromePreferenceKeys.java
 +++ b/chrome/browser/preferences/android/java/src/org/chromium/chrome/browser/preferences/ChromePreferenceKeys.java
-@@ -454,6 +454,7 @@ public final class ChromePreferenceKeys
+@@ -455,6 +455,7 @@ public final class ChromePreferenceKeys
      /** Whether the app-specific history info text was already seen by users. */
      public static final String HISTORY_APP_SPECIFIC_INFO_SEEN =
              "Chrome.History.AppSpecificInfoSeen";
@@ -307,7 +307,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
          boolean isOnExternalDisplay = !DisplayUtil.isContextInDefaultDisplay(context);
 --- a/chrome/browser/ui/android/omnibox/java/src/org/chromium/chrome/browser/omnibox/LocationBarCoordinator.java
 +++ b/chrome/browser/ui/android/omnibox/java/src/org/chromium/chrome/browser/omnibox/LocationBarCoordinator.java
-@@ -1259,7 +1259,7 @@ public class LocationBarCoordinator
+@@ -1253,7 +1253,7 @@ public class LocationBarCoordinator
      }
  
      private boolean isTabletWindow() {
@@ -318,7 +318,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
      /* package */ LocationBarMediator getMediatorForTesting() {
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -602,6 +602,12 @@ For more settings that use data to impro
+@@ -605,6 +605,12 @@ For more settings that use data to impro
        </message>
  
  
@@ -376,15 +376,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
      <dimen name="ntp_search_box_height_tall">72dp</dimen>
 --- a/chrome/browser/ui/android/toolbar/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarControlContainer.java
 +++ b/chrome/browser/ui/android/toolbar/java/src/org/chromium/chrome/browser/toolbar/top/ToolbarControlContainer.java
-@@ -9,6 +9,7 @@ import static org.chromium.build.NullUti
- 
- import android.annotation.SuppressLint;
- import android.content.Context;
-+import android.content.res.Resources;
- import android.graphics.Canvas;
- import android.graphics.Color;
- import android.graphics.Paint;
-@@ -227,6 +228,11 @@ public class ToolbarControlContainer ext
+@@ -235,6 +235,11 @@ public class ToolbarControlContainer ext
      @Initializer
      public void initWithToolbar(int toolbarLayoutId, int toolbarLayoutHeightResId) {
          try (TraceEvent te = TraceEvent.scoped("ToolbarControlContainer.initWithToolbar")) {
@@ -425,7 +417,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.ui.resources.dynamics.DynamicResourceReadyOnceCallback;
  import org.chromium.ui.util.TokenHolder;
  
-@@ -366,6 +367,7 @@ class HeightTransitionHandler {
+@@ -364,6 +365,7 @@ class HeightTransitionHandler {
  
      /** Get the min screen width (in dp) required for the tab strip to become visible. */
      private static int getScreenWidthThresholdDp() {
@@ -466,7 +458,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
 +        android:summary="@string/force_tablet_ui_summary"
 +        android:title="@string/force_tablet_ui_title" />
 +
-     <Preference
+     <org.chromium.components.browser_ui.settings.ChromeBasePreference
          android:key="captions"
          android:title="@string/accessibility_captions_title"/>
 --- a/components/browser_ui/accessibility/android/java/src/org/chromium/components/browser_ui/accessibility/AccessibilitySettings.java

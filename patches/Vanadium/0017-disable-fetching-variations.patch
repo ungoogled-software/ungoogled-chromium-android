@@ -9,7 +9,7 @@ Subject: [PATCH] disable fetching variations
 
 --- a/chrome/android/java/src/org/chromium/chrome/browser/init/AsyncInitTaskRunner.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/init/AsyncInitTaskRunner.java
-@@ -39,7 +39,7 @@ public abstract class AsyncInitTaskRunne
+@@ -38,7 +38,7 @@ public abstract class AsyncInitTaskRunne
  
      @VisibleForTesting
      boolean shouldFetchVariationsSeedDuringFirstRun() {

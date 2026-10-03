@@ -5,10 +5,9 @@ Subject: [PATCH] ultimatum: webextensions on Android,draft
 author: bearinmindcat <bearincrypto@gmail.com>
 date: Thu, 1 Oct 2026
 ---
-diff --git a/chrome/browser/download/download_crx_util.cc b/chrome/browser/download/download_crx_util.cc
 --- a/chrome/browser/download/download_crx_util.cc
 +++ b/chrome/browser/download/download_crx_util.cc
-@@ -89,9 +89,7 @@
+@@ -90,9 +90,7 @@ std::unique_ptr<ExtensionInstallPrompt>
  }  // namespace
  
  bool OffStoreInstallAllowedByPrefs(Profile* profile, const DownloadItem& item) {
@@ -19,7 +18,7 @@ diff --git a/chrome/browser/download/download_crx_util.cc b/chrome/browser/downl
  }
  
  // Tests can call this method to inject a mock ExtensionInstallPrompt
-@@ -119,10 +117,7 @@
+@@ -120,10 +118,7 @@ scoped_refptr<extensions::CrxInstaller>
  }
  
  bool IsTrustedExtensionDownload(Profile* profile, const DownloadItem& item) {
@@ -31,10 +30,9 @@ diff --git a/chrome/browser/download/download_crx_util.cc b/chrome/browser/downl
  }
  
  std::unique_ptr<base::AutoReset<bool>> OverrideOffstoreInstallAllowedForTesting(
-diff --git a/chrome/browser/extensions/api/developer_private/developer_private_functions.cc b/chrome/browser/extensions/api/developer_private/developer_private_functions.cc
 --- a/chrome/browser/extensions/api/developer_private/developer_private_functions.cc
 +++ b/chrome/browser/extensions/api/developer_private/developer_private_functions.cc
-@@ -1018,6 +1018,81 @@
+@@ -1062,6 +1062,81 @@ void DeveloperPrivateLoadUnpackedFunctio
    Release();  // Balanced in Run().
  }
  
@@ -116,10 +114,9 @@ diff --git a/chrome/browser/extensions/api/developer_private/developer_private_f
  DeveloperPrivateInstallDroppedFileFunction::
      DeveloperPrivateInstallDroppedFileFunction() = default;
  DeveloperPrivateInstallDroppedFileFunction::
-diff --git a/chrome/browser/extensions/api/developer_private/developer_private_functions.h b/chrome/browser/extensions/api/developer_private/developer_private_functions.h
 --- a/chrome/browser/extensions/api/developer_private/developer_private_functions.h
 +++ b/chrome/browser/extensions/api/developer_private/developer_private_functions.h
-@@ -362,6 +362,32 @@
+@@ -373,6 +373,32 @@ class DeveloperPrivateLoadUnpackedFuncti
    std::optional<ui::SelectedFileInfo> selected_file_for_testing_;
  };
  
@@ -152,10 +149,9 @@ diff --git a/chrome/browser/extensions/api/developer_private/developer_private_f
  class DeveloperPrivateInstallDroppedFileFunction
      : public DeveloperPrivateAPIFunction {
   public:
-diff --git a/chrome/browser/resources/extensions/service.ts b/chrome/browser/resources/extensions/service.ts
 --- a/chrome/browser/resources/extensions/service.ts
 +++ b/chrome/browser/resources/extensions/service.ts
-@@ -388,6 +388,23 @@
+@@ -398,6 +398,23 @@ export class Service implements ServiceI
      return this.loadUnpackedHelper_();
    }
  
@@ -179,11 +175,10 @@ diff --git a/chrome/browser/resources/extensions/service.ts b/chrome/browser/res
    retryLoadUnpacked(retryGuid?: string): Promise<boolean> {
      // Attempt to load an unpacked extension, optionally as another attempt at
      // a previously-specified load.
-diff --git a/chrome/browser/resources/extensions/toolbar.html.ts b/chrome/browser/resources/extensions/toolbar.html.ts
 --- a/chrome/browser/resources/extensions/toolbar.html.ts
 +++ b/chrome/browser/resources/extensions/toolbar.html.ts
-@@ -33,6 +33,12 @@
-   </extensions-pack-dialog>` : ''}
+@@ -34,6 +34,12 @@ ${this.showPackDialog_ ? html`
+ ` : ''}
  <div id="devDrawer" ?expanded="${this.expanded_}">
    <div id="buttonStrip">
 +    <if expr="is_android">
@@ -195,10 +190,9 @@ diff --git a/chrome/browser/resources/extensions/toolbar.html.ts b/chrome/browse
      <cr-button ?hidden="${!this.canLoadUnpacked_()}" id="loadUnpacked"
          @click="${this.onLoadUnpackedClick_}">
        $i18n{toolbarLoadUnpacked}
-diff --git a/chrome/browser/resources/extensions/toolbar.ts b/chrome/browser/resources/extensions/toolbar.ts
 --- a/chrome/browser/resources/extensions/toolbar.ts
 +++ b/chrome/browser/resources/extensions/toolbar.ts
-@@ -29,6 +29,8 @@
+@@ -29,6 +29,8 @@ export interface ToolbarDelegate {
    /** Opens the dialog to load unpacked extensions. */
    loadUnpacked(): Promise<boolean>;
  
@@ -207,7 +201,7 @@ diff --git a/chrome/browser/resources/extensions/toolbar.ts b/chrome/browser/res
    /** Updates all extensions. */
    updateAllExtensions(extensions: chrome.developerPrivate.ExtensionInfo[]):
        Promise<void>;
-@@ -39,6 +41,10 @@
+@@ -39,6 +41,10 @@ class DummyToolbarDelegate {
    loadUnpacked() {
      return Promise.resolve(true);
    }
@@ -218,7 +212,7 @@ diff --git a/chrome/browser/resources/extensions/toolbar.ts b/chrome/browser/res
    updateAllExtensions(_extensions: chrome.developerPrivate.ExtensionInfo[]) {
      return Promise.resolve();
    }
-@@ -184,6 +190,21 @@
+@@ -184,6 +190,21 @@ export class ExtensionsToolbarElement ex
          .then((success) => {
            if (success) {
              const toastManager = getToastManager();
@@ -240,10 +234,9 @@ diff --git a/chrome/browser/resources/extensions/toolbar.ts b/chrome/browser/res
              toastManager.duration = TOAST_DURATION_MS;
              toastManager.show(this.i18n('toolbarLoadUnpackedDone'));
            }
-diff --git a/chrome/common/extensions/api/developer_private.webidl b/chrome/common/extensions/api/developer_private.webidl
 --- a/chrome/common/extensions/api/developer_private.webidl
 +++ b/chrome/common/extensions/api/developer_private.webidl
-@@ -663,6 +663,11 @@
+@@ -667,6 +667,11 @@ interface DeveloperPrivate {
    // |PromiseValue|: error
    static Promise<LoadError?> loadUnpacked(optional LoadUnpackedOptions options);
  
@@ -255,21 +248,19 @@ diff --git a/chrome/common/extensions/api/developer_private.webidl b/chrome/comm
    // Installs the file that was dragged and dropped onto the associated
    // page.
    static Promise<undefined> installDroppedFile();
-diff --git a/extensions/browser/extension_function_histogram_value.h b/extensions/browser/extension_function_histogram_value.h
 --- a/extensions/browser/extension_function_histogram_value.h
 +++ b/extensions/browser/extension_function_histogram_value.h
-@@ -2042,6 +2042,7 @@
-   DICTATIONPRIVATE_SETSTREAMSTATE = 1977,
-   WEBREQUESTINTERNAL_EVENTHANDLINGDONE = 1978,
-   DICTATIONPRIVATE_UPDATEAUDIOLEVEL = 1979,
+@@ -2046,6 +2046,7 @@ enum HistogramValue {
+   AUTOFILLPRIVATE_FETCHUSERDATAPROCESSINGCONSENT = 1981,
+   DEVELOPERPRIVATE_OPENREVIEWPAGE = 1982,
+   TABS_CREATESPLIT = 1983,
 +  DEVELOPERPRIVATE_LOADCRX = 1976,
    // Last entry: Add new entries above, then run:
    // tools/metrics/histograms/update_extension_histograms.py
    ENUM_BOUNDARY
-diff --git a/extensions/browser/extension_util.cc b/extensions/browser/extension_util.cc
 --- a/extensions/browser/extension_util.cc
 +++ b/extensions/browser/extension_util.cc
-@@ -585,10 +585,6 @@
+@@ -585,10 +585,6 @@ bool ShouldDownloadAsRegularFile() {
  }
  
  bool IsExtensionDownload(const download::DownloadItem& download_item) {
@@ -280,10 +271,9 @@ diff --git a/extensions/browser/extension_util.cc b/extensions/browser/extension
  
    if (download_item.GetMimeType() == Extension::kMimeType) {
      return !ShouldDownloadAsRegularFile();
-diff --git a/tools/typescript/definitions/developer_private.d.ts b/tools/typescript/definitions/developer_private.d.ts
 --- a/tools/typescript/definitions/developer_private.d.ts
 +++ b/tools/typescript/definitions/developer_private.d.ts
-@@ -454,6 +454,8 @@
+@@ -454,6 +454,8 @@ declare global {
        export function installDroppedFile(): Promise<void>;
        export function loadUnpacked(options: LoadUnpackedOptions):
            Promise<LoadError|null>;

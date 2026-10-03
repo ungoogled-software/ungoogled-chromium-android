@@ -22,7 +22,7 @@ dependency.
 
 --- a/android_webview/browser/aw_browser_context.cc
 +++ b/android_webview/browser/aw_browser_context.cc
-@@ -77,7 +77,6 @@
+@@ -79,7 +79,6 @@
  #include "components/prefs/pref_service_factory.h"
  #include "components/prefs/segregated_pref_store.h"
  #include "components/profile_metrics/browser_profile_type.h"
@@ -30,7 +30,7 @@ dependency.
  #include "components/url_formatter/url_fixer.h"
  #include "components/user_prefs/user_prefs.h"
  #include "components/visitedlink/browser/partitioned_visitedlink_writer.h"
-@@ -242,7 +241,6 @@ base::FilePath AwBrowserContext::GetCook
+@@ -248,7 +247,6 @@ base::FilePath AwBrowserContext::GetCook
  
  // static
  void AwBrowserContext::RegisterPrefs(PrefRegistrySimple* registry) {
@@ -73,7 +73,7 @@ dependency.
    ErrorUiType errorType =
 --- a/chrome/browser/preferences/BUILD.gn
 +++ b/chrome/browser/preferences/BUILD.gn
-@@ -74,7 +74,6 @@ java_cpp_strings("java_pref_names_srcjar
+@@ -75,7 +75,6 @@ java_cpp_strings("java_pref_names_srcjar
      "//components/payments/core/payment_prefs.h",
      "//components/policy/core/common/policy_pref_names.h",
      "//components/privacy_sandbox/privacy_sandbox_prefs.h",
@@ -83,7 +83,7 @@ dependency.
      "//components/supervised_user/core/common/pref_names.h",
 --- a/chrome/browser/safe_browsing/android/BUILD.gn
 +++ b/chrome/browser/safe_browsing/android/BUILD.gn
-@@ -223,7 +223,6 @@ android_resources("java_resources") {
+@@ -224,7 +224,6 @@ android_resources("java_resources") {
  
  java_cpp_enum("safe_browsing_enums") {
    sources = [

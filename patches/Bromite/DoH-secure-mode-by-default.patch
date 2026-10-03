@@ -20,7 +20,7 @@ Subject: DoH secure mode by default
  
 --- a/chrome/browser/net/stub_resolver_config_reader.cc
 +++ b/chrome/browser/net/stub_resolver_config_reader.cc
-@@ -396,22 +396,7 @@ SecureDnsConfig StubResolverConfigReader
+@@ -401,22 +401,7 @@ SecureDnsConfig StubResolverConfigReader
      check_parental_controls = false;
    }
  
@@ -45,7 +45,7 @@ Subject: DoH secure mode by default
  
 --- a/components/policy/android/java/src/org/chromium/components/policy/EnterpriseInfoImpl.java
 +++ b/components/policy/android/java/src/org/chromium/components/policy/EnterpriseInfoImpl.java
-@@ -45,7 +45,7 @@ public class EnterpriseInfoImpl extends
+@@ -46,7 +46,7 @@ public class EnterpriseInfoImpl extends
      private @MonotonicNonNull OwnedState mOwnedState;
      private final Queue<Callback<@Nullable OwnedState>> mCallbackList;
  

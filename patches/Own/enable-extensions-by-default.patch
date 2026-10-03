@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/extensions/common/extension_features.cc
 +++ b/extensions/common/extension_features.cc
-@@ -254,7 +254,7 @@ BASE_FEATURE(kOptimizeWebRequestProxy, b
+@@ -269,7 +269,7 @@ BASE_FEATURE(kOptimizeWebRequestProxy, b
  #if BUILDFLAG(IS_ANDROID)
  BASE_FEATURE(kEnableExtensionsAndroid,
               "EnableExtensionsAndroid",
@@ -10,4 +10,4 @@ author: bearinmindcat <bearincrypto@gmail.com>
 +             base::FEATURE_ENABLED_BY_DEFAULT);
  #endif
  
- }  // namespace extensions_features
+ BASE_FEATURE(kUseSha256ForExtensionHashes, base::FEATURE_DISABLED_BY_DEFAULT);

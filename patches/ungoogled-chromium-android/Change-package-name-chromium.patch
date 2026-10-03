@@ -8,7 +8,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
 
 --- a/chrome/android/chrome_public_apk_tmpl.gni
 +++ b/chrome/android/chrome_public_apk_tmpl.gni
-@@ -25,7 +25,7 @@ declare_args() {
+@@ -26,7 +26,7 @@ declare_args() {
    # Android package name to use when compiling the public chrome targets
    # (chrome_public_apk, trichrome_chrome_bundle, etc. as well as the
    # *_bundle variants). This defaults to the Chromium browser package name.
@@ -17,7 +17,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
    if (use_stable_package_name_for_trichrome) {
      chrome_public_manifest_package += ".stable"
    } else if (android_channel != "default") {
-@@ -33,7 +33,7 @@ declare_args() {
+@@ -34,7 +34,7 @@ declare_args() {
    }
  }
  

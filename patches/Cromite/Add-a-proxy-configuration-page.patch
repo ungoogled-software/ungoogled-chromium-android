@@ -33,29 +33,29 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 --- a/chrome/android/java/res/xml/privacy_preferences.xml
 +++ b/chrome/android/java/res/xml/privacy_preferences.xml
 @@ -10,6 +10,10 @@ found in the LICENSE file.
-     <PreferenceCategory
+     <org.chromium.components.browser_ui.settings.ChromeBasePreferenceCategory
          android:key="privacy_section"
          android:title="@string/privacy_section_title" />
 +    <org.chromium.chrome.browser.about_settings.HyperlinkPreference
 +        android:key="proxy"
 +        android:title="@string/proxy_title"
 +        app:url="@string/proxy_url" />
-     <Preference
+     <org.chromium.components.browser_ui.settings.ChromeBasePreference
          android:key="clear_browsing_data"
          android:title="@string/clear_browsing_data_title"
 --- a/chrome/android/java/src/org/chromium/chrome/browser/privacy/settings/PrivacySettings.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/privacy/settings/PrivacySettings.java
-@@ -101,6 +101,7 @@ public class PrivacySettings extends Chr
+@@ -98,6 +98,7 @@ public class PrivacySettings extends Chr
+     private static final String PREF_SAFE_BROWSING = "safe_browsing";
      private static final String PREF_PASSWORD_LEAK_DETECTION = "password_leak_detection";
      private static final String PREF_SYNC_AND_SERVICES_LINK = "sync_and_services_link";
-     private static final String PREF_PRIVACY_SANDBOX = "privacy_sandbox";
 +    private static final String PREF_PROXY_OPTIONS = "proxy";
      private static final String PREF_PRIVACY_GUIDE = "privacy_guide";
      private static final String PREF_INCOGNITO_LOCK = "incognito_lock";
      private static final String PREF_JAVASCRIPT_OPTIMIZER = "javascript_optimizer";
 --- a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
 +++ b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
-@@ -450,6 +450,7 @@ ChromeAutocompleteProviderClient::GetBui
+@@ -458,6 +458,7 @@ ChromeAutocompleteProviderClient::GetBui
    builtins_to_provide.push_back(chrome::kChromeUISettingsURL16);
  #endif
    builtins_to_provide.push_back(chrome::kChromeUIVersionURL16);
@@ -65,7 +65,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
 --- a/chrome/browser/browser_resources.grd
 +++ b/chrome/browser/browser_resources.grd
-@@ -193,6 +193,9 @@
+@@ -197,6 +197,9 @@
        <if expr="_google_chrome">
          <include name="IDR_PREF_HASH_SEED_BIN" file="resources\settings\internal\pref_hash_seed.bin" type="BINDATA" />
        </if>
@@ -95,7 +95,31 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
  #if BUILDFLAG(IS_CHROMEOS)
  #include "chromeos/ash/components/network/proxy/proxy_config_service_impl.h"
-@@ -77,3 +81,8 @@ ProxyServiceFactory::CreatePrefProxyConf
+@@ -59,8 +63,22 @@ ProxyServiceFactory::CreatePrefProxyConf
+   return std::make_unique<ash::ProxyConfigServiceImpl>(
+       profile_prefs, local_state_prefs, nullptr);
+ #else
++  // Migrate from profile_prefs to local_state_prefs
++  if (!local_state_prefs->GetBoolean("proxy_migrated")) {
++    const base::DictValue& dict =
++        profile_prefs->GetDict(proxy_config::prefs::kProxy);
++
++    LOG(INFO) << "CreatePrefProxyConfigTrackerOfProfile: Migration from profile to "
++              << "local state";
++
++    const base::Value /*ProxyConfigDictionary*/ proxy_dict(dict.Clone());
++    local_state_prefs->Set(proxy_config::prefs::kProxy, proxy_dict);
++
++    local_state_prefs->SetBoolean("proxy_migrated", true);
++    local_state_prefs->CommitPendingWrite();
++  }
+   return std::make_unique<PrefProxyConfigTrackerImpl>(
+-      profile_prefs, /*proxy_config_service_task_runner=*/nullptr,
++      local_state_prefs, /*proxy_config_service_task_runner=*/nullptr,
+       policy_service, enterprise_proxy_service);
+ #endif  // BUILDFLAG(IS_CHROMEOS)
+ }
+@@ -78,3 +96,8 @@ ProxyServiceFactory::CreatePrefProxyConf
        /*proxy_config_service_task_runner=*/nullptr, /*policy_service=*/nullptr);
  #endif  // BUILDFLAG(IS_CHROMEOS)
  }
@@ -114,9 +138,9 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
  class PrefProxyConfigTracker;
  class PrefService;
-@@ -40,6 +41,8 @@ class ProxyServiceFactory {
-                                         PrefService* local_state_prefs,
-                                         policy::PolicyService* policy_service);
+@@ -46,6 +47,8 @@ class ProxyServiceFactory {
+       policy::PolicyService* policy_service,
+       enterprise_net::EnterpriseProxyService* enterprise_proxy_service);
  
 +  static void RegisterPrefs(PrefRegistrySimple* registry);
 +
@@ -125,7 +149,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
    // (ChromeOS only).
 --- a/chrome/browser/prefs/browser_prefs.cc
 +++ b/chrome/browser/prefs/browser_prefs.cc
-@@ -238,6 +238,8 @@
+@@ -240,6 +240,8 @@
  #endif  // !BUILDFLAG(IS_ANDROID)
  #endif  // BUILDFLAG(ENABLE_WEBUI_NTP)
  
@@ -134,7 +158,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  #if BUILDFLAG(ENABLE_BACKGROUND_MODE)
  #include "chrome/browser/background/extensions/background_mode_manager.h"
  #endif
-@@ -1433,6 +1435,8 @@ void RegisterLocalState(PrefRegistrySimp
+@@ -1485,6 +1487,8 @@ void RegisterLocalState(PrefRegistrySimp
    component_updater::RegisterPrefs(registry);
    domain_reliability::RegisterPrefs(registry);
    embedder_support::OriginTrialPrefs::RegisterPrefs(registry);
@@ -581,16 +605,16 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 +})();
 --- a/chrome/browser/ui/webui/BUILD.gn
 +++ b/chrome/browser/ui/webui/BUILD.gn
-@@ -50,6 +50,7 @@ source_set("configs") {
+@@ -49,6 +49,7 @@ source_set("configs") {
+   deps = [
      ":gcm_internals_ui",
-     ":memory_internals_ui",
      ":net_export_ui",
 +    ":proxy_config_ui",
      ":ntp_tiles_internals_ui",
      ":signin_internals_ui",
      ":webui",
-@@ -864,3 +865,24 @@ source_set("net_export_ui") {
-     deps += [ "//components/browser_ui/share/android" ]
+@@ -1064,3 +1065,24 @@ source_set("unit_tests") {
+     ]
    }
  }
 +source_set("proxy_config_ui") {
@@ -616,7 +640,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 +}
 --- a/chrome/browser/ui/webui/chrome_web_ui_configs.cc
 +++ b/chrome/browser/ui/webui/chrome_web_ui_configs.cc
-@@ -73,6 +73,9 @@
+@@ -74,6 +74,9 @@
  #include "chrome/browser/ui/webui/new_tab_page/new_tab_page_ui.h"
  #endif  // BUILDFLAG(ENABLE_WEBUI_NTP)
  
@@ -626,7 +650,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  #if BUILDFLAG(ENABLE_WEBUI_CERTIFICATE_VIEWER)
  #include "chrome/browser/ui/webui/certificate_viewer/certificate_viewer_ui.h"
  #endif
-@@ -487,7 +490,7 @@ void RegisterChromeWebUIConfigs() {
+@@ -482,7 +485,7 @@ void RegisterChromeWebUIConfigs() {
    map.AddWebUIConfig(std::make_unique<SigninErrorUIConfig>());
    map.AddWebUIConfig(std::make_unique<SigninEmailConfirmationUIConfig>());
  #endif  //  !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
@@ -637,7 +661,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
        std::make_unique<safe_browsing::ChromeSafeBrowsingUIConfig>());
 --- /dev/null
 +++ b/chrome/browser/ui/webui/proxy_config_ui.cc
-@@ -0,0 +1,392 @@
+@@ -0,0 +1,393 @@
 +/*
 +    This file is part of Bromite.
 +
@@ -762,7 +786,8 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 +    pref_proxy_config_tracker_ =
 +        ProxyServiceFactory::CreatePrefProxyConfigTrackerOfProfile(
 +            profile->GetPrefs(), g_browser_process->local_state(),
-+            profile->GetProfilePolicyConnector()->policy_service());
++            profile->GetProfilePolicyConnector()->policy_service(),
++            /* enterprise_proxy_service */ nullptr);
 +  }
 +
 +  proxy_config_service_ = ProxyServiceFactory::CreateProxyConfigService(
@@ -1086,7 +1111,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
        kChromeUIActorInternalsHost,
 --- a/chrome/common/webui_url_constants.h
 +++ b/chrome/common/webui_url_constants.h
-@@ -212,6 +212,8 @@ inline constexpr char kChromeUINetIntern
+@@ -217,6 +217,8 @@ inline constexpr char kChromeUINetIntern
  inline constexpr char kChromeUINetInternalsURL[] = "chrome://net-internals/";
  inline constexpr char kChromeUINewTabHost[] = "newtab";
  inline constexpr char kChromeUINewTabFooterHost[] = "newtab-footer";
@@ -1097,7 +1122,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      "new-tab-page-third-party";
 --- a/components/proxy_config/pref_proxy_config_tracker_impl.cc
 +++ b/components/proxy_config/pref_proxy_config_tracker_impl.cc
-@@ -529,7 +529,7 @@ PrefProxyConfigTrackerImpl::GetEffective
+@@ -585,7 +585,7 @@ PrefProxyConfigTrackerImpl::GetEffective
  // static
  void PrefProxyConfigTrackerImpl::RegisterPrefs(PrefRegistrySimple* registry) {
    registry->RegisterDictionaryPref(proxy_config::prefs::kProxy,
@@ -1106,7 +1131,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
    registry->RegisterListPref(proxy_config::prefs::kProxyOverrideRules);
  #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
    registry->RegisterIntegerPref(
-@@ -543,7 +543,7 @@ void PrefProxyConfigTrackerImpl::Registe
+@@ -599,7 +599,7 @@ void PrefProxyConfigTrackerImpl::Registe
  void PrefProxyConfigTrackerImpl::RegisterProfilePrefs(
      PrefRegistrySimple* registry) {
    registry->RegisterDictionaryPref(proxy_config::prefs::kProxy,
@@ -1115,7 +1140,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
    registry->RegisterBooleanPref(proxy_config::prefs::kUseSharedProxies, false);
    registry->RegisterListPref(proxy_config::prefs::kProxyOverrideRules);
  #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
-@@ -706,6 +706,7 @@ bool PrefProxyConfigTrackerImpl::PrefCon
+@@ -801,6 +801,7 @@ bool PrefProxyConfigTrackerImpl::PrefCon
        if (proxy_dict.GetBypassList(&proxy_bypass)) {
          proxy_config.proxy_rules().bypass_rules.ParseFromString(proxy_bypass);
        }

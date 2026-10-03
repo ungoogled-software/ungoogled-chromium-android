@@ -13,7 +13,7 @@ The snippets are already disabled in native codes, this will disable it on Java 
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -315,7 +315,6 @@ if (_is_default_toolchain) {
+@@ -328,7 +328,6 @@ if (_is_default_toolchain) {
        "$google_play_services_package:google_play_services_basement_java",
        "$google_play_services_package:google_play_services_cast_framework_java",
        "$google_play_services_package:google_play_services_cast_java",
@@ -21,7 +21,7 @@ The snippets are already disabled in native codes, this will disable it on Java 
        "$google_play_services_package:google_play_services_iid_java",
        "$google_play_services_package:google_play_services_tasks_java",
        "$google_play_services_package:google_play_services_vision_common_java",
-@@ -2009,7 +2008,6 @@ if (_is_default_toolchain) {
+@@ -2036,7 +2035,6 @@ if (_is_default_toolchain) {
      ]
      deps = [
        ":chrome_java",

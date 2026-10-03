@@ -31,7 +31,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
 +        android:summary="@string/always_incognito_summary"
 +        android:defaultValue="false" />
 +
-     <PreferenceCategory
+     <org.chromium.components.browser_ui.settings.ChromeBasePreferenceCategory
          android:key="security_section"
        android:title="@string/security_section_title" />
 --- /dev/null
@@ -45,9 +45,9 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
 +
 +import android.content.SharedPreferences;
 +
-+import org.chromium.chrome.browser.tab.EmptyTabObserver;
 +import org.chromium.chrome.browser.tab.Tab;
 +import org.chromium.chrome.browser.tab.TabLaunchType;
++import org.chromium.chrome.browser.tab.TabObserver;
 +import org.chromium.content_public.browser.LoadUrlParams;
 +import org.chromium.url.GURL;
 +
@@ -60,7 +60,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
 + * A {@link TabObserver} that implements the always-incognito preference behavior for links. When the preference is set
 + * to true, it intercepts links opened within observed {@link Tab}s and opens them in new incognito <code>Tab</code>s instead.
 + */
-+public class AlwaysIncognitoLinkInterceptor extends EmptyTabObserver {
++public class AlwaysIncognitoLinkInterceptor implements TabObserver {
 +    public static final String PREF_ALWAYS_INCOGNITO = "always_incognito";
 +
 +    private final SharedPreferences alwaysIncognitoContainer;
@@ -123,7 +123,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
  import org.chromium.chrome.browser.tab.TabDelegateFactory;
  import org.chromium.chrome.browser.tab.TabId;
  import org.chromium.chrome.browser.tab.TabLaunchType;
-@@ -70,6 +72,7 @@ public class ChromeTabCreator implements
+@@ -72,6 +74,7 @@ public class ChromeTabCreator implements
      private final Supplier<TabDelegateFactory> mTabDelegateFactorySupplier;
      private final OneshotSupplier<ProfileProvider> mProfileProviderSupplier;
      protected final boolean mIncognito;
@@ -131,7 +131,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
      protected final AsyncTabParamsManager mAsyncTabParamsManager;
      private final Supplier<TabModelSelector> mTabModelSelectorSupplier;
      private final Supplier<@Nullable CompositorViewHolder> mCompositorViewHolderSupplier;
-@@ -91,6 +94,7 @@ public class ChromeTabCreator implements
+@@ -93,6 +96,7 @@ public class ChromeTabCreator implements
          mTabDelegateFactorySupplier = tabDelegateFactory;
          mProfileProviderSupplier = profileProviderSupplier;
          mIncognito = incognito;
@@ -139,14 +139,14 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
          mAsyncTabParamsManager = asyncTabParamsManager;
          mTabModelSelectorSupplier = tabModelSelectorSupplier;
          mCompositorViewHolderSupplier = compositorViewHolderSupplier;
-@@ -478,6 +482,7 @@ public class ChromeTabCreator implements
+@@ -551,6 +555,7 @@ public class ChromeTabCreator implements
              if (creationState == TabCreationState.LIVE_IN_FOREGROUND && !openInForeground) {
                  creationState = TabCreationState.LIVE_IN_BACKGROUND;
              }
 +            if (mExtraLogic != null) tab.addObserver(mExtraLogic);
              mTabModel.addTab(tab, position, type, creationState);
+             mAsyncTabParamsManager.remove(assignedTabId);
              return tab;
-         }
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
 @@ -362,6 +362,12 @@ CHAR_LIMIT guidelines:

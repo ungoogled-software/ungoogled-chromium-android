@@ -18,7 +18,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
            "$google_play_services_package:google_play_services_tasks_java",
            "//third_party/androidx:androidx_collection_collection_java",
            "//third_party/androidx:androidx_core_core_java",
-@@ -577,7 +575,6 @@ template("define_autorolled_targets") {
+@@ -617,7 +615,6 @@ template("define_autorolled_targets") {
            "$google_play_services_package:google_play_services_base_java",
            "$google_play_services_package:google_play_services_basement_java",
            "$google_play_services_package:google_play_services_cloud_messaging_java",

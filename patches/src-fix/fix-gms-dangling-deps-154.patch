@@ -1,0 +1,12 @@
+author: bearinmindcat <bearincrypto@gmail.com>
+
+--- a/android_webview/test/BUILD.gn
++++ b/android_webview/test/BUILD.gn
+@@ -307,7 +307,6 @@ base_webview_instrumentation_test_apk("w
+ 
+   deps = [
+     ":webview_compose_javatests",
+-    "$google_play_services_package:google_play_services_tasks_java",
+     "//android_webview:common_aidl_java",
+     "//android_webview:common_origin_trials_java",
+     "//android_webview:common_variations_java",

@@ -94,12 +94,12 @@ Bromite/Revert-flags-remove-disable-pull-to-refresh-effect.patch
 Bromite/Disable-DRM-media-origin-IDs-preprovisioning.patch
 Bromite/Add-an-always-incognito-mode.patch
 Cromite/Add-bookmark-import-export-actions.patch
+src-fix/fix-android-extra-locales-cy-154.patch
+src-fix/fix-gms-dangling-deps-154.patch
+src-fix/fix-android-download-obfuscation-154.patch
 Extensions/android-extensions-support.patch
 Extensions/Ultimatum/load-crx.patch
 Extensions/misc/extensions-menu-null-guard.patch
-Extensions/misc/extension-popup-key-event-guard.patch
-Extensions/misc/fix-menu-button-reopen.patch
 Own/enable-extensions-by-default.patch
-Own/fix-extension-proxy-auth.patch
 
 #Other/debug-fix.patch

@@ -17,7 +17,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -313,8 +313,6 @@ if (_is_default_toolchain) {
+@@ -326,8 +326,6 @@ if (_is_default_toolchain) {
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
        "$google_play_services_package:google_play_services_tasks_java",
@@ -511,7 +511,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
      if (!defined(material_design_target)) {
        android_aar_prebuilt("com_google_android_material_material_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_material_material/material.aar"
-@@ -792,30 +760,6 @@ template("define_autorolled_targets") {
+@@ -796,30 +764,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy

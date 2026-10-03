@@ -46,7 +46,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.chrome.browser.app.tab_activity_glue.ActivityTabWebContentsDelegateAndroid;
  import org.chromium.chrome.browser.back_press.BackPressManager;
  import org.chromium.chrome.browser.browser_controls.BrowserControlsStateProvider;
-@@ -61,7 +62,7 @@ import java.util.function.Supplier;
+@@ -63,7 +64,7 @@ import java.util.function.Supplier;
   */
  @NullMarked
  public class TabbedModeTabDelegateFactory implements TabDelegateFactory {
@@ -56,7 +56,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      private final Supplier<@Nullable ShareDelegate> mShareDelegateSupplier;
      private final Supplier<@Nullable EphemeralTabCoordinator> mEphemeralTabCoordinatorSupplier;
 @@ -96,7 +97,7 @@ public class TabbedModeTabDelegateFactor
-     private final Supplier<Integer> mLeftSideUiWidthSupplier;
+     private final RecentlyClosedEntriesManager mRecentlyClosedEntriesManager;
  
      public TabbedModeTabDelegateFactory(
 -            Activity activity,
@@ -75,7 +75,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import android.content.ComponentName;
  import android.content.Intent;
  import android.text.TextUtils;
-@@ -130,6 +132,9 @@ public class BookmarkActivity extends Sn
+@@ -131,6 +133,9 @@ public class BookmarkActivity extends Sn
          mOnKeyDownHandler =
                  BackPressHelper.create(
                          this, getOnBackPressedDispatcher(), mBookmarkManagerCoordinator);
@@ -85,7 +85,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      }
  
      @Override
-@@ -173,6 +178,21 @@ public class BookmarkActivity extends Sn
+@@ -174,6 +179,21 @@ public class BookmarkActivity extends Sn
      }
  
      @Override
@@ -109,7 +109,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      }
 --- a/chrome/android/java/src/org/chromium/chrome/browser/native_page/NativePageFactory.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/native_page/NativePageFactory.java
-@@ -29,6 +29,7 @@ import org.chromium.build.annotations.Nu
+@@ -30,6 +30,7 @@ import org.chromium.build.annotations.Nu
  import org.chromium.build.annotations.Nullable;
  import org.chromium.chrome.R;
  import org.chromium.chrome.browser.RecentlyClosedEntriesManager;
@@ -117,7 +117,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.chrome.browser.app.download.home.DownloadPage;
  import org.chromium.chrome.browser.back_press.BackPressManager;
  import org.chromium.chrome.browser.bookmarks.BookmarkPage;
-@@ -87,7 +88,7 @@ import java.util.function.Supplier;
+@@ -89,7 +90,7 @@ import java.util.function.Supplier;
   */
  @NullMarked
  public class NativePageFactory {
@@ -126,7 +126,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      private final BottomSheetController mBottomSheetController;
      private final BrowserControlsManager mBrowserControlsManager;
      private final Supplier<@Nullable Tab> mCurrentTabSupplier;
-@@ -115,7 +116,7 @@ public class NativePageFactory {
+@@ -117,7 +118,7 @@ public class NativePageFactory {
      private @Nullable PdfFragmentViewTrackerImpl mPdfFragmentViewTracker;
  
      public NativePageFactory(
@@ -135,7 +135,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              BottomSheetController sheetController,
              BrowserControlsManager browserControlsManager,
              Supplier<@Nullable Tab> currentTabSupplier,
-@@ -199,7 +200,7 @@ public class NativePageFactory {
+@@ -201,7 +202,7 @@ public class NativePageFactory {
  
      @VisibleForTesting
      static class NativePageBuilder {
@@ -144,7 +144,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          private final BottomSheetController mBottomSheetController;
          private final Supplier<NewTabPageCreationTracker> mNewTabPageCreationTracker;
          private final BrowserControlsManager mBrowserControlsManager;
-@@ -246,7 +247,7 @@ public class NativePageFactory {
+@@ -248,7 +249,7 @@ public class NativePageFactory {
                  StartupMetricsTracker startupMetricsTracker,
                  BackPressManager backPressManager,
                  RecentlyClosedEntriesManager recentlyClosedEntriesManager) {
@@ -155,7 +155,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              mBrowserControlsManager = browserControlsManager;
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -873,6 +873,13 @@ source_set("core") {
+@@ -877,6 +877,13 @@ source_set("core") {
      "universal_web_contents_observers.cc",
    ]
  
@@ -200,7 +200,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  // Must come after all headers that specialize FromJniType() / ToJniType().
  #include "chrome/browser/bookmarks/android/jni_headers/BookmarkBridge_jni.h"
  
-@@ -296,6 +318,10 @@ BookmarkBridge::~BookmarkBridge() {
+@@ -295,6 +317,10 @@ BookmarkBridge::~BookmarkBridge() {
    partner_bookmarks_shim_observation_.Reset();
    bookmark_model_observation_.Reset();
    profile_observation_.Reset();
@@ -211,7 +211,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  }
  
  void BookmarkBridge::Destroy(JNIEnv* env) {
-@@ -852,6 +878,173 @@ int32_t BookmarkBridge::GetTotalBookmark
+@@ -853,6 +879,173 @@ int32_t BookmarkBridge::GetTotalBookmark
    return count;
  }
  
@@ -475,7 +475,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
    base::WeakPtrFactory<BookmarkBridge> weak_ptr_factory_;
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkBridge.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkBridge.java
-@@ -36,6 +36,9 @@ import org.chromium.url.GURL;
+@@ -37,6 +37,9 @@ import org.chromium.url.GURL;
  import java.util.ArrayList;
  import java.util.List;
  
@@ -485,7 +485,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  /**
   * Provides the communication channel for Android to fetch and manipulate the bookmark model stored
   * in native.
-@@ -53,6 +56,9 @@ class BookmarkBridge {
+@@ -54,6 +57,9 @@ class BookmarkBridge {
      private boolean mIsNativeBookmarkModelLoaded;
      private boolean mInitializedPartnerBookmarks;
  
@@ -495,7 +495,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      // Lazily set pseudo-constants. These should never change at runtime. Used to avoid crossing
      // JNI to fetch information.
      private @Nullable BookmarkId mRootFolderId;
-@@ -501,6 +507,35 @@ class BookmarkBridge {
+@@ -503,6 +509,35 @@ class BookmarkBridge {
      }
  
      /**
@@ -531,7 +531,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
       * Synchronously gets a list of bookmarks that match the specified search query.
       *
       * @param query Keyword used for searching bookmarks.
-@@ -1108,6 +1143,10 @@ class BookmarkBridge {
+@@ -1110,6 +1145,10 @@ class BookmarkBridge {
          void getChildIds(
                  long nativeBookmarkBridge, long id, int type, List<BookmarkId> bookmarksList);
  
@@ -544,7 +544,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          int getTotalBookmarkCount(long nativeBookmarkBridge, long id, int type);
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkDelegate.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkDelegate.java
-@@ -67,6 +67,16 @@ public interface BookmarkDelegate {
+@@ -75,6 +75,16 @@ public interface BookmarkDelegate {
      /** Shows the search UI. */
      void openSearchUi();
  
@@ -563,7 +563,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkManagerCoordinator.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkManagerCoordinator.java
-@@ -67,6 +67,8 @@ import org.chromium.ui.base.Clipboard;
+@@ -70,6 +70,8 @@ import org.chromium.ui.base.Clipboard;
  import org.chromium.ui.base.ViewUtils;
  import org.chromium.ui.base.WindowAndroid;
  import org.chromium.ui.edge_to_edge.EdgeToEdgePadAdjuster;
@@ -572,7 +572,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.ui.modaldialog.ModalDialogManager;
  import org.chromium.ui.modaldialog.ModalDialogManager.ModalDialogType;
  import org.chromium.ui.modelutil.MVCListAdapter.ListItem;
-@@ -369,6 +371,13 @@ public class BookmarkManagerCoordinator
+@@ -443,6 +445,13 @@ public class BookmarkManagerCoordinator
  
      // Public API implementation.
  
@@ -585,10 +585,10 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 +
      /** Destroys and cleans up itself. This must be called after done using this class. */
      public void onDestroyed() {
-         RecordUserAction.record("MobileBookmarkManagerClose");
+         if (mSearchBoxChangeProcessor != null) {
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkManagerMediator.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkManagerMediator.java
-@@ -68,6 +68,8 @@ import org.chromium.components.commerce.
+@@ -73,6 +73,8 @@ import org.chromium.components.commerce.
  import org.chromium.components.commerce.core.SubscriptionsObserver;
  import org.chromium.components.power_bookmarks.PowerBookmarkMeta;
  import org.chromium.components.power_bookmarks.PowerBookmarkType;
@@ -597,7 +597,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.ui.accessibility.AccessibilityState;
  import org.chromium.ui.base.Clipboard;
  import org.chromium.ui.base.DeviceFormFactor;
-@@ -91,6 +93,47 @@ import java.util.function.BooleanSupplie
+@@ -96,6 +98,47 @@ import java.util.function.BooleanSupplie
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  
@@ -645,7 +645,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  /** Responsible for BookmarkManager business logic. */
  // TODO(crbug.com/40256938): Remove BookmarkDelegate if possible.
  @NullMarked
-@@ -101,6 +144,9 @@ class BookmarkManagerMediator
+@@ -106,6 +149,9 @@ class BookmarkManagerMediator
  
      private static boolean sPreventLoadingForTesting;
  
@@ -655,7 +655,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      /** Keeps track of whether drag is enabled / active for bookmark lists. */
      private class BookmarkDragStateDelegate implements DragStateDelegate {
          private BookmarkDelegate mBookmarkDelegate;
-@@ -648,6 +694,14 @@ class BookmarkManagerMediator
+@@ -662,6 +708,14 @@ class BookmarkManagerMediator
          mNativePage = nativePage;
      }
  
@@ -670,7 +670,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      /** See BookmarkManager(Coordinator)#updateForUrl */
      void updateForUrl(String url) {
          // Bookmark model is null if the manager has been destroyed.
-@@ -817,6 +871,232 @@ class BookmarkManagerMediator
+@@ -839,6 +893,232 @@ class BookmarkManagerMediator
      }
  
      @Override
@@ -924,7 +924,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              SnackbarManager snackbarManager,
              Supplier<BottomSheetController> bottomSheetControllerSupplier,
              ActivityResultTracker activityResultTracker,
-@@ -87,6 +90,9 @@ public class BookmarkPage extends BasicN
+@@ -88,6 +91,9 @@ public class BookmarkPage extends BasicN
                          backPressManager);
  
          mBookmarkManagerCoordinator.setBasicNativePage(this);
@@ -936,7 +936,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          setBackPressHandler(mBookmarkManagerCoordinator, backPressManager);
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbar.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbar.java
-@@ -96,6 +96,17 @@ public class BookmarkToolbar extends Sel
+@@ -109,6 +109,17 @@ public class BookmarkToolbar extends Sel
          setOnMenuItemClickListener(dragEnabled ? null : this);
      }
  
@@ -954,7 +954,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      void setEditButtonVisible(boolean visible) {
          mEditButtonVisible = visible;
          getMenu().findItem(R.id.edit_menu_id).setVisible(visible);
-@@ -178,6 +189,12 @@ public class BookmarkToolbar extends Sel
+@@ -220,6 +231,12 @@ public class BookmarkToolbar extends Sel
  
      void setNavigateBackRunnable(Runnable navigateBackRunnable) {
          mNavigateBackRunnable = navigateBackRunnable;
@@ -967,7 +967,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      }
  
      void setMenuIdClickedFunction(Function<Integer, Boolean> menuIdClickedFunction) {
-@@ -198,6 +215,13 @@ public class BookmarkToolbar extends Sel
+@@ -240,6 +257,13 @@ public class BookmarkToolbar extends Sel
      @Override
      public boolean onMenuItemClick(MenuItem menuItem) {
          hideOverflowMenu();
@@ -981,7 +981,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          return assumeNonNull(mMenuIdClickedFunction).apply(menuItem.getItemId());
      }
  
-@@ -218,6 +242,9 @@ public class BookmarkToolbar extends Sel
+@@ -260,6 +284,9 @@ public class BookmarkToolbar extends Sel
      protected void showNormalView() {
          super.showNormalView();
  
@@ -989,11 +989,11 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 +        getMenu().findItem(R.id.export_menu_id).setVisible(true);
 +
          // SelectableListToolbar will show/hide the entire group.
+         setNavigationButtonState(mNavigationButtonState);
          setEditButtonVisible(mEditButtonVisible);
-         setNewFolderButtonVisible(mNewFolderButtonVisible);
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbarMediator.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbarMediator.java
-@@ -148,6 +148,10 @@ class BookmarkToolbarMediator
+@@ -147,6 +147,10 @@ class BookmarkToolbarMediator
                      mBookmarkDelegate = bookmarkDelegate;
                      mModel.set(
                              BookmarkToolbarProperties.NAVIGATE_BACK_RUNNABLE, this::onNavigateBack);
@@ -1006,7 +1006,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
                  });
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbarProperties.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbarProperties.java
-@@ -82,6 +82,10 @@ class BookmarkToolbarProperties {
+@@ -84,6 +84,10 @@ class BookmarkToolbarProperties {
  
      static final WritableObjectPropertyKey<View> NEXT_FOCUSABLE_VIEW =
              new WritableObjectPropertyKey<>();
@@ -1017,7 +1017,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
      static final PropertyKey[] ALL_KEYS = {
          SELECTION_DELEGATE,
-@@ -109,6 +113,8 @@ class BookmarkToolbarProperties {
+@@ -112,6 +116,8 @@ class BookmarkToolbarProperties {
          SELECTION_MODE_SHOW_COPY_LINK,
          SELECTION_MODE_SHOW_MARK_READ,
          SELECTION_MODE_SHOW_MARK_UNREAD,
@@ -1029,7 +1029,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  }
 --- a/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbarViewBinder.java
 +++ b/chrome/browser/bookmarks/android/java/src/org/chromium/chrome/browser/bookmarks/BookmarkToolbarViewBinder.java
-@@ -56,6 +56,12 @@ class BookmarkToolbarViewBinder {
+@@ -59,6 +59,12 @@ class BookmarkToolbarViewBinder {
              bookmarkToolbar.setNavigateBackRunnable(
                      model.get(BookmarkToolbarProperties.NAVIGATE_BACK_RUNNABLE));
          } else if (key == BookmarkToolbarProperties.MENU_ID_CLICKED_FUNCTION) {
@@ -1137,37 +1137,37 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          assertNonNull(mSuggestedPath);
 --- a/chrome/browser/flags/android/chrome_feature_list.cc
 +++ b/chrome/browser/flags/android/chrome_feature_list.cc
-@@ -282,6 +282,7 @@ const base::Feature* const kFeaturesExpo
+@@ -301,6 +301,7 @@ const base::Feature* const kFeaturesExpo
      &kBookmarkPaneAndroid,
      &kBookmarksBarContextMenu,
      &kBookmarksBarNTP,
 +    &kBookmarksExportUseSaf,
-     &kBookmarksDesktopLayout,
      &kBottomSheetAsBrowserControls,
      &kBottomSheetOnDesktopWindowing,
-@@ -662,6 +663,8 @@ BASE_FEATURE(kBlockIntentsWhileLocked, b
+     &kBrowserControlsDebugging,
+@@ -715,6 +716,8 @@ BASE_FEATURE(kBlockIntentsWhileLocked, b
  BASE_FEATURE(kBookmarkPaneAndroid, base::FEATURE_DISABLED_BY_DEFAULT);
- BASE_FEATURE(kBookmarksBarContextMenu, base::FEATURE_ENABLED_BY_DEFAULT);
+ BASE_FEATURE(kBookmarksBarContextMenu, base::FEATURE_DISABLED_BY_DEFAULT);
  BASE_FEATURE(kBookmarksBarNTP, base::FEATURE_DISABLED_BY_DEFAULT);
 +// disabled by default because of an issue on Android 6.0
 +BASE_FEATURE(kBookmarksExportUseSaf, base::FEATURE_DISABLED_BY_DEFAULT);
- BASE_FEATURE(kBookmarksDesktopLayout, base::FEATURE_ENABLED_BY_DEFAULT);
  BASE_FEATURE(kBottomSheetAsBrowserControls, base::FEATURE_ENABLED_BY_DEFAULT);
  BASE_FEATURE(kBottomSheetOnDesktopWindowing, base::FEATURE_DISABLED_BY_DEFAULT);
+ BASE_FEATURE(kBrowserControlsDebugging, base::FEATURE_DISABLED_BY_DEFAULT);
 --- a/chrome/browser/flags/android/chrome_feature_list.h
 +++ b/chrome/browser/flags/android/chrome_feature_list.h
-@@ -93,6 +93,7 @@ BASE_DECLARE_FEATURE(kBlockIntentsWhileL
+@@ -103,6 +103,7 @@ BASE_DECLARE_FEATURE(kBlockIntentsWhileL
  BASE_DECLARE_FEATURE(kBookmarkPaneAndroid);
  BASE_DECLARE_FEATURE(kBookmarksBarContextMenu);
  BASE_DECLARE_FEATURE(kBookmarksBarNTP);
 +BASE_DECLARE_FEATURE(kBookmarksExportUseSaf);
- BASE_DECLARE_FEATURE(kBookmarksDesktopLayout);
  BASE_DECLARE_FEATURE(kBottomSheetAsBrowserControls);
  BASE_DECLARE_FEATURE(kBottomSheetOnDesktopWindowing);
+ BASE_DECLARE_FEATURE(kBrowserControlsDebugging);
 --- a/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java
 +++ b/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java
-@@ -727,6 +727,7 @@ public abstract class ChromeFeatureList
-     public static final String VERIFY_STARTUP_SIGNIN_STATE = "VerifyStartupSigninState";
+@@ -872,6 +872,7 @@ public abstract class ChromeFeatureList
+             "VirtualKeyboardResizesContentTransientOvershootFix";
      public static final String VIRTUAL_KEYBOARD_TRANSIENT_INNER_HEIGHT_FIX =
              "VirtualKeyboardTransientInnerHeightFix";
 +    public static final String BOOKMARKS_EXPORT_USESAF = "BookmarksExportUseSaf";
@@ -1217,7 +1217,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
    // Adds the TemplateURLs in |template_urls| to the local store.
 --- a/chrome/browser/preferences/android/java/src/org/chromium/chrome/browser/preferences/ChromePreferenceKeys.java
 +++ b/chrome/browser/preferences/android/java/src/org/chromium/chrome/browser/preferences/ChromePreferenceKeys.java
-@@ -140,6 +140,8 @@ public final class ChromePreferenceKeys
+@@ -137,6 +137,8 @@ public final class ChromePreferenceKeys
              "enhanced_bookmark_last_used_parent_folder";
      public static final String BOOKMARKS_SORT_ORDER = "Chrome.Bookmarks.BookmarkRowSortOrder";
      public static final String BOOKMARKS_VISUALS_PREF = "Chrome.Bookmarks.BookmarkRowDisplay";
@@ -1226,14 +1226,14 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
      /** Whether the GLIC button is enabled by the user in the bottom bar. */
      public static final String BOTTOM_BAR_GLIC_BUTTON_ENABLED =
-@@ -1196,6 +1198,7 @@ public final class ChromePreferenceKeys
+@@ -1202,6 +1204,7 @@ public final class ChromePreferenceKeys
                  AUXILIARY_SEARCH_SCHEMA_VERSION,
                  APP_LAUNCH_LAST_KNOWN_ACTIVE_TAB_STATE,
                  APP_LAUNCH_SEARCH_ENGINE_HAD_LOGO,
 +                BOOKMARKS_LAST_EXPORT_URI,
                  APPLICATION_OVERRIDE_LANGUAGE,
+                 BACKGROUND_TAB_POOL_LAST_PROFILE_TOKEN,
                  BLUETOOTH_NOTIFICATION_IDS,
-                 BOOKMARKS_SORT_ORDER,
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
 @@ -271,6 +271,24 @@ CHAR_LIMIT guidelines:
@@ -1363,7 +1363,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      /**
       * Creates and starts an intent based on the passed fileTypes and capture value.
       *
-@@ -407,7 +420,7 @@ public class SelectFileDialog implements
+@@ -404,7 +417,7 @@ public class SelectFileDialog implements
          List<String> missingPermissions = new ArrayList<>();
          String storagePermission = Manifest.permission.READ_EXTERNAL_STORAGE;
          boolean shouldUsePhotoPicker = shouldUsePhotoPicker();
@@ -1372,7 +1372,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              // The permission scenario for accessing media has evolved a bit over the years:
              // Early on, READ_EXTERNAL_STORAGE was required to access media, but that permission was
              // later deprecated. In its place (starting with Android T) READ_MEDIA_IMAGES and
-@@ -447,7 +460,7 @@ public class SelectFileDialog implements
+@@ -444,7 +457,7 @@ public class SelectFileDialog implements
  
                                  // TODO(finnur): Remove once we figure out the cause of
                                  // crbug.com/950024.
@@ -1381,7 +1381,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
                                      if (permissions.length != requestPermissions.length) {
                                          throw new RuntimeException(
                                                  String.format(
-@@ -464,7 +477,7 @@ public class SelectFileDialog implements
+@@ -461,7 +474,7 @@ public class SelectFileDialog implements
                                      }
                                  }
  
@@ -1390,7 +1390,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
                                      if (permissions[i].equals(storagePermission)
                                              || permissions[i].equals(
                                                      Manifest.permission.READ_MEDIA_IMAGES)
-@@ -775,6 +788,7 @@ public class SelectFileDialog implements
+@@ -776,6 +789,7 @@ public class SelectFileDialog implements
                  mimeTypes.add(mimeType);
              }
          }
@@ -1398,7 +1398,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          return mimeTypes;
      }
  
-@@ -1160,6 +1174,10 @@ public class SelectFileDialog implements
+@@ -1159,6 +1173,10 @@ public class SelectFileDialog implements
          return countAcceptTypesFor(superType) == mMimeTypes.size();
      }
  

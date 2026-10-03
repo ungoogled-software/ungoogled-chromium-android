@@ -9,7 +9,7 @@ Subject: Add flag to disable WebGL
 
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -4878,6 +4878,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -4996,6 +4996,9 @@ const FeatureEntry kFeatureEntries[] = {
  // //tools/flags/generate_unexpire_flags.py.
  #include "build/chromeos_buildflags.h"
  #include "chrome/browser/unexpire_flags_gen.inc"
@@ -21,7 +21,7 @@ Subject: Add flag to disable WebGL
       MULTI_VALUE_TYPE(kEnableBenchmarkingChoices)},
 --- a/chrome/browser/flag-metadata.json
 +++ b/chrome/browser/flag-metadata.json
-@@ -2736,6 +2736,10 @@
+@@ -2927,6 +2927,10 @@
      "expiry_milestone": 116
    },
    {
@@ -34,7 +34,7 @@ Subject: Add flag to disable WebGL
      // This is a web-developer facing flag and should not be removed.
 --- a/chrome/browser/flag_descriptions.h
 +++ b/chrome/browser/flag_descriptions.h
-@@ -556,6 +556,10 @@ inline constexpr char kDisableAutofillSt
+@@ -544,6 +544,10 @@ inline constexpr char kDisableAutofillSt
      "When enabled, the Autofill strike system will not block a feature from "
      "being offered.";
  

@@ -3,8 +3,8 @@ author: bearinmindcat <bearincrypto@gmail.com>
 ---
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -1021,7 +1021,6 @@ source_set("core") {
-     "//chrome/browser/profiling_host",
+@@ -1030,7 +1030,6 @@ source_set("core") {
+     "//chrome/browser/pwc",
      "//chrome/browser/renderer_host",
      "//chrome/browser/resource_coordinator",
 -    "//chrome/browser/safe_browsing",
@@ -13,8 +13,8 @@ author: bearinmindcat <bearincrypto@gmail.com>
      "//chrome/browser/search_engines",
 --- a/chrome/browser/safe_browsing/BUILD.gn
 +++ b/chrome/browser/safe_browsing/BUILD.gn
-@@ -108,6 +108,10 @@ static_library("safe_browsing") {
-     "//services/preferences/public/cpp",
+@@ -110,6 +110,10 @@ static_library("safe_browsing") {
+     "//ui/base",
    ]
    }
 +  deps = []

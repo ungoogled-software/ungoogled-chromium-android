@@ -9,7 +9,7 @@ Subject: kill Location, fall back to system
 
 --- a/services/device/geolocation/BUILD.gn
 +++ b/services/device/geolocation/BUILD.gn
-@@ -156,7 +156,6 @@ if (is_android) {
+@@ -159,7 +159,6 @@ if (is_android) {
        "android/java/src/org/chromium/device/geolocation/LocationProviderAdapter.java",
        "android/java/src/org/chromium/device/geolocation/LocationProviderAndroid.java",
        "android/java/src/org/chromium/device/geolocation/LocationProviderFactory.java",

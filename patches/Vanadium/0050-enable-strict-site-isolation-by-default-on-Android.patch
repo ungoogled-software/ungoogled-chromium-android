@@ -10,7 +10,7 @@ Subject: [PATCH] enable strict site isolation by default on Android
 
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -5583,16 +5583,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -5706,16 +5706,6 @@ const FeatureEntry kFeatureEntries[] = {
       FEATURE_VALUE_TYPE(features::kNotificationsIgnoreRequireInteraction)},
  #endif  // BUILDFLAG(IS_CHROMEOS)
  
@@ -25,11 +25,11 @@ Subject: [PATCH] enable strict site isolation by default on Android
 -     SINGLE_VALUE_TYPE(switches::kSitePerProcess)},
 -#endif
  
-     {"force-enterprise-isolated-mode-replaces-incognito",
+     {kEnterpriseIsolatedModeInternalName,
       flag_descriptions::kEnterpriseIsolatedModeName,
 --- a/chrome/common/chrome_features.cc
 +++ b/chrome/common/chrome_features.cc
-@@ -1647,13 +1647,7 @@ BASE_FEATURE(kServiceWorkerForegroundOnE
+@@ -1709,13 +1709,7 @@ BASE_FEATURE(kExtensionServiceWorkerPrio
  //
  // TODO(alexmos): Move this and the other site isolation features below to
  // browser_features, as they are only used on the browser side.

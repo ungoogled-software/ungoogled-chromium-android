@@ -5,7 +5,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
 diff '--color=auto' -ur orig/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java new/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
-@@ -4530,7 +4530,7 @@ public class ChromeTabbedActivity extend
+@@ -4661,7 +4661,7 @@ public class ChromeTabbedActivity extend
                              TabClosureParams.closeTab(currentTab).build(), /* allowDialog= */ true);
              RecordUserAction.record("MobileTabClosed");
          } else if (id == R.id.exit_id) {
@@ -16,7 +16,7 @@ diff '--color=auto' -ur orig/chrome/android/java/src/org/chromium/chrome/browser
  
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -2969,7 +2969,7 @@ public abstract class ChromeActivity ext
+@@ -2976,7 +2976,7 @@ public abstract class ChromeActivity ext
          }
  
          if (id == R.id.exit_id) {
@@ -43,7 +43,7 @@ diff '--color=auto' -ur orig/chrome/android/java/src/org/chromium/chrome/browser
  public class ApplicationLifetime {
      /** Interface to be implemented to be notified of application termination. */
      public interface Observer {
-@@ -47,4 +50,13 @@ public class ApplicationLifetime {
+@@ -61,4 +64,13 @@ public class ApplicationLifetime {
              observer.onTerminate(restart);
          }
      }

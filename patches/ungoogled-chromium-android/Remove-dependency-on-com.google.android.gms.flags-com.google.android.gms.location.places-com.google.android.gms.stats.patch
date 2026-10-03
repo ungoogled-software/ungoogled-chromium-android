@@ -9,7 +9,7 @@ Subject: Remove dependency on com.google.android.gms.flags,
 
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -784,27 +784,6 @@ template("define_autorolled_targets") {
+@@ -788,27 +788,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -37,7 +37,7 @@ Subject: Remove dependency on com.google.android.gms.flags,
        android_aar_prebuilt("google_play_services_phenotype_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_phenotype/play-services-phenotype.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_phenotype/com_google_android_gms_play_services_phenotype.info"
-@@ -824,27 +803,6 @@ template("define_autorolled_targets") {
+@@ -828,27 +807,6 @@ template("define_autorolled_targets") {
          ]
        }
      }

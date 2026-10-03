@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/components/enterprise/connectors/core/cloud_content_scanning/cloud_binary_upload_service_base.cc
 +++ b/components/enterprise/connectors/core/cloud_content_scanning/cloud_binary_upload_service_base.cc
-@@ -357,17 +357,6 @@ void CloudBinaryUploadServiceBase::LogRe
+@@ -362,17 +362,6 @@ void CloudBinaryUploadServiceBase::LogRe
      ScanRequestUploadResult result,
      BinaryUploadRequest* request,
      const ContentAnalysisResponse& response) {

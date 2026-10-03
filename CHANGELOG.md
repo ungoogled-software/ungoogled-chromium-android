@@ -1,3 +1,7 @@
+# 154.0.8037.92-1
+* Upstream update
+* Fixed chrome://proxy settings not applying to websites
+
 # 152.0.7977.82-1
 * Upstream update
 * Added patches for extensions & misc crash fixes

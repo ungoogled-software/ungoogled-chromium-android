@@ -29,7 +29,7 @@ Subject: Remove dependency on com.google.android.gms.cast
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -312,8 +312,6 @@ if (_is_default_toolchain) {
+@@ -325,8 +325,6 @@ if (_is_default_toolchain) {
        ":xr_java",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -40,7 +40,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        "$google_play_services_package:google_play_services_vision_common_java",
 --- a/chrome/android/java/AndroidManifest.xml
 +++ b/chrome/android/java/AndroidManifest.xml
-@@ -854,16 +854,6 @@ by a child template that "extends" this
+@@ -876,16 +876,6 @@ by a child template that "extends" this
              </intent-filter>
          </activity>
  
@@ -57,7 +57,7 @@ Subject: Remove dependency on com.google.android.gms.cast
          <activity android:name="org.chromium.chrome.browser.share.send_tab_to_self.SendTabToSelfShareTargetActivity"
              android:theme="@style/Theme.BrowserUI.Translucent.NoTitleBar"
              android:exported="false"
-@@ -1409,12 +1399,6 @@ by a child template that "extends" this
+@@ -1441,12 +1431,6 @@ by a child template that "extends" this
        <uses-native-library android:name="libopenxr.google.so" android:required="false" />
        {% endif %}
  
@@ -1545,31 +1545,31 @@ Subject: Remove dependency on com.google.android.gms.cast
        android_aar_prebuilt("google_play_services_fido_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_fido/play-services-fido.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_fido/com_google_android_gms_play_services_fido.info"
-@@ -499,11 +452,6 @@ template("define_autorolled_targets") {
-       info_path = "autorolled/committed/libs/com_google_mlkit_common/com_google_mlkit_common.info"
-       enable_bytecode_checks = false
-       deps = [
--        "$google_play_services_package:google_android_datatransport_transport_api_java",
--        "$google_play_services_package:google_android_datatransport_transport_backend_cct_java",
--        "$google_play_services_package:google_android_datatransport_transport_runtime_java",
--        "$google_play_services_package:google_firebase_firebase_encoders_java",
--        "$google_play_services_package:google_firebase_firebase_encoders_json_java",
-         "$google_play_services_package:google_play_services_base_java",
-         "$google_play_services_package:google_play_services_basement_java",
-         "$google_play_services_package:google_play_services_tasks_java",
-@@ -535,11 +483,6 @@ template("define_autorolled_targets") {
-       info_path = "autorolled/committed/libs/com_google_mlkit_genai_prompt/com_google_mlkit_genai_prompt.info"
-       enable_bytecode_checks = false
-       deps = [
--        "$google_play_services_package:google_android_datatransport_transport_api_java",
--        "$google_play_services_package:google_android_datatransport_transport_backend_cct_java",
--        "$google_play_services_package:google_android_datatransport_transport_runtime_java",
--        "$google_play_services_package:google_firebase_firebase_encoders_java",
--        "$google_play_services_package:google_firebase_firebase_encoders_json_java",
-         "$google_play_services_package:google_play_services_basement_java",
-         "$google_play_services_package:google_play_services_tasks_java",
-         "//third_party/android_deps:com_google_mlkit_common_java",
-@@ -918,74 +861,6 @@ template("define_autorolled_targets") {
+@@ -500,11 +453,6 @@ template("define_autorolled_targets") {
+         info_path = "autorolled/committed/libs/com_google_mlkit_common/com_google_mlkit_common.info"
+         enable_bytecode_checks = false
+         deps = [
+-          "$google_play_services_package:google_android_datatransport_transport_api_java",
+-          "$google_play_services_package:google_android_datatransport_transport_backend_cct_java",
+-          "$google_play_services_package:google_android_datatransport_transport_runtime_java",
+-          "$google_play_services_package:google_firebase_firebase_encoders_java",
+-          "$google_play_services_package:google_firebase_firebase_encoders_json_java",
+           "$google_play_services_package:google_play_services_base_java",
+           "$google_play_services_package:google_play_services_basement_java",
+           "$google_play_services_package:google_play_services_tasks_java",
+@@ -538,11 +486,6 @@ template("define_autorolled_targets") {
+         info_path = "autorolled/committed/libs/com_google_mlkit_genai_prompt/com_google_mlkit_genai_prompt.info"
+         enable_bytecode_checks = false
+         deps = [
+-          "$google_play_services_package:google_android_datatransport_transport_api_java",
+-          "$google_play_services_package:google_android_datatransport_transport_backend_cct_java",
+-          "$google_play_services_package:google_android_datatransport_transport_runtime_java",
+-          "$google_play_services_package:google_firebase_firebase_encoders_java",
+-          "$google_play_services_package:google_firebase_firebase_encoders_json_java",
+           "$google_play_services_package:google_play_services_basement_java",
+           "$google_play_services_package:google_play_services_tasks_java",
+           "//third_party/android_deps:com_google_mlkit_common_java",
+@@ -922,74 +865,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -1644,7 +1644,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        android_aar_prebuilt("google_play_services_clearcut_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_clearcut/play-services-clearcut.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_clearcut/com_google_android_gms_play_services_clearcut.info"
-@@ -1174,70 +1049,6 @@ template("define_autorolled_targets") {
+@@ -1178,70 +1053,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
@@ -1713,5 +1713,5 @@ Subject: Remove dependency on com.google.android.gms.cast
 -
 -    # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
-     java_prebuilt("com_google_googlejavaformat_google_java_format_java") {
-       jar_path = "autorolled/cipd/libs/com_google_googlejavaformat_google_java_format/google-java-format.jar"
+     if (google_play_services_package == "//third_party/android_deps") {
+       android_aar_prebuilt(

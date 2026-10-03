@@ -17,7 +17,7 @@ Subject: Remove dependency on com.google.android.gms.auth
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -310,7 +310,6 @@ if (_is_default_toolchain) {
+@@ -323,7 +323,6 @@ if (_is_default_toolchain) {
        ":screenshot_provider_java",
        ":usage_stats_proto_java",
        ":xr_java",
@@ -45,7 +45,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      "//base:base_java_test_support_uncommon",
 --- a/content/public/android/BUILD.gn
 +++ b/content/public/android/BUILD.gn
-@@ -163,7 +163,6 @@ android_library("content_full_java") {
+@@ -164,7 +164,6 @@ android_library("content_full_java") {
      ":content_java_resources",
      ":content_main_dex_java",
      ":content_util_java",
@@ -402,7 +402,7 @@ Subject: Remove dependency on com.google.android.gms.auth
                  mUserConsentReceiver = receiver;
 --- a/content/test/BUILD.gn
 +++ b/content/test/BUILD.gn
-@@ -3811,7 +3811,6 @@ if (is_android) {
+@@ -3784,7 +3784,6 @@ if (is_android) {
      testonly = true
      sources = content_java_sources_needing_jni
      deps = [
@@ -512,7 +512,7 @@ Subject: Remove dependency on com.google.android.gms.auth
        android_aar_prebuilt("com_google_android_material_material_java") {
 --- a/third_party/androidx/BUILD.gn
 +++ b/third_party/androidx/BUILD.gn
-@@ -615,24 +615,6 @@ if (!limit_android_deps) {
+@@ -617,24 +617,6 @@ if (!limit_android_deps) {
  
    # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
    androidx_android_aar_prebuilt(
@@ -537,11 +537,10 @@ Subject: Remove dependency on com.google.android.gms.auth
        "androidx_credentials_registry_registry_provider_java") {
      aar_path = "../androidx/cipd/libs/androidx_credentials_registry_registry_provider/registry-provider.aar"
      info_path = "../androidx/committed/libs/androidx_credentials_registry_registry_provider/androidx_credentials_registry_registry_provider.info"
-@@ -644,19 +626,6 @@ if (!limit_android_deps) {
-       "//third_party/kotlin_stdlib:kotlin_stdlib_java",
+@@ -648,19 +630,6 @@ if (!limit_android_deps) {
      ]
    }
--
+ 
 -  # This is generated, do not edit. Update BuildConfigGenerator.groovy instead.
 -  androidx_android_aar_prebuilt(
 -      "androidx_credentials_registry_registry_provider_play_services_java") {
@@ -549,6 +548,7 @@ Subject: Remove dependency on com.google.android.gms.auth
 -    info_path = "../androidx/committed/libs/androidx_credentials_registry_registry_provider_play_services/androidx_credentials_registry_registry_provider_play_services.info"
 -    enable_bytecode_checks = false
 -    deps = [
+-      ":androidx_core_core_java",
 -      ":androidx_credentials_registry_registry_provider_java",
 -      "$google_play_services_package:google_play_services_identity_credentials_java",
 -      "//third_party/kotlin_stdlib:kotlin_stdlib_java",

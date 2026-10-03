@@ -11,7 +11,7 @@ Subject: Remove dependency on com.google.android.play
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -2202,9 +2202,6 @@ if (_is_default_toolchain) {
+@@ -2230,9 +2230,6 @@ if (_is_default_toolchain) {
        deps += [
          "//chrome/browser/ui/android/app_rating:play_review_aar_for_clank_java",
        ]
@@ -115,7 +115,7 @@ Subject: Remove dependency on com.google.android.play
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -133,20 +133,6 @@ template("define_autorolled_targets") {
+@@ -131,18 +131,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
@@ -125,8 +125,6 @@ Subject: Remove dependency on com.google.android.play
 -      info_path = "autorolled/committed/libs/com_google_android_play_review/com_google_android_play_review.info"
 -      enable_bytecode_checks = false
 -      deps = [
--        "$google_play_services_package:google_play_services_basement_java",
--        "$google_play_services_package:google_play_services_tasks_java",
 -        "//third_party/android_deps:com_google_android_play_core_common_java",
 -      ]
 -    }

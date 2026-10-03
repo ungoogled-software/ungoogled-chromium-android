@@ -7,7 +7,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
 
 --- a/chrome/browser/android/rlz/rlz_ping_handler.cc
 +++ b/chrome/browser/android/rlz/rlz_ping_handler.cc
-@@ -76,7 +76,7 @@ void RlzPingHandler::Ping(const base::an
+@@ -69,7 +69,7 @@ void RlzPingHandler::Ping(const std::str
    DCHECK_EQ(id.length(), 50u);
  
    GURL request_url(base::StringPrintf(

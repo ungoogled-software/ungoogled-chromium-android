@@ -18,7 +18,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      std::optional<double> sampling_likelihood,
 --- a/chrome/browser/page_content_annotations/page_content_annotations_service_factory.cc
 +++ b/chrome/browser/page_content_annotations/page_content_annotations_service_factory.cc
-@@ -60,7 +60,7 @@ bool IsEphemeralProfile(Profile* profile
+@@ -62,7 +62,7 @@ bool IsEphemeralProfile(Profile* profile
    return entry && entry->IsEphemeral();
  }
  
@@ -120,7 +120,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      CrowdsourcingRequestType request_type) {
    switch (request_type) {
      case CrowdsourcingRequestType::kRequestQuery:
-@@ -548,7 +548,7 @@ std::string GetAPIMethodUrl(Crowdsourcin
+@@ -545,7 +545,7 @@ std::string GetAPIMethodUrl(Crowdsourcin
  }
  
  // Gets HTTP body payload for API POST request.

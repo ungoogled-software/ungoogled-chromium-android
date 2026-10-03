@@ -45,7 +45,7 @@ Subject: Remove dependency on
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -310,9 +310,6 @@ if (_is_default_toolchain) {
+@@ -323,9 +323,6 @@ if (_is_default_toolchain) {
        ":screenshot_provider_java",
        ":usage_stats_proto_java",
        ":xr_java",
@@ -125,7 +125,7 @@ Subject: Remove dependency on
 -    "$google_play_services_package:google_play_services_tasks_java",
      "//base:base_java",
      "//build/android:build_java",
-     "//chrome/browser/preferences:java",
+     "//chrome/browser/lifetime/android:java",
 --- a/chrome/browser/omaha/android/BUILD.gn
 +++ b/chrome/browser/omaha/android/BUILD.gn
 @@ -21,7 +21,6 @@ android_library("java") {
@@ -167,7 +167,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//build/android:build_java",
      "//chrome/browser/device_reauth/android:java",
-@@ -225,7 +223,6 @@ android_library("utils_java") {
+@@ -224,7 +222,6 @@ android_library("utils_java") {
  
    deps = [
      ":java_resources",
@@ -175,7 +175,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//base:resetters_java",
      "//base:tasks_java",
-@@ -301,8 +298,6 @@ robolectric_binary("password_manager_jun
+@@ -299,8 +296,6 @@ robolectric_binary("password_manager_jun
      ":test_support_java",
      ":unified_password_manager_proto_java",
      ":utils_java",
@@ -205,7 +205,7 @@ Subject: Remove dependency on
      "//third_party/androidx:androidx_annotation_annotation_java",
 --- a/chrome/browser/ui/android/omnibox/BUILD.gn
 +++ b/chrome/browser/ui/android/omnibox/BUILD.gn
-@@ -212,7 +212,6 @@ android_library("java") {
+@@ -216,7 +216,6 @@ android_library("java") {
  
    deps = [
      ":java_resources",
@@ -213,7 +213,7 @@ Subject: Remove dependency on
      "//base:base_java",
      "//base:supplier_java",
      "//base/version_info/android:version_constants_java",
-@@ -612,7 +611,6 @@ robolectric_library("junit") {
+@@ -626,7 +625,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":java_resources",
@@ -252,7 +252,7 @@ Subject: Remove dependency on
        "//content/public/android:content_java",
 --- a/chrome/test/android/BUILD.gn
 +++ b/chrome/test/android/BUILD.gn
-@@ -399,8 +399,6 @@ android_library("chrome_java_integration
+@@ -402,8 +402,6 @@ android_library("chrome_java_integration
  
    deps = [
      ":chrome_java_test_support_common",
@@ -340,7 +340,7 @@ Subject: Remove dependency on
  import org.chromium.base.ThreadUtils;
  import org.chromium.base.metrics.RecordUserAction;
  import org.chromium.build.annotations.NullMarked;
-@@ -90,7 +88,6 @@ public abstract class UserRecoverableErr
+@@ -91,7 +89,6 @@ public abstract class UserRecoverableErr
              if (!sNotificationShown.getAndSet(true)) {
                  return;
              }
@@ -348,7 +348,7 @@ Subject: Remove dependency on
          }
      }
  
-@@ -178,17 +175,10 @@ public abstract class UserRecoverableErr
+@@ -179,17 +176,10 @@ public abstract class UserRecoverableErr
              }
              Dialog dialog = mDialog;
              if (dialog == null) {
@@ -508,8 +508,8 @@ Subject: Remove dependency on
 -    "$google_play_services_package:google_play_services_tasks_java",
      "//base:base_java",
      "//base:service_loader_java",
-     "//base/version_info/android:version_constants_java",
-@@ -232,8 +228,6 @@ robolectric_library("junit") {
+     "//base:tristate_java",
+@@ -233,8 +229,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":test_support_java",
@@ -520,7 +520,7 @@ Subject: Remove dependency on
      "//base:base_junit_test_support",
 --- a/content/public/android/BUILD.gn
 +++ b/content/public/android/BUILD.gn
-@@ -163,9 +163,6 @@ android_library("content_full_java") {
+@@ -164,9 +164,6 @@ android_library("content_full_java") {
      ":content_java_resources",
      ":content_main_dex_java",
      ":content_util_java",
@@ -558,7 +558,7 @@ Subject: Remove dependency on
  
 --- a/content/test/BUILD.gn
 +++ b/content/test/BUILD.gn
-@@ -3811,9 +3811,6 @@ if (is_android) {
+@@ -3784,9 +3784,6 @@ if (is_android) {
      testonly = true
      sources = content_java_sources_needing_jni
      deps = [
@@ -570,7 +570,7 @@ Subject: Remove dependency on
        "//third_party/jni_zero:jni_zero_java",
 --- a/device/BUILD.gn
 +++ b/device/BUILD.gn
-@@ -538,8 +538,6 @@ if (is_android) {
+@@ -545,8 +545,6 @@ if (is_android) {
        "vr/public/junit/src/org/chromium/device/vr/XrFeatureStatusTest.java",
      ]
      deps = [
@@ -602,7 +602,7 @@ Subject: Remove dependency on
        "//mojo/public/java:base_java",
 --- a/services/device/geolocation/BUILD.gn
 +++ b/services/device/geolocation/BUILD.gn
-@@ -160,9 +160,6 @@ if (is_android) {
+@@ -163,9 +163,6 @@ if (is_android) {
  
      deps = [
        ":geolocation_jni_headers",
@@ -766,34 +766,52 @@ Subject: Remove dependency on
      if (!defined(material_design_target)) {
        android_aar_prebuilt("com_google_android_material_material_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_material_material/material.aar"
-@@ -353,9 +266,6 @@ template("define_autorolled_targets") {
-       info_path = "autorolled/committed/libs/com_google_mlkit_common/com_google_mlkit_common.info"
+@@ -211,8 +124,6 @@ template("define_autorolled_targets") {
+         # Please depend on //third_party/android_deps:playcore_java instead.
+         visibility = [ "//third_party/android_deps:*" ]
+         deps = [
+-          "$google_play_services_package:google_play_services_basement_java",
+-          "$google_play_services_package:google_play_services_tasks_java",
+           "//third_party/android_deps:com_google_android_play_core_common_java",
+         ]
+       }
+@@ -226,8 +137,6 @@ template("define_autorolled_targets") {
+       info_path = "autorolled/committed/libs/com_google_android_play_review/com_google_android_play_review.info"
        enable_bytecode_checks = false
        deps = [
--        "$google_play_services_package:google_play_services_base_java",
 -        "$google_play_services_package:google_play_services_basement_java",
 -        "$google_play_services_package:google_play_services_tasks_java",
-         "//third_party/androidx:androidx_appcompat_appcompat_java",
-         "//third_party/androidx:androidx_core_core_java",
+         "//third_party/android_deps:com_google_android_play_core_common_java",
        ]
-@@ -369,7 +279,6 @@ template("define_autorolled_targets") {
-       info_path = "autorolled/committed/libs/com_google_mlkit_genai_common/com_google_mlkit_genai_common.info"
-       enable_bytecode_checks = false
-       deps = [
--        "$google_play_services_package:google_play_services_basement_java",
-         "//third_party/android_deps:org_jetbrains_kotlinx_kotlinx_coroutines_core_java",
-         "//third_party/android_deps:org_jetbrains_kotlinx_kotlinx_coroutines_guava_java",
-         "//third_party/kotlin_stdlib:kotlin_stdlib_java",
-@@ -384,8 +293,6 @@ template("define_autorolled_targets") {
-       info_path = "autorolled/committed/libs/com_google_mlkit_genai_prompt/com_google_mlkit_genai_prompt.info"
-       enable_bytecode_checks = false
-       deps = [
--        "$google_play_services_package:google_play_services_basement_java",
--        "$google_play_services_package:google_play_services_tasks_java",
-         "//third_party/android_deps:com_google_mlkit_common_java",
-         "//third_party/android_deps:com_google_mlkit_genai_common_java",
-         "//third_party/android_deps:com_google_mlkit_genai_schema_java",
-@@ -761,51 +668,6 @@ template("define_autorolled_targets") {
+     }
+@@ -354,9 +263,6 @@ template("define_autorolled_targets") {
+         info_path = "autorolled/committed/libs/com_google_mlkit_common/com_google_mlkit_common.info"
+         enable_bytecode_checks = false
+         deps = [
+-          "$google_play_services_package:google_play_services_base_java",
+-          "$google_play_services_package:google_play_services_basement_java",
+-          "$google_play_services_package:google_play_services_tasks_java",
+           "//third_party/androidx:androidx_appcompat_appcompat_java",
+           "//third_party/androidx:androidx_core_core_java",
+         ]
+@@ -371,7 +277,6 @@ template("define_autorolled_targets") {
+         info_path = "autorolled/committed/libs/com_google_mlkit_genai_common/com_google_mlkit_genai_common.info"
+         enable_bytecode_checks = false
+         deps = [
+-          "$google_play_services_package:google_play_services_basement_java",
+           "//third_party/android_deps:org_jetbrains_kotlinx_kotlinx_coroutines_core_java",
+           "//third_party/android_deps:org_jetbrains_kotlinx_kotlinx_coroutines_guava_java",
+           "//third_party/kotlin_stdlib:kotlin_stdlib_java",
+@@ -387,8 +292,6 @@ template("define_autorolled_targets") {
+         info_path = "autorolled/committed/libs/com_google_mlkit_genai_prompt/com_google_mlkit_genai_prompt.info"
+         enable_bytecode_checks = false
+         deps = [
+-          "$google_play_services_package:google_play_services_basement_java",
+-          "$google_play_services_package:google_play_services_tasks_java",
+           "//third_party/android_deps:com_google_mlkit_common_java",
+           "//third_party/android_deps:com_google_mlkit_genai_common_java",
+           "//third_party/android_deps:com_google_mlkit_genai_schema_java",
+@@ -765,51 +668,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
@@ -845,7 +863,23 @@ Subject: Remove dependency on
      android_aar_prebuilt("com_google_android_play_core_common_java") {
        aar_path = "autorolled/cipd/libs/com_google_android_play_core_common/core-common.aar"
        info_path = "autorolled/committed/libs/com_google_android_play_core_common/com_google_android_play_core_common.info"
-@@ -1493,29 +1355,6 @@ template("define_autorolled_targets") {
+@@ -903,7 +761,6 @@ template("define_autorolled_targets") {
+           "//third_party/androidx:*",
+         ]
+         deps = [
+-          "$google_play_services_package:google_play_services_tasks_java",
+         ]
+       }
+     }
+@@ -924,7 +781,6 @@ template("define_autorolled_targets") {
+           "//third_party/androidx:*",
+         ]
+         deps = [
+-          "$google_play_services_package:google_play_services_basement_java",
+         ]
+       }
+     }
+@@ -1540,29 +1396,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy

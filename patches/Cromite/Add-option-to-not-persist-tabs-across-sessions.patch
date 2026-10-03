@@ -18,7 +18,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 +        android:summary="@string/close_tabs_on_exit_summary"
 +        android:defaultValue="false" />
  
-     <PreferenceCategory
+     <org.chromium.components.browser_ui.settings.ChromeBasePreferenceCategory
          android:key="security_section"
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
@@ -30,7 +30,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.base.CommandLine;
  import org.chromium.base.DeviceInfo;
  import org.chromium.base.IntentUtils;
-@@ -2418,8 +2419,10 @@ public class ChromeTabbedActivity extend
+@@ -2489,8 +2490,10 @@ public class ChromeTabbedActivity extend
                          ActivityRestoreState.NUM_ENTRIES);
              }
  
@@ -44,7 +44,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              if (noRestoreState) {
 --- a/chrome/android/java/src/org/chromium/chrome/browser/privacy/settings/PrivacySettings.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/privacy/settings/PrivacySettings.java
-@@ -9,6 +9,7 @@ import static org.chromium.components.co
+@@ -10,6 +10,7 @@ import static org.chromium.components.co
  
  import android.content.Context;
  import android.content.Intent;
@@ -52,7 +52,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import android.graphics.drawable.Drawable;
  import android.os.Bundle;
  import android.text.SpannableString;
-@@ -24,6 +25,7 @@ import androidx.preference.Preference;
+@@ -25,6 +26,7 @@ import androidx.preference.Preference;
  
  import org.chromium.base.ApiCompatibilityUtils;
  import org.chromium.base.Callback;
@@ -60,15 +60,15 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.base.IntentUtils;
  import org.chromium.base.metrics.RecordHistogram;
  import org.chromium.base.metrics.RecordUserAction;
-@@ -104,6 +106,7 @@ public class PrivacySettings extends Chr
-     private static final String PREF_JAVASCRIPT_OPTIMIZER = "javascript_optimizer";
+@@ -102,6 +104,7 @@ public class PrivacySettings extends Chr
      @VisibleForTesting static final String PREF_DO_NOT_TRACK = "do_not_track";
+     @VisibleForTesting static final String PREF_UNIVERSAL_OPT_OUT = "universal_opt_out";
      @VisibleForTesting static final String PREF_THIRD_PARTY_COOKIES = "third_party_cookies";
 +    private static final String PREF_CLOSE_TABS_ON_EXIT = "close_tabs_on_exit";
      private static final String PREF_ADVANCED_PROTECTION_INFO = "advanced_protection_info";
      private static final int SECURE_CONNECTIONS_MESSAGE_ID =
              R.string.settings_privacy_and_security_advanced_protection_secure_connections_bullet;
-@@ -389,7 +392,11 @@ public class PrivacySettings extends Chr
+@@ -348,7 +351,11 @@ public class PrivacySettings extends Chr
      @Override
      public boolean onPreferenceChange(Preference preference, Object newValue) {
          String key = preference.getKey();
@@ -81,7 +81,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              UserPrefs.get(getProfile())
                      .setBoolean(Pref.CAN_MAKE_PAYMENT_ENABLED, (boolean) newValue);
          } else if (PREF_HTTPS_FIRST_MODE_LEGACY.equals(key)) {
-@@ -443,6 +450,10 @@ public class PrivacySettings extends Chr
+@@ -412,6 +419,10 @@ public class PrivacySettings extends Chr
                              getContext(), getProfile()));
          }
  
@@ -116,7 +116,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -2759,6 +2759,12 @@ To change this setting, <ph name="BEGIN_
+@@ -2634,6 +2634,12 @@ To change this setting, <ph name="BEGIN_
        <message name="IDS_ACCESSIBILITY_TAB_SWITCHER_TITLE" desc="Accessibility label of the current window when Grid Tab Switcher is shown.">
          All tabs
        </message>

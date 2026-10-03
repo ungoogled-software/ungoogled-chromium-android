@@ -1,0 +1,14 @@
+author: bearinmindcat <bearincrypto@gmail.com>
+
+--- a/chrome/browser/download/chrome_download_manager_delegate.cc
++++ b/chrome/browser/download/chrome_download_manager_delegate.cc
+@@ -1165,7 +1165,8 @@ bool ChromeDownloadManagerDelegate::Shou
+ 
+ bool ChromeDownloadManagerDelegate::ShouldObfuscateDownload(
+     download::DownloadItem* item) {
+-#if BUILDFLAG(ENTERPRISE_CONTENT_ANALYSIS) || BUILDFLAG(IS_ANDROID)
++#if BUILDFLAG(ENTERPRISE_CONTENT_ANALYSIS) || \
++    (BUILDFLAG(IS_ANDROID) && BUILDFLAG(SAFE_BROWSING_AVAILABLE))
+   if (!base::FeatureList::IsEnabled(
+           enterprise_obfuscation::kEnterpriseFileObfuscation)) {
+     return false;

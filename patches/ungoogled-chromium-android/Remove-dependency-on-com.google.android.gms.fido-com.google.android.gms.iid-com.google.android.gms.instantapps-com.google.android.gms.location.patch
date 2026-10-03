@@ -22,7 +22,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -312,7 +312,6 @@ if (_is_default_toolchain) {
+@@ -325,7 +325,6 @@ if (_is_default_toolchain) {
        ":xr_java",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -42,7 +42,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
      "//base:base_java_test_support",
 --- a/chrome/browser/ui/android/omnibox/BUILD.gn
 +++ b/chrome/browser/ui/android/omnibox/BUILD.gn
-@@ -212,7 +212,6 @@ android_library("java") {
+@@ -216,7 +216,6 @@ android_library("java") {
  
    deps = [
      ":java_resources",
@@ -50,7 +50,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
      "$google_play_services_package:google_play_services_tasks_java",
      "//base:base_java",
      "//base:supplier_java",
-@@ -613,7 +612,6 @@ robolectric_library("junit") {
+@@ -627,7 +626,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":java_resources",
@@ -71,9 +71,9 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -import com.google.android.gms.location.LocationServices;
 -
  import org.jni_zero.CalledByNative;
+ import org.jni_zero.JniType;
  
- import org.chromium.base.ApiCompatibilityUtils;
-@@ -96,7 +90,6 @@ public class GeolocationHeader {
+@@ -97,7 +91,6 @@ public class GeolocationHeader {
  
      private static final String DUMMY_URL_QUERY = "some_query";
  
@@ -81,7 +81,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
      private static boolean sGeolocationPrimed;
      private static boolean sCurrentLocationRequested;
  
-@@ -150,44 +143,7 @@ public class GeolocationHeader {
+@@ -151,44 +144,7 @@ public class GeolocationHeader {
       * granularity matching the app's permission level.
       */
      private static boolean startListeningForLocationUpdates(boolean requestCoarseLocation) {
@@ -127,7 +127,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
          return sCurrentLocationRequested;
      }
  
-@@ -198,17 +154,9 @@ public class GeolocationHeader {
+@@ -199,17 +155,9 @@ public class GeolocationHeader {
              return;
          }
          if (!sCurrentLocationRequested) return;
@@ -270,9 +270,9 @@ Subject: Remove dependency on com.google.android.gms.fido,
 -import com.google.android.gms.location.Priority;
 -
  import org.chromium.base.ContextUtils;
+ import org.chromium.base.ResettersForTesting;
  import org.chromium.base.SysUtils;
- import org.chromium.base.TimeUtils;
-@@ -235,7 +233,7 @@ public class OmniboxFeatures {
+@@ -248,7 +246,7 @@ public class OmniboxFeatures {
              newIntParam(
                      sUseFusedLocationProvider,
                      "geolocation_request_priority",
@@ -283,7 +283,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
              newIntParam(
 --- a/device/BUILD.gn
 +++ b/device/BUILD.gn
-@@ -540,7 +540,6 @@ if (is_android) {
+@@ -547,7 +547,6 @@ if (is_android) {
      deps = [
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -303,7 +303,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
        "$google_play_services_package:google_play_services_vision_java",
 --- a/services/device/geolocation/BUILD.gn
 +++ b/services/device/geolocation/BUILD.gn
-@@ -162,7 +162,6 @@ if (is_android) {
+@@ -165,7 +165,6 @@ if (is_android) {
        ":geolocation_jni_headers",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",

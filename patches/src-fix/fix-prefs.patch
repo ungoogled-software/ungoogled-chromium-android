@@ -9,14 +9,14 @@ Subject: fix build error with prefs.h
 
 --- a/chrome/browser/preferences/BUILD.gn
 +++ b/chrome/browser/preferences/BUILD.gn
-@@ -77,7 +77,6 @@ java_cpp_strings("java_pref_names_srcjar
+@@ -78,7 +78,6 @@ java_cpp_strings("java_pref_names_srcjar
      "//components/safe_browsing/core/common/safe_browsing_prefs.h",
      "//components/safety_check/safety_check_pref_names.h",
      "//components/saved_tab_groups/public/pref_names.h",
 -    "//components/signin/public/base/signin_pref_names.cc",
      "//components/supervised_user/core/common/pref_names.h",
      "//components/translate/core/browser/translate_pref_names.h",
-   ]
+     "//components/unified_consent/pref_names.cc",
 --- a/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/FullscreenSigninPromoLauncher.java
 +++ b/chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/FullscreenSigninPromoLauncher.java
 @@ -181,8 +181,7 @@ public final class FullscreenSigninPromo

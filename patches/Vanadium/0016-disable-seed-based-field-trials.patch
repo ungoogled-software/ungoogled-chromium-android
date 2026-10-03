@@ -9,7 +9,7 @@ Subject: [PATCH 16/78] disable seed-based field trials
 
 --- a/components/variations/service/variations_field_trial_creator.cc
 +++ b/components/variations/service/variations_field_trial_creator.cc
-@@ -348,9 +348,11 @@ bool VariationsFieldTrialCreator::SetUpF
+@@ -356,9 +356,11 @@ bool VariationsFieldTrialCreator::SetUpF
  
    CreateTrialsResult create_trials_result = {.applied_seed = false};
    if (!used_testing_config && client_filterable_state) {
