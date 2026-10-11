@@ -97,6 +97,7 @@ src-fix/fix-android-extra-locales-cy-154.patch
 src-fix/fix-gms-dangling-deps-154.patch
 src-fix/fix-android-download-obfuscation-154.patch
 src-fix/fix-webview-safebrowsing-154.patch
+src-fix/restore-sync-service-154.patch
 Extensions/android-extensions-support.patch
 Extensions/Ultimatum/load-crx.patch
 Extensions/misc/extensions-menu-null-guard.patch
