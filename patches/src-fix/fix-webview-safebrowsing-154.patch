@@ -1,0 +1,94 @@
+author: bearinmindcat <bearincrypto@gmail.com>
+
+--- a/android_webview/browser/aw_browser_context.cc
++++ b/android_webview/browser/aw_browser_context.cc
+@@ -552,8 +552,6 @@ void AwBrowserContext::BuildVisitedLinkT
+ }
+ 
+ void AwBrowserContext::SetExtendedReportingAllowed(bool allowed) {
+-  user_pref_service_->SetBoolean(
+-      ::prefs::kSafeBrowsingExtendedReportingOptInAllowed, allowed);
+ }
+ 
+ // TODO(amalova): Make sure NetworkContextParams is configured correctly when
+--- a/android_webview/browser/prefetch/aw_prefetch_manager.h
++++ b/android_webview/browser/prefetch/aw_prefetch_manager.h
+@@ -19,6 +19,7 @@
+ #include "base/android/scoped_java_ref.h"
+ #include "base/containers/circular_deque.h"
+ #include "base/memory/raw_ref.h"
++#include "components/prefs/pref_service.h"
+ #include "content/public/browser/browser_context.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/pre_prefetch_handle.h"
+--- a/android_webview/renderer/aw_url_loader_throttle_provider.cc
++++ b/android_webview/renderer/aw_url_loader_throttle_provider.cc
+@@ -8,12 +8,12 @@
+ 
+ #include "base/feature_list.h"
+ #include "base/memory/ptr_util.h"
+-#include "components/safe_browsing/content/renderer/renderer_url_loader_throttle.h"
+ #include "components/safe_browsing/core/common/features.h"
+ #include "content/public/common/content_features.h"
+ #include "content/public/renderer/render_thread.h"
+ #include "services/network/public/cpp/resource_request.h"
+ #include "third_party/blink/public/common/loader/resource_type_util.h"
++#include "third_party/blink/public/common/loader/url_loader_throttle.h"
+ 
+ namespace android_webview {
+ 
+@@ -66,9 +66,6 @@ AwURLLoaderThrottleProvider::CreateThrot
+   if (!is_frame_resource) {
+     if (safe_browsing_remote_)
+       safe_browsing_.Bind(std::move(safe_browsing_remote_));
+-    throttles.emplace_back(
+-        std::make_unique<safe_browsing::RendererURLLoaderThrottle>(
+-            safe_browsing_.get(), local_frame_token));
+   }
+ 
+   return throttles;
+--- a/components/safe_browsing/android/remote_database_manager.cc
++++ b/components/safe_browsing/android/remote_database_manager.cc
+@@ -19,7 +19,6 @@
+ #include "base/strings/string_number_conversions.h"
+ #include "base/strings/string_split.h"
+ #include "base/timer/elapsed_timer.h"
+-#include "components/safe_browsing/android/real_time_url_checks_allowlist.h"
+ #include "components/safe_browsing/android/safe_browsing_api_handler_bridge.h"
+ #include "components/safe_browsing/core/browser/db/v4_get_hash_protocol_manager.h"
+ #include "components/safe_browsing/core/browser/db/v4_protocol_manager_util.h"
+@@ -31,7 +30,6 @@
+ using content::BrowserThread;
+ namespace safe_browsing {
+ 
+-using IsInAllowlistResult = RealTimeUrlChecksAllowlist::IsInAllowlistResult;
+ namespace {
+ 
+ constexpr char kCanCheckUrlBaseHistogramName[] = "SB2.RemoteCall.CanCheckUrl";
+@@ -204,11 +202,7 @@ void RemoteSafeBrowsingDatabaseManager::
+     return;
+   }
+ 
+-  IsInAllowlistResult match_result =
+-      RealTimeUrlChecksAllowlist::GetInstance()->IsInAllowlist(url);
+-  // Note that if the allowlist is unavailable, we say that is a match.
+-  bool is_match = match_result == IsInAllowlistResult::kInAllowlist ||
+-                  match_result == IsInAllowlistResult::kAllowlistUnavailable;
++  bool is_match = true;
+   ui_task_runner()->PostTask(
+       FROM_HERE, base::BindOnce(std::move(callback),
+                                 /*url_on_high_confidence_allowlist=*/is_match,
+--- a/components/safe_browsing/content/browser/triggers/trigger_manager.cc
++++ b/components/safe_browsing/content/browser/triggers/trigger_manager.cc
+@@ -125,9 +125,9 @@ TriggerManager::GetDataCollectionPermiss
+     const PrefService& pref_service,
+     content::WebContents* web_contents) {
+   return DataCollectionPermissions(
+-      IsExtendedReportingOptInAllowed(pref_service),
++      false,
+       web_contents->GetBrowserContext()->IsOffTheRecord(),
+-      IsExtendedReportingEnabled(pref_service));
++      false);
+ }
+ 
+ bool TriggerManager::CanStartDataCollection(

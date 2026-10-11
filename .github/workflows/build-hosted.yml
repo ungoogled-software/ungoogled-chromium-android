@@ -54,7 +54,7 @@ jobs:
       architecture: ${{ matrix.architecture }}
       chromium_source: ${{ inputs.chromium_source || 'github' }}
       source_run_id: ${{ inputs.source_run_id }}
-      threads: ${{ inputs.threads || 0 }}
+      threads: ${{ fromJSON(inputs.threads || '0') }}
 
   release:
     needs: build
@@ -73,7 +73,7 @@ jobs:
           NAME: ${{ github.event_name == 'push' && github.ref_name || inputs.release_name }}
         run: |
           files=()
-          while IFS= read -r f; do files+=("$f"); done < <(find rel -name 'ChromePublic_*.apk' -o -name 'ChromePublic_arm64.aab')
+          while IFS= read -r f; do files+=("$f"); done < <(find rel -name 'ChromePublic_*.apk' -o -name 'ChromePublic_arm64.aab' -o -name 'SystemWebView_*.apk')
           [ "${#files[@]}" -gt 0 ] || { echo "FATAL: no release files found"; exit 1; }
           for f in "${files[@]}"; do
               case "$f" in

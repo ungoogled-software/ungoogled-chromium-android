@@ -82,6 +82,22 @@ else
     [ -n "$AAB_IN" ] && cp "$AAB_IN" "$REL/ChromePublic_${ARCH}.aab"
 fi
 
+WV_IN=$(find "$OUT/apks" -maxdepth 1 -name "SystemWebView64.apk" | head -1)
+[ -n "$WV_IN" ] || WV_IN=$(find "$OUT/apks" -maxdepth 1 -name "SystemWebView.apk" | head -1)
+if [ -n "$WV_IN" ]; then
+    if [ -n "$KS" ] && [ -f "$KS" ] && [ -n "$KS_PASSFILE" ] && [ -f "$KS_PASSFILE" ]; then
+        "$APKSIGNER" sign --ks "$KS" --ks-key-alias "$KS_ALIAS" \
+            --ks-pass "pass:$PW" --key-pass "pass:$PW" \
+            --in "$WV_IN" --out "$REL/SystemWebView_${ARCH}.apk"
+        WFP=$("$APKSIGNER" verify --print-certs "$REL/SystemWebView_${ARCH}.apk" 2>/dev/null \
+              | grep -m1 "certificate SHA-256 digest" | awk '{print $NF}' \
+              | sed 's/../&:/g; s/:$//' | tr 'a-f' 'A-F')
+        [ "$WFP" = "$KFP" ] || { echo "FATAL: signed WebView cert != keystore (apk=$WFP key=$KFP)"; exit 1; }
+        echo "signed SystemWebView as $KS_ALIAS ($KFP)"
+    else
+        cp "$WV_IN" "$REL/SystemWebView_${ARCH}.apk"
+    fi
+fi
 MAP=$(find "$OUT" -maxdepth 2 \( -name "ChromePublic.apk.mapping" -o -name "ChromePublic.aab.mapping" \) | head -1)
 if [ -n "$MAP" ]; then cp "$MAP" "$REL/ChromePublic_${ARCH}.apk.mapping"; else echo "WARN: no R8 mapping found"; fi
 
@@ -95,9 +111,10 @@ fi
 [ -f "$REL/ChromePublic_${ARCH}_symbols.zip" ] || echo "WARN: no unstripped .so found, symbols archive skipped"
 
 ( cd "$REL"
-  [ -f sha256sums.txt ] && grep -v "  ChromePublic_${ARCH}[._]" sha256sums.txt > sha256sums.new || :
+  [ -f sha256sums.txt ] && grep -v -e "  ChromePublic_${ARCH}[._]" -e "  SystemWebView_${ARCH}[._]" sha256sums.txt > sha256sums.new || :
   for _f in "ChromePublic_${ARCH}.apk" "ChromePublic_${ARCH}.aab" \
-            "ChromePublic_${ARCH}.apk.mapping" "ChromePublic_${ARCH}_symbols.zip"; do
+            "ChromePublic_${ARCH}.apk.mapping" "ChromePublic_${ARCH}_symbols.zip" \
+            "SystemWebView_${ARCH}.apk"; do
       [ -f "$_f" ] && sha256sum "$_f"
   done >> sha256sums.new
   sort -k2 sha256sums.new -o sha256sums.txt

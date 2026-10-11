@@ -12,3 +12,4 @@ target_os="android"
 enable_cardboard = false
 
 use_mlkit_for_aicore = false
+system_webview_package_name = "org.ungoogled.chromium.webview"

@@ -2,7 +2,6 @@ src-fix/android-rlz-fix-missing-variable.patch
 src-fix/fix-null-mInstanceID.patch
 src-fix/fix-prefs.patch
 src-fix/fix-search-template.patch
-src-fix/webview_extra_deps.patch
 src-fix/fix-safe-browsing.patch
 src-fix/fix-safe-browsing-android-gn.patch
 src-fix/fix-ipv6-probe-unused-symbols.patch
@@ -97,6 +96,7 @@ Cromite/Add-bookmark-import-export-actions.patch
 src-fix/fix-android-extra-locales-cy-154.patch
 src-fix/fix-gms-dangling-deps-154.patch
 src-fix/fix-android-download-obfuscation-154.patch
+src-fix/fix-webview-safebrowsing-154.patch
 Extensions/android-extensions-support.patch
 Extensions/Ultimatum/load-crx.patch
 Extensions/misc/extensions-menu-null-guard.patch

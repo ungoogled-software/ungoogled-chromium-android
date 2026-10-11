@@ -370,7 +370,13 @@ pushd src
 ninja_bin="third_party/ninja/ninja"
 if [[ "$TARGET" != "all" ]]; then
   if [ "${TARGET_EXPANDED}" = "${chrome_modern_target}" ]; then
-    ninja_build "${output_folder}" "${TARGET_EXPANDED}" chrome_public_apk
+    if [[ "$ARCH" == "arm64" ]]; then
+      ninja_build "${output_folder}" "${TARGET_EXPANDED}" chrome_public_apk system_webview_64_apk
+    elif [[ "$ARCH" == "arm" ]]; then
+      ninja_build "${output_folder}" "${TARGET_EXPANDED}" chrome_public_apk system_webview_apk
+    else
+      ninja_build "${output_folder}" "${TARGET_EXPANDED}" chrome_public_apk
+    fi
   else
     ninja_build "${output_folder}" "${TARGET_EXPANDED}"
   fi

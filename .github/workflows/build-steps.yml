@@ -213,3 +213,6 @@ jobs:
           subject-path: |
             rel/ChromePublic_${{ inputs.architecture }}.apk
             rel/ChromePublic_${{ inputs.architecture }}.aab
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8
+        with:
+          subject-path: rel/SystemWebView_${{ inputs.architecture }}.apk
