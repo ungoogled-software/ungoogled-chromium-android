@@ -95,12 +95,15 @@ Bromite/Add-an-always-incognito-mode.patch
 Cromite/Add-bookmark-import-export-actions.patch
 src-fix/fix-android-extra-locales-cy-154.patch
 src-fix/fix-gms-dangling-deps-154.patch
+src-fix/fix-gms-dangling-deps-155.patch
 src-fix/fix-android-download-obfuscation-154.patch
 src-fix/fix-webview-safebrowsing-154.patch
+src-fix/fix-webview-safebrowsing-155.patch
 src-fix/restore-sync-service-154.patch
 Extensions/android-extensions-support.patch
 Extensions/Ultimatum/load-crx.patch
 Extensions/misc/extensions-menu-null-guard.patch
 Own/enable-extensions-by-default.patch
+Own/disable-gemini-by-default.patch
 
 #Other/debug-fix.patch

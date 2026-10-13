@@ -10,7 +10,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
 ---
 --- a/chrome/android/java/res/values/ids.xml
 +++ b/chrome/android/java/res/values/ids.xml
-@@ -205,6 +205,7 @@ found in the LICENSE file.
+@@ -206,6 +206,7 @@ found in the LICENSE file.
      <item type="id" name="downloads_menu_id" />
      <item type="id" name="duplicate_tab_menu_id" />
      <item type="id" name="enable_price_tracking_menu_id" />
@@ -29,7 +29,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  /**
   * This is the main activity for ChromeMobile when not running in document mode. All the tabs are
   * accessible via a chrome specific tab switching UI.
-@@ -4658,6 +4660,8 @@ public class ChromeTabbedActivity extend
+@@ -4683,6 +4685,8 @@ public class ChromeTabbedActivity extend
                      .closeTabs(
                              TabClosureParams.closeTab(currentTab).build(), /* allowDialog= */ true);
              RecordUserAction.record("MobileTabClosed");
@@ -48,7 +48,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.chrome.browser.ChromeActivitySessionTracker;
  import org.chromium.chrome.browser.ChromeApplicationImpl;
  import org.chromium.chrome.browser.ChromeKeyboardVisibilityDelegate;
-@@ -2974,6 +2975,11 @@ public abstract class ChromeActivity ext
+@@ -3008,6 +3009,11 @@ public abstract class ChromeActivity ext
              return true;
          }
  
@@ -80,8 +80,28 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          // request), maybe persist the session state so that it can be restored on next launch
 --- a/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java
-@@ -752,6 +752,19 @@ public class TabbedAppMenuPropertiesDele
-             modelList.add(buildContentFilterHelpCenterMenuItem(currentTab));
+@@ -566,6 +566,19 @@ public class TabbedAppMenuPropertiesDele
+             modelList.add(buildContentFilterHelpCenterMenuItem());
+         }
+ 
++        modelList.add(
++                new MVCListAdapter.ListItem(
++                        AppMenuHandler.AppMenuItemType.STANDARD,
++                        AppMenuItemUtils.buildModelForStandardMenuItem(
++                                mContext,
++                                getAppMenuItemTheme(),
++                                R.id.exit_id,
++                                R.string.menu_exit,
++                                shouldShowIconBeforeItem()
++                                        ? R.drawable.ic_exit_to_app_white_24dp
++                                        : 0,
++                                isMenuIconAtStart())));
++
+         // Default browser promo
+         if (shouldShowDefaultBrowserPromo()) {
+             RecordUserAction.record("MobileMenuDefaultBrowserPromoShown");
+@@ -752,6 +765,19 @@ public class TabbedAppMenuPropertiesDele
+             modelList.add(buildContentFilterHelpCenterMenuItem());
          }
  
 +        modelList.add(
@@ -102,7 +122,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              // Used to track how many people saw the promo.
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -4457,6 +4457,9 @@ To change this setting, <ph name="BEGIN_
+@@ -4468,6 +4468,9 @@ To change this setting, <ph name="BEGIN_
        <message name="IDS_MENU_MORE_TOOLS" desc="Menu item to more tools. [CHAR_LIMIT=27]">
          More tools
        </message>

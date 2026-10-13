@@ -3,7 +3,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 ---
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -1030,7 +1030,6 @@ source_set("core") {
+@@ -1023,7 +1023,6 @@ source_set("core") {
      "//chrome/browser/pwc",
      "//chrome/browser/renderer_host",
      "//chrome/browser/resource_coordinator",

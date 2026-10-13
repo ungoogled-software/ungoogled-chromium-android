@@ -13,7 +13,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  // static
 --- a/components/signin/public/base/signin_prefs.cc
 +++ b/components/signin/public/base/signin_prefs.cc
-@@ -194,6 +194,8 @@ SigninPrefs::~SigninPrefs() = default;
+@@ -199,6 +199,8 @@ SigninPrefs::~SigninPrefs() = default;
  void SigninPrefs::RegisterProfilePrefs(PrefRegistrySimple* registry) {
    registry->RegisterDictionaryPref(kSigninAccountPrefs);
    registry->RegisterIntegerPref(kAccountMetricsNextUnassignedId, 0);

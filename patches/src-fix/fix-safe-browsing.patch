@@ -83,7 +83,7 @@ dependency.
      "//components/supervised_user/core/common/pref_names.h",
 --- a/chrome/browser/safe_browsing/android/BUILD.gn
 +++ b/chrome/browser/safe_browsing/android/BUILD.gn
-@@ -224,7 +224,6 @@ android_resources("java_resources") {
+@@ -248,7 +248,6 @@ android_resources("java_resources") {
  
  java_cpp_enum("safe_browsing_enums") {
    sources = [
@@ -93,7 +93,7 @@ dependency.
  }
 --- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/SafeBrowsingBridge.java
 +++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/SafeBrowsingBridge.java
-@@ -67,7 +67,7 @@ public final class SafeBrowsingBridge {
+@@ -63,7 +63,7 @@ public final class SafeBrowsingBridge {
       * @return The Safe Browsing state. It can be Enhanced Protection, Standard Protection, or No
       *     Protection.
       */
@@ -102,7 +102,7 @@ dependency.
          return SafeBrowsingBridgeJni.get().getSafeBrowsingState(mProfile);
      }
  
-@@ -75,7 +75,7 @@ public final class SafeBrowsingBridge {
+@@ -71,7 +71,7 @@ public final class SafeBrowsingBridge {
       * @param state Set the Safe Browsing state. It can be Enhanced Protection, Standard Protection,
       *     or No Protection.
       */
@@ -111,7 +111,7 @@ dependency.
          SafeBrowsingBridgeJni.get().setSafeBrowsingState(mProfile, state);
      }
  
-@@ -130,10 +130,9 @@ public final class SafeBrowsingBridge {
+@@ -101,10 +101,9 @@ public final class SafeBrowsingBridge {
  
          boolean getSafeBrowsingExtendedReportingManaged(Profile profile);
  
@@ -247,7 +247,7 @@ dependency.
          recordUserActionHistogramForStateDetailsClicked(safeBrowsingState);
 -        if (safeBrowsingState == SafeBrowsingState.ENHANCED_PROTECTION) {
 +        if (safeBrowsingState == 2 /* ENHANCED_PROTECTION */) {
-             SettingsNavigationFactory.createSettingsNavigation()
+             SettingsNavigationFactory.createSettingsNavigation(requireContext())
                      .startSettings(
                              getActivity(),
                              EnhancedProtectionSettingsFragment.class,
@@ -255,7 +255,7 @@ dependency.
                              /* addToBackStack= */ true);
 -        } else if (safeBrowsingState == SafeBrowsingState.STANDARD_PROTECTION) {
 +        } else if (safeBrowsingState == 1 /* STANDARD_PROTECTION */) {
-             SettingsNavigationFactory.createSettingsNavigation()
+             SettingsNavigationFactory.createSettingsNavigation(requireContext())
                      .startSettings(
                              getActivity(),
 @@ -140,15 +138,15 @@ public class SafeBrowsingSettingsFragmen

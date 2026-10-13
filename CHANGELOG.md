@@ -1,3 +1,10 @@
+# 155.0.8059.39-1
+* Upstream update
+* Added SystemWebView builds (arm64 & arm)
+* Fixed a crash when opening Bookmarks
+* Fixed the Exit menu item not showing
+* Disabled Gemini (Ask Gemini button)
+
 # 154.0.8037.92-1
 * Upstream update
 * Fixed chrome://proxy settings not applying to websites

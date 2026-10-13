@@ -17,7 +17,7 @@ Subject: Remove dependency on com.google.android.gms.auth
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -323,7 +323,6 @@ if (_is_default_toolchain) {
+@@ -321,7 +321,6 @@ if (_is_default_toolchain) {
        ":screenshot_provider_java",
        ":usage_stats_proto_java",
        ":xr_java",
@@ -402,7 +402,7 @@ Subject: Remove dependency on com.google.android.gms.auth
                  mUserConsentReceiver = receiver;
 --- a/content/test/BUILD.gn
 +++ b/content/test/BUILD.gn
-@@ -3784,7 +3784,6 @@ if (is_android) {
+@@ -3811,7 +3811,6 @@ if (is_android) {
      testonly = true
      sources = content_java_sources_needing_jni
      deps = [

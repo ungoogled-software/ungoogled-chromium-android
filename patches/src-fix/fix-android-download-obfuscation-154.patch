@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/chrome/browser/download/chrome_download_manager_delegate.cc
 +++ b/chrome/browser/download/chrome_download_manager_delegate.cc
-@@ -1165,7 +1165,8 @@ bool ChromeDownloadManagerDelegate::Shou
+@@ -1187,7 +1187,8 @@ bool ChromeDownloadManagerDelegate::Shou
  
  bool ChromeDownloadManagerDelegate::ShouldObfuscateDownload(
      download::DownloadItem* item) {

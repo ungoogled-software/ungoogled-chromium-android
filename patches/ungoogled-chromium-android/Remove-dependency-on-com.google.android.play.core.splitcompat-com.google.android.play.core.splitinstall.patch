@@ -16,7 +16,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -809,7 +809,6 @@ if (_is_default_toolchain) {
+@@ -810,7 +810,6 @@ if (_is_default_toolchain) {
        "//third_party/android_deps:com_google_errorprone_error_prone_annotations_java",
        "//third_party/android_deps:guava_android_java",
        "//third_party/android_deps:material_design_java",
@@ -24,7 +24,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
        "//third_party/android_deps:protobuf_lite_runtime_java",
        "//third_party/android_media:android_media_java",
        "//third_party/android_swipe_refresh:android_swipe_refresh_java",
-@@ -2195,7 +2194,6 @@ if (_is_default_toolchain) {
+@@ -2220,7 +2219,6 @@ if (_is_default_toolchain) {
        "//components/policy/android:policy_java",
        "//components/variations/android:variations_java",
        "//third_party/android_deps:material_design_java",
@@ -390,7 +390,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
      public static boolean isInitialized() {
 --- a/third_party/android_deps/BUILD.gn
 +++ b/third_party/android_deps/BUILD.gn
-@@ -101,8 +101,6 @@ if (!limit_android_deps) {
+@@ -102,8 +102,6 @@ if (!limit_android_deps) {
      preferred_dep = true
      if (defined(playcore_target)) {
        deps = [ playcore_target ]
@@ -401,7 +401,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
  
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -114,23 +114,6 @@ template("define_autorolled_targets") {
+@@ -133,23 +133,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
@@ -425,7 +425,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
      android_aar_prebuilt("com_google_ar_impress_java") {
        aar_path = "autorolled/cipd/libs/com_google_ar_impress/impress.aar"
        info_path = "autorolled/committed/libs/com_google_ar_impress/com_google_ar_impress.info"
-@@ -655,21 +638,6 @@ template("define_autorolled_targets") {
+@@ -674,21 +657,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy

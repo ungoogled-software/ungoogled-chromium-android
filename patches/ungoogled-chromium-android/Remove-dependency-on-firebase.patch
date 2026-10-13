@@ -10,7 +10,7 @@ Subject: Remove dependency on firebase
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -2184,7 +2184,6 @@ if (_is_default_toolchain) {
+@@ -2209,7 +2209,6 @@ if (_is_default_toolchain) {
      ]
      deps = [
        ":chrome_base_module_resources",
@@ -102,7 +102,7 @@ Subject: Remove dependency on firebase
       * SplitCompatGcmListenerService}.
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -534,78 +534,6 @@ template("define_autorolled_targets") {
+@@ -553,78 +553,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
@@ -181,7 +181,7 @@ Subject: Remove dependency on firebase
      if (!defined(guava_android_target)) {
        java_prebuilt("com_google_guava_guava_java") {
          jar_path = "autorolled/cipd/libs/com_google_guava_guava/guava.jar"
-@@ -659,7 +587,6 @@ template("define_autorolled_targets") {
+@@ -678,7 +606,6 @@ template("define_autorolled_targets") {
            "$google_play_services_package:google_android_datatransport_transport_api_java",
            "$google_play_services_package:google_android_datatransport_transport_backend_cct_java",
            "$google_play_services_package:google_android_datatransport_transport_runtime_java",
@@ -189,7 +189,7 @@ Subject: Remove dependency on firebase
            "$google_play_services_package:google_firebase_firebase_encoders_java",
            "$google_play_services_package:google_firebase_firebase_encoders_json_java",
            "$google_play_services_package:google_play_services_base_java",
-@@ -1337,71 +1264,6 @@ template("define_autorolled_targets") {
+@@ -1356,71 +1283,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -261,7 +261,7 @@ Subject: Remove dependency on firebase
        java_prebuilt("google_firebase_firebase_encoders_java") {
          jar_path = "autorolled/cipd/libs/com_google_firebase_firebase_encoders/firebase-encoders.jar"
          output_name = "com_google_firebase_firebase_encoders"
-@@ -1466,27 +1328,6 @@ template("define_autorolled_targets") {
+@@ -1485,27 +1347,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -289,7 +289,7 @@ Subject: Remove dependency on firebase
        android_aar_prebuilt(
            "google_firebase_firebase_installations_interop_java") {
          aar_path = "autorolled/cipd/libs/com_google_firebase_firebase_installations_interop/firebase-installations-interop.aar"
-@@ -1500,7 +1341,6 @@ template("define_autorolled_targets") {
+@@ -1519,7 +1360,6 @@ template("define_autorolled_targets") {
            "//third_party/androidx:*",
          ]
          deps = [
@@ -297,7 +297,7 @@ Subject: Remove dependency on firebase
            "$google_play_services_package:google_play_services_tasks_java",
          ]
        }
-@@ -1522,7 +1362,6 @@ template("define_autorolled_targets") {
+@@ -1541,7 +1381,6 @@ template("define_autorolled_targets") {
            "//third_party/androidx:*",
          ]
          deps = [

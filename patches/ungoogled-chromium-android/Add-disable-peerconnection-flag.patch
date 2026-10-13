@@ -23,31 +23,31 @@ author: Wengling Chen <feiyu2817@gmail.com>
       "Forces the result of the browser's IPv6 probing (i.e. IPv6 connectivity test) to be unsuccessful. This causes IPv4 addresses to be prioritized over IPv6 addresses. Without this flag, the probing result is set to be successful, which causes IPv6 to be used over IPv4 when possible. ungoogled-chromium flag.",
 --- a/third_party/blink/common/features.cc
 +++ b/third_party/blink/common/features.cc
-@@ -581,6 +581,9 @@ BASE_FEATURE(kDevToolsWebMCPSupport, bas
+@@ -579,6 +579,9 @@ BASE_FEATURE(kDevToolsImprovedNetworkErr
  
  BASE_FEATURE(kDevToolsAdsPanel, base::FEATURE_ENABLED_BY_DEFAULT);
  
 +// Disable PeerConnection creations. ungoogled-chromium-android flag.
 +BASE_FEATURE(kDisablePeerConnection, base::FEATURE_ENABLED_BY_DEFAULT);
 +
- BASE_FEATURE(kDirectCompositorThreadIpc,
- #if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || \
-     BUILDFLAG(IS_WIN)
+ BASE_FEATURE(kDisableArrayBufferSizeLimitsForTesting,
+              base::FEATURE_DISABLED_BY_DEFAULT);
+ 
 --- a/third_party/blink/public/common/features.h
 +++ b/third_party/blink/public/common/features.h
-@@ -407,6 +407,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE
+@@ -405,6 +405,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE
  // Enables the DevTools 'Application > Application > Ads' panel.
  BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDevToolsAdsPanel);
  
 +// Disable PeerConnection creations. ungoogled-chromium-android flag.
 +BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDisablePeerConnection);
 +
- // Enables input IPC to directly target the renderer's compositor thread without
- // hopping through the IO thread first.
- BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDirectCompositorThreadIpc);
+ // TODO(https://crbug.com/1201109): temporary flag to disable new ArrayBuffer
+ // size limits, so that tests can be written against code receiving these
+ // buffers. Remove when the bindings code instituting these limits is removed.
 --- a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.cc
 +++ b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.cc
-@@ -639,6 +639,14 @@ RTCPeerConnection* RTCPeerConnection::Cr
+@@ -638,6 +638,14 @@ RTCPeerConnection* RTCPeerConnection::Cr
      ExecutionContext* context,
      const RTCConfiguration* rtc_configuration,
      ExceptionState& exception_state) {

@@ -29,7 +29,7 @@ Subject: Remove dependency on com.google.android.gms.cast
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -325,8 +325,6 @@ if (_is_default_toolchain) {
+@@ -323,8 +323,6 @@ if (_is_default_toolchain) {
        ":xr_java",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -40,7 +40,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        "$google_play_services_package:google_play_services_vision_common_java",
 --- a/chrome/android/java/AndroidManifest.xml
 +++ b/chrome/android/java/AndroidManifest.xml
-@@ -876,16 +876,6 @@ by a child template that "extends" this
+@@ -890,16 +890,6 @@ by a child template that "extends" this
              </intent-filter>
          </activity>
  
@@ -57,7 +57,7 @@ Subject: Remove dependency on com.google.android.gms.cast
          <activity android:name="org.chromium.chrome.browser.share.send_tab_to_self.SendTabToSelfShareTargetActivity"
              android:theme="@style/Theme.BrowserUI.Translucent.NoTitleBar"
              android:exported="false"
-@@ -1441,12 +1431,6 @@ by a child template that "extends" this
+@@ -1456,12 +1446,6 @@ by a child template that "extends" this
        <uses-native-library android:name="libopenxr.google.so" android:required="false" />
        {% endif %}
  
@@ -72,7 +72,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        <provider android:name="org.chromium.chrome.browser.util.ChromeFileProvider"
 --- a/chrome/android/javatests/BUILD.gn
 +++ b/chrome/android/javatests/BUILD.gn
-@@ -53,8 +53,6 @@ android_library("chrome_test_java_helper
+@@ -55,8 +55,6 @@ android_library("chrome_test_java_helper
    public_deps = [
      "$google_play_services_package:google_play_services_base_java",
      "$google_play_services_package:google_play_services_basement_java",
@@ -1545,7 +1545,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        android_aar_prebuilt("google_play_services_fido_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_fido/play-services-fido.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_fido/com_google_android_gms_play_services_fido.info"
-@@ -500,11 +453,6 @@ template("define_autorolled_targets") {
+@@ -519,11 +472,6 @@ template("define_autorolled_targets") {
          info_path = "autorolled/committed/libs/com_google_mlkit_common/com_google_mlkit_common.info"
          enable_bytecode_checks = false
          deps = [
@@ -1557,7 +1557,7 @@ Subject: Remove dependency on com.google.android.gms.cast
            "$google_play_services_package:google_play_services_base_java",
            "$google_play_services_package:google_play_services_basement_java",
            "$google_play_services_package:google_play_services_tasks_java",
-@@ -538,11 +486,6 @@ template("define_autorolled_targets") {
+@@ -557,11 +505,6 @@ template("define_autorolled_targets") {
          info_path = "autorolled/committed/libs/com_google_mlkit_genai_prompt/com_google_mlkit_genai_prompt.info"
          enable_bytecode_checks = false
          deps = [
@@ -1569,7 +1569,7 @@ Subject: Remove dependency on com.google.android.gms.cast
            "$google_play_services_package:google_play_services_basement_java",
            "$google_play_services_package:google_play_services_tasks_java",
            "//third_party/android_deps:com_google_mlkit_common_java",
-@@ -922,74 +865,6 @@ template("define_autorolled_targets") {
+@@ -941,74 +884,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -1644,7 +1644,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        android_aar_prebuilt("google_play_services_clearcut_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_clearcut/play-services-clearcut.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_clearcut/com_google_android_gms_play_services_clearcut.info"
-@@ -1178,70 +1053,6 @@ template("define_autorolled_targets") {
+@@ -1197,70 +1072,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy

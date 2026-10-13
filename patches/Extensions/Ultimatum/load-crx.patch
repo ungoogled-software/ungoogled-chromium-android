@@ -32,7 +32,7 @@ date: Thu, 1 Oct 2026
  std::unique_ptr<base::AutoReset<bool>> OverrideOffstoreInstallAllowedForTesting(
 --- a/chrome/browser/extensions/api/developer_private/developer_private_functions.cc
 +++ b/chrome/browser/extensions/api/developer_private/developer_private_functions.cc
-@@ -1062,6 +1062,81 @@ void DeveloperPrivateLoadUnpackedFunctio
+@@ -1059,6 +1059,81 @@ void DeveloperPrivateLoadUnpackedFunctio
    Release();  // Balanced in Run().
  }
  
@@ -236,7 +236,7 @@ date: Thu, 1 Oct 2026
            }
 --- a/chrome/common/extensions/api/developer_private.webidl
 +++ b/chrome/common/extensions/api/developer_private.webidl
-@@ -667,6 +667,11 @@ interface DeveloperPrivate {
+@@ -669,6 +669,11 @@ interface DeveloperPrivate {
    // |PromiseValue|: error
    static Promise<LoadError?> loadUnpacked(optional LoadUnpackedOptions options);
  
@@ -250,17 +250,17 @@ date: Thu, 1 Oct 2026
    static Promise<undefined> installDroppedFile();
 --- a/extensions/browser/extension_function_histogram_value.h
 +++ b/extensions/browser/extension_function_histogram_value.h
-@@ -2046,6 +2046,7 @@ enum HistogramValue {
-   AUTOFILLPRIVATE_FETCHUSERDATAPROCESSINGCONSENT = 1981,
-   DEVELOPERPRIVATE_OPENREVIEWPAGE = 1982,
-   TABS_CREATESPLIT = 1983,
+@@ -2051,6 +2051,7 @@ enum HistogramValue {
+   ENTERPRISE_WEBRTC_STARTCAPTURE = 1986,
+   ENTERPRISE_WEBRTC_GETCAPTURESTATUS = 1987,
+   ENTERPRISE_WEBRTC_STOPCAPTURE = 1988,
 +  DEVELOPERPRIVATE_LOADCRX = 1976,
    // Last entry: Add new entries above, then run:
    // tools/metrics/histograms/update_extension_histograms.py
    ENUM_BOUNDARY
 --- a/extensions/browser/extension_util.cc
 +++ b/extensions/browser/extension_util.cc
-@@ -585,10 +585,6 @@ bool ShouldDownloadAsRegularFile() {
+@@ -603,10 +603,6 @@ bool ShouldDownloadAsRegularFile() {
  }
  
  bool IsExtensionDownload(const download::DownloadItem& download_item) {
@@ -273,7 +273,7 @@ date: Thu, 1 Oct 2026
      return !ShouldDownloadAsRegularFile();
 --- a/tools/typescript/definitions/developer_private.d.ts
 +++ b/tools/typescript/definitions/developer_private.d.ts
-@@ -454,6 +454,8 @@ declare global {
+@@ -456,6 +456,8 @@ declare global {
        export function installDroppedFile(): Promise<void>;
        export function loadUnpacked(options: LoadUnpackedOptions):
            Promise<LoadError|null>;

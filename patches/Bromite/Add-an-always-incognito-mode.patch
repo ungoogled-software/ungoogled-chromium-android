@@ -149,7 +149,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
              return tab;
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -362,6 +362,12 @@ CHAR_LIMIT guidelines:
+@@ -368,6 +368,12 @@ CHAR_LIMIT guidelines:
        <message name ="IDS_SETTINGS_INCOGNITO_TAB_LOCK_TITLE" desc = "Title for a toggle in Settings that allows users to lock their existing Incognito tabs with a device reauthentication mechanism.">
          Lock Incognito tabs when you leave Chrome
        </message>

@@ -1,8 +1,18 @@
 author: bearinmindcat <bearincrypto@gmail.com>
 
+--- a/chrome/browser/safe_browsing/BUILD.gn
++++ b/chrome/browser/safe_browsing/BUILD.gn
+@@ -128,6 +128,7 @@ static_library("safe_browsing") {
+   if (is_android) {
+     deps += [
+       "//chrome/browser/password_manager/android:utils",
++      "//chrome/browser/security_events",
+       "//chrome/browser/ui/android/safe_browsing",
+       "//chrome/browser/ui/android/tab_model",
+       "//components/safe_browsing/android:safe_browsing_api_handler",
 --- a/chrome/browser/sync/sync_service_factory.cc
 +++ b/chrome/browser/sync/sync_service_factory.cc
-@@ -300,6 +300,8 @@
+@@ -298,6 +298,8 @@ syncer::DataTypeController::TypeVector C
  
    builder.SetDataTypeStoreService(
        DataTypeStoreServiceFactory::GetForProfile(profile));
@@ -11,7 +21,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  
  #if BUILDFLAG(ENABLE_EXTENSIONS_CORE)
    builder.SetExtensionSyncService(ExtensionSyncService::Get(profile));
-@@ -396,7 +398,114 @@
+@@ -390,7 +392,114 @@ std::unique_ptr<KeyedService> BuildSyncS
      std::optional<syncer::CreateHttpPostProviderFactory>
          create_http_post_provider_factory_for_test,
      content::BrowserContext* context) {
@@ -126,7 +136,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  }
  
  }  // namespace
-@@ -467,6 +576,7 @@
+@@ -461,6 +570,7 @@ SyncServiceFactory::SyncServiceFactory()
    DependsOn(PasswordSenderServiceFactory::GetInstance());
    DependsOn(ProfilePasswordStoreFactory::GetInstance());
  
@@ -134,13 +144,3 @@ author: bearinmindcat <bearincrypto@gmail.com>
    DependsOn(SendTabToSelfSyncServiceFactory::GetInstance());
    DependsOn(SharingMessageBridgeFactory::GetInstance());
  #if !BUILDFLAG(IS_ANDROID)
---- a/chrome/browser/safe_browsing/BUILD.gn
-+++ b/chrome/browser/safe_browsing/BUILD.gn
-@@ -128,6 +128,7 @@ static_library("safe_browsing") {
-   if (is_android) {
-     deps += [
-       "//chrome/browser/password_manager/android:utils",
-+      "//chrome/browser/security_events",
-       "//chrome/browser/ui/android/safe_browsing",
-       "//chrome/browser/ui/android/tab_model",
-       "//components/safe_browsing/android:safe_browsing_api_handler",

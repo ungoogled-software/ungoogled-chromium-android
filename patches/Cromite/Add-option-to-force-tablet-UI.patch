@@ -70,16 +70,16 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
          } catch (InflateException e) {
 --- a/chrome/android/java/src/org/chromium/chrome/browser/accessibility/settings/ChromeAccessibilitySettingsDelegate.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/accessibility/settings/ChromeAccessibilitySettingsDelegate.java
-@@ -6,6 +6,8 @@ package org.chromium.chrome.browser.acce
- 
+@@ -9,6 +9,8 @@ import android.content.Context;
  import org.chromium.build.annotations.NullMarked;
+ import org.chromium.build.annotations.Nullable;
  import org.chromium.chrome.browser.dom_distiller.DomDistillerServiceFactory;
 +import org.chromium.chrome.browser.preferences.ChromePreferenceKeys;
 +import org.chromium.chrome.browser.preferences.ChromeSharedPreferences;
  import org.chromium.chrome.browser.image_descriptions.ImageDescriptionsController;
  import org.chromium.chrome.browser.preferences.Pref;
  import org.chromium.chrome.browser.profiles.Profile;
-@@ -61,6 +63,25 @@ public class ChromeAccessibilitySettings
+@@ -64,6 +66,25 @@ public class ChromeAccessibilitySettings
          }
      }
  
@@ -102,12 +102,12 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
 +        return new ForceTabletUIDelegate();
 +    }
 +
+     private final @Nullable Context mContext;
      private final Profile mProfile;
  
-     /**
 --- a/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/app/ChromeActivity.java
-@@ -897,7 +897,10 @@ public abstract class ChromeActivity ext
+@@ -893,7 +893,10 @@ public abstract class ChromeActivity ext
              // Inflate the correct toolbar layout for the device.
              int toolbarLayoutId = getToolbarLayoutId();
              if (toolbarLayoutId != ActivityUtils.NO_RESOURCE_ID && controlContainer != null) {
@@ -131,7 +131,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.ui.util.MotionEventUtils;
 --- a/chrome/android/java/src/org/chromium/chrome/browser/compositor/overlays/strip/StripLayoutHelperManager.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/compositor/overlays/strip/StripLayoutHelperManager.java
-@@ -115,6 +115,7 @@ import org.chromium.components.tabs.TabA
+@@ -117,6 +117,7 @@ import org.chromium.components.tabs.TabA
  import org.chromium.content_public.browser.LoadUrlParams;
  import org.chromium.ui.base.ActivityResultTracker;
  import org.chromium.ui.base.ActivityWindowAndroid;
@@ -139,7 +139,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.ui.base.PageTransition;
  import org.chromium.ui.display.DisplayUtil;
  import org.chromium.ui.dragdrop.DragAndDropDelegate;
-@@ -556,7 +557,10 @@ public class StripLayoutHelperManager
+@@ -562,7 +563,10 @@ public class StripLayoutHelperManager
          mIsHeaderCustomizationSupported =
                  ToolbarFeatures.isAppHeaderCustomizationSupported(
                          /* isTablet= */ true, DisplayUtil.isContextInDefaultDisplay(mContext));
@@ -185,10 +185,10 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.build.annotations.Nullable;
  import org.chromium.chrome.browser.flags.ChromeSwitches;
 +import org.chromium.chrome.browser.preferences.ChromeSharedPreferences;
- import org.chromium.chrome.browser.profiles.ProfileManager;
- import org.chromium.chrome.browser.signin.SigninCheckerProvider;
  import org.chromium.components.background_task_scheduler.BackgroundTaskSchedulerFactory;
-@@ -109,6 +110,7 @@ public class ChromeBrowserInitializer {
+ import org.chromium.content_public.browser.BrowserStartupController;
+ import org.chromium.content_public.browser.BrowserStartupController.StartupMetrics;
+@@ -107,6 +108,7 @@ public class ChromeBrowserInitializer {
      public void handlePreNativeStartupAndLoadLibraries(final BrowserParts parts) {
          ThreadUtils.checkUiThread();
          if (parts.isActivityFinishingOrDestroyed()) return;
@@ -198,7 +198,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
          try (TraceEvent _ = TraceEvent.scoped("ChromeBrowserInitializer.preInflationStartup")) {
 --- a/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedRootUiCoordinator.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedRootUiCoordinator.java
-@@ -1125,6 +1125,8 @@ public class TabbedRootUiCoordinator ext
+@@ -1148,6 +1148,8 @@ public class TabbedRootUiCoordinator ext
  
      @Override
      public int getControlContainerHeightResource() {
@@ -209,7 +209,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ui/RootUiCoordinator.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ui/RootUiCoordinator.java
-@@ -145,6 +145,8 @@ import org.chromium.chrome.browser.paint
+@@ -146,6 +146,8 @@ import org.chromium.chrome.browser.paint
  import org.chromium.chrome.browser.password_manager.ManagePasswordsReferrer;
  import org.chromium.chrome.browser.password_manager.PasswordManagerLauncher;
  import org.chromium.chrome.browser.pdf.PdfPage;
@@ -218,7 +218,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.chrome.browser.profiles.Profile;
  import org.chromium.chrome.browser.quick_delete.QuickDeleteController;
  import org.chromium.chrome.browser.quick_delete.QuickDeleteDelegateImpl;
-@@ -2455,7 +2457,9 @@ public class RootUiCoordinator
+@@ -2473,7 +2475,9 @@ public class RootUiCoordinator
  
      protected int getFindToolbarStub() {
          int stubId = R.id.find_toolbar_stub;
@@ -241,7 +241,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
    srcjar_deps = [
 --- a/chrome/browser/preferences/android/java/src/org/chromium/chrome/browser/preferences/ChromePreferenceKeys.java
 +++ b/chrome/browser/preferences/android/java/src/org/chromium/chrome/browser/preferences/ChromePreferenceKeys.java
-@@ -455,6 +455,7 @@ public final class ChromePreferenceKeys
+@@ -441,6 +441,7 @@ public final class ChromePreferenceKeys
      /** Whether the app-specific history info text was already seen by users. */
      public static final String HISTORY_APP_SPECIFIC_INFO_SEEN =
              "Chrome.History.AppSpecificInfoSeen";
@@ -307,7 +307,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
          boolean isOnExternalDisplay = !DisplayUtil.isContextInDefaultDisplay(context);
 --- a/chrome/browser/ui/android/omnibox/java/src/org/chromium/chrome/browser/omnibox/LocationBarCoordinator.java
 +++ b/chrome/browser/ui/android/omnibox/java/src/org/chromium/chrome/browser/omnibox/LocationBarCoordinator.java
-@@ -1253,7 +1253,7 @@ public class LocationBarCoordinator
+@@ -1214,7 +1214,7 @@ public class LocationBarCoordinator
      }
  
      private boolean isTabletWindow() {
@@ -315,10 +315,10 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
 +        return DeviceFormFactor.isWindowOnTablet(mWindowAndroid) || isTabletLayout();
      }
  
-     /* package */ LocationBarMediator getMediatorForTesting() {
+     /**
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -605,6 +605,12 @@ For more settings that use data to impro
+@@ -611,6 +611,12 @@ For more settings that use data to impro
        </message>
  
  
@@ -355,13 +355,14 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  
 --- a/chrome/browser/ui/android/toolbar/java/res/values-sw600dp/dimens.xml
 +++ b/chrome/browser/ui/android/toolbar/java/res/values-sw600dp/dimens.xml
-@@ -8,5 +8,6 @@ found in the LICENSE file.
+@@ -8,6 +8,7 @@ found in the LICENSE file.
  <resources>
      <!-- Tab Strip Dimensions -->
      <dimen name="tab_strip_height">40dp</dimen>
 +    <dimen name="tab_strip_height_tabletui">40dp</dimen>
      <dimen name="tab_strip_reserved_top_padding">2dp</dimen>
- </resources>
+ 
+     <!-- Matches the other toolbar buttons. See crbug.com/543773382. -->
 --- a/chrome/browser/ui/android/toolbar/java/res/values/dimens.xml
 +++ b/chrome/browser/ui/android/toolbar/java/res/values/dimens.xml
 @@ -9,7 +9,9 @@ found in the LICENSE file.
@@ -417,7 +418,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
  import org.chromium.ui.resources.dynamics.DynamicResourceReadyOnceCallback;
  import org.chromium.ui.util.TokenHolder;
  
-@@ -364,6 +365,7 @@ class HeightTransitionHandler {
+@@ -363,6 +364,7 @@ class HeightTransitionHandler {
  
      /** Get the min screen width (in dp) required for the tab strip to become visible. */
      private static int getScreenWidthThresholdDp() {
@@ -505,7 +506,7 @@ License: GPL-2.0-or-later - https://spdx.org/licenses/GPL-2.0-or-later.html
              mDelegate.getReaderAccessibilityDelegate().setValue(readerModeEnabled);
 --- a/components/browser_ui/accessibility/android/java/src/org/chromium/components/browser_ui/accessibility/AccessibilitySettingsDelegate.java
 +++ b/components/browser_ui/accessibility/android/java/src/org/chromium/components/browser_ui/accessibility/AccessibilitySettingsDelegate.java
-@@ -43,6 +43,8 @@ public interface AccessibilitySettingsDe
+@@ -45,6 +45,8 @@ public interface AccessibilitySettingsDe
       */
      BrowserContextHandle getBrowserContextHandle();
  

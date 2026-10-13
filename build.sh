@@ -158,14 +158,17 @@ function prepare_repos {
   [ $_sync_rc -eq 0 ] || return $_sync_rc
 
   ( src/third_party/node/update_npm_deps ) || return $?
-  ROLLUP_VER=$(grep '"version"' src/third_party/devtools-frontend/src/node_modules/rollup/package.json | head -1 | cut -d'"' -f4)
-  _rollup_dest="src/third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-x64-gnu"
-  if [ ! -f "${_rollup_dest}/rollup.linux-x64-gnu.node" ]; then
-    curl -sL "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-${ROLLUP_VER}.tgz" -o /tmp/rollup-native.tgz || return $?
-    rm -rf "${_rollup_dest}"; mkdir -p "${_rollup_dest}"
-    tar xzf /tmp/rollup-native.tgz -C "${_rollup_dest}" --strip-components=1 || return $?
+  _rollup_pkg="src/third_party/devtools-frontend/src/node_modules/rollup/package.json"
+  if [ -f "${_rollup_pkg}" ]; then
+    ROLLUP_VER=$(grep '"version"' "${_rollup_pkg}" | head -1 | cut -d'"' -f4)
+    _rollup_dest="src/third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-x64-gnu"
+    if [ ! -f "${_rollup_dest}/rollup.linux-x64-gnu.node" ]; then
+      curl -sL "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-${ROLLUP_VER}.tgz" -o /tmp/rollup-native.tgz || return $?
+      rm -rf "${_rollup_dest}"; mkdir -p "${_rollup_dest}"
+      tar xzf /tmp/rollup-native.tgz -C "${_rollup_dest}" --strip-components=1 || return $?
+    fi
+    [ -f "${_rollup_dest}/rollup.linux-x64-gnu.node" ] || { echo "FATAL: rollup native module missing"; return 1; }
   fi
-  [ -f "${_rollup_dest}/rollup.linux-x64-gnu.node" ] || { echo "FATAL: rollup native module missing"; return 1; }
 
   python3 src/build/util/lastchange.py -o src/build/util/LASTCHANGE
   python3 src/tools/download_optimization_profile.py --newest_state=src/chrome/android/profiles/newest.txt --local_state=src/chrome/android/profiles/local.txt --output_name=src/chrome/android/profiles/afdo.prof --gs_url_base=chromeos-prebuilt/afdo-job/llvm || return $?
