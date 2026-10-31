@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
-@@ -4656,7 +4656,17 @@ public class ChromeTabbedActivity extend
+@@ -4678,7 +4678,17 @@ public class ChromeTabbedActivity extend
          } else if (id == R.id.extensions_menu_menu_id) {
              ExtensionsToolbarCoordinator coordinator =
                      getToolbarManager().getExtensionsToolbarCoordinator();

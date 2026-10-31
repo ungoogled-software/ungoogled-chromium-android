@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/chrome/browser/notifications/persistent_notification_handler.cc
 +++ b/chrome/browser/notifications/persistent_notification_handler.cc
-@@ -393,26 +393,6 @@ void PersistentNotificationHandler::OnSh
+@@ -394,26 +394,6 @@ void PersistentNotificationHandler::OnSh
      const GURL& url,
      const std::string& notification_id,
      Profile* profile) {

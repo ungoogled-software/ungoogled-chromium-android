@@ -117,7 +117,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.chrome.browser.app.download.home.DownloadPage;
  import org.chromium.chrome.browser.back_press.BackPressManager;
  import org.chromium.chrome.browser.bookmarks.BookmarkManagerOpenerImpl;
-@@ -96,7 +97,7 @@ import java.util.function.Supplier;
+@@ -97,7 +98,7 @@ import java.util.function.Supplier;
   */
  @NullMarked
  public class NativePageFactory {
@@ -126,7 +126,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      private final BottomSheetController mBottomSheetController;
      private final BrowserControlsManager mBrowserControlsManager;
      private final Supplier<@Nullable Tab> mCurrentTabSupplier;
-@@ -124,7 +125,7 @@ public class NativePageFactory {
+@@ -125,7 +126,7 @@ public class NativePageFactory {
      private @Nullable PdfFragmentViewTrackerImpl mPdfFragmentViewTracker;
  
      public NativePageFactory(
@@ -135,7 +135,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              BottomSheetController sheetController,
              BrowserControlsManager browserControlsManager,
              Supplier<@Nullable Tab> currentTabSupplier,
-@@ -208,7 +209,7 @@ public class NativePageFactory {
+@@ -209,7 +210,7 @@ public class NativePageFactory {
  
      @VisibleForTesting
      static class NativePageBuilder {
@@ -144,7 +144,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          private final BottomSheetController mBottomSheetController;
          private final Supplier<NewTabPageCreationTracker> mNewTabPageCreationTracker;
          private final BrowserControlsManager mBrowserControlsManager;
-@@ -255,7 +256,7 @@ public class NativePageFactory {
+@@ -256,7 +257,7 @@ public class NativePageFactory {
                  StartupMetricsTracker startupMetricsTracker,
                  BackPressManager backPressManager,
                  RecentlyClosedEntriesManager recentlyClosedEntriesManager) {
@@ -155,7 +155,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              mBrowserControlsManager = browserControlsManager;
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -868,6 +868,13 @@ source_set("core") {
+@@ -870,6 +870,13 @@ source_set("core") {
      "universal_web_contents_observers.cc",
    ]
  
@@ -1138,7 +1138,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          assertNonNull(mSuggestedPath);
 --- a/chrome/browser/flags/android/chrome_feature_list.cc
 +++ b/chrome/browser/flags/android/chrome_feature_list.cc
-@@ -307,6 +307,7 @@ const base::Feature* const kFeaturesExpo
+@@ -317,6 +317,7 @@ const base::Feature* const kFeaturesExpo
      &kBookmarkPaneAndroid,
      &kBookmarksBarContextMenu,
      &kBookmarksBarNTP,
@@ -1146,7 +1146,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      &kBottomControlsJankImprovement,
      &kBottomSheetAsBrowserControls,
      &kBottomSheetOnDesktopWindowing,
-@@ -732,6 +733,8 @@ BASE_FEATURE(kBlockIntentsWhileLocked, b
+@@ -754,6 +755,8 @@ BASE_FEATURE(kBlockIntentsWhileLocked, b
  BASE_FEATURE(kBookmarkPaneAndroid, base::FEATURE_DISABLED_BY_DEFAULT);
  BASE_FEATURE(kBookmarksBarContextMenu, base::FEATURE_DISABLED_BY_DEFAULT);
  BASE_FEATURE(kBookmarksBarNTP, base::FEATURE_DISABLED_BY_DEFAULT);
@@ -1157,7 +1157,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  BASE_FEATURE(kBottomSheetOnDesktopWindowing, base::FEATURE_ENABLED_BY_DEFAULT);
 --- a/chrome/browser/flags/android/chrome_feature_list.h
 +++ b/chrome/browser/flags/android/chrome_feature_list.h
-@@ -103,6 +103,7 @@ BASE_DECLARE_FEATURE(kBlockIntentsWhileL
+@@ -106,6 +106,7 @@ BASE_DECLARE_FEATURE(kBlockIntentsWhileL
  BASE_DECLARE_FEATURE(kBookmarkPaneAndroid);
  BASE_DECLARE_FEATURE(kBookmarksBarContextMenu);
  BASE_DECLARE_FEATURE(kBookmarksBarNTP);
@@ -1167,7 +1167,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  BASE_DECLARE_FEATURE(kBottomSheetOnDesktopWindowing);
 --- a/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java
 +++ b/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java
-@@ -893,6 +893,7 @@ public abstract class ChromeFeatureList
+@@ -911,6 +911,7 @@ public abstract class ChromeFeatureList
              "VirtualKeyboardResizesContentTransientOvershootFix";
      public static final String VIRTUAL_KEYBOARD_TRANSIENT_INNER_HEIGHT_FIX =
              "VirtualKeyboardTransientInnerHeightFix";
@@ -1227,7 +1227,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
      /** Whether the GLIC button is enabled by the user in the bottom bar. */
      public static final String BOTTOM_BAR_GLIC_BUTTON_ENABLED =
-@@ -1180,6 +1182,7 @@ public final class ChromePreferenceKeys
+@@ -1178,6 +1180,7 @@ public final class ChromePreferenceKeys
                  AUXILIARY_SEARCH_SCHEMA_VERSION,
                  APP_LAUNCH_LAST_KNOWN_ACTIVE_TAB_STATE,
                  APP_LAUNCH_SEARCH_ENGINE_HAD_LOGO,
@@ -1264,7 +1264,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
        </message>
 --- a/chrome/utility/BUILD.gn
 +++ b/chrome/utility/BUILD.gn
-@@ -218,6 +218,13 @@ static_library("utility") {
+@@ -220,6 +220,13 @@ static_library("utility") {
      deps += [ "//chrome/services/pdf:lib" ]
    }
  
@@ -1338,7 +1338,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.ui.UiUtils;
  
  import java.io.File;
-@@ -74,6 +75,7 @@ public class SelectFileDialog implements
+@@ -76,6 +77,7 @@ public class SelectFileDialog implements
      private static final String TAG = "SelectFileDialog";
      private static final String IMAGE_TYPE = "image";
      private static final String VIDEO_TYPE = "video";
@@ -1346,7 +1346,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      private static final String AUDIO_TYPE = "audio";
      private static final String ALL_TYPES = "*/*";
      private static final String GENERIC_TYPE = "application/octet-stream";
-@@ -323,6 +325,17 @@ public class SelectFileDialog implements
+@@ -364,6 +366,17 @@ public class SelectFileDialog implements
          mMimeTypes = convertToSupportedMimeTypes(mFileTypes);
      }
  
@@ -1364,7 +1364,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      /**
       * Creates and starts an intent based on the passed fileTypes and capture value.
       *
-@@ -417,7 +430,7 @@ public class SelectFileDialog implements
+@@ -469,7 +482,7 @@ public class SelectFileDialog implements
          List<String> missingPermissions = new ArrayList<>();
          String storagePermission = Manifest.permission.READ_EXTERNAL_STORAGE;
          boolean shouldUsePhotoPicker = shouldUsePhotoPicker();
@@ -1373,7 +1373,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              // The permission scenario for accessing media has evolved a bit over the years:
              // Early on, READ_EXTERNAL_STORAGE was required to access media, but that permission was
              // later deprecated. In its place (starting with Android T) READ_MEDIA_IMAGES and
-@@ -457,7 +470,7 @@ public class SelectFileDialog implements
+@@ -509,7 +522,7 @@ public class SelectFileDialog implements
  
                                  // TODO(finnur): Remove once we figure out the cause of
                                  // crbug.com/950024.
@@ -1382,7 +1382,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
                                      if (permissions.length != requestPermissions.length) {
                                          throw new RuntimeException(
                                                  String.format(
-@@ -474,7 +487,7 @@ public class SelectFileDialog implements
+@@ -526,7 +539,7 @@ public class SelectFileDialog implements
                                      }
                                  }
  
@@ -1391,7 +1391,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
                                      if (permissions[i].equals(storagePermission)
                                              || permissions[i].equals(
                                                      Manifest.permission.READ_MEDIA_IMAGES)
-@@ -789,6 +802,7 @@ public class SelectFileDialog implements
+@@ -855,6 +868,7 @@ public class SelectFileDialog implements
                  mimeTypes.add(mimeType);
              }
          }
@@ -1399,7 +1399,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
          return mimeTypes;
      }
  
-@@ -1173,6 +1187,10 @@ public class SelectFileDialog implements
+@@ -1254,6 +1268,10 @@ public class SelectFileDialog implements
          return countAcceptTypesFor(superType) == mMimeTypes.size();
      }
  
@@ -1435,7 +1435,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
 --- a/ui/shell_dialogs/select_file_dialog_android.cc
 +++ b/ui/shell_dialogs/select_file_dialog_android.cc
-@@ -195,6 +195,12 @@ void SelectFileDialogImpl::SelectFileImp
+@@ -204,6 +204,12 @@ void SelectFileDialogImpl::SelectFileImp
        owning_window->GetJavaObject());
  }
  

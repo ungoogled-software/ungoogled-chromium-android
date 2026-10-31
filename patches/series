@@ -4,13 +4,8 @@ src-fix/fix-prefs.patch
 src-fix/fix-search-template.patch
 src-fix/fix-safe-browsing.patch
 src-fix/fix-safe-browsing-android-gn.patch
-src-fix/fix-ipv6-probe-unused-symbols.patch
 src-fix/fix-canvas-noise-unsafe-buffers.patch
-src-fix/fix-accountstostring-unused.patch
 src-fix/fix-degoogle-core-unreachable-150.patch
-src-fix/fix-safebrowsing-metrics-unused-150.patch
-src-fix/fix-template-url-reorder-ctor-150.patch
-src-fix/fix-primary-account-unused-150.patch
 src-fix/fix-r8-dontwarn-xr-usedbynative.patch
 src-fix/fix-degoogle-core-werror-batch2-150.patch
 src-fix/fix-safebrowsing-cloud-binary-upload-deepscan.patch

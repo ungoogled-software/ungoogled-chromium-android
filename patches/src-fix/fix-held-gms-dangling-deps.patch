@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -196,7 +196,6 @@ template("define_autorolled_targets") {
+@@ -268,7 +268,6 @@ template("define_autorolled_targets") {
          deps = [
            "$google_play_services_package:google_play_services_base_java",
            "$google_play_services_package:google_play_services_basement_java",
@@ -10,7 +10,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
            "$google_play_services_package:google_play_services_tasks_java",
            "//third_party/androidx:androidx_core_core_java",
            "//third_party/androidx:androidx_mediarouter_mediarouter_java",
-@@ -296,7 +295,6 @@ template("define_autorolled_targets") {
+@@ -368,7 +367,6 @@ template("define_autorolled_targets") {
          deps = [
            "$google_play_services_package:google_play_services_base_java",
            "$google_play_services_package:google_play_services_basement_java",
@@ -18,7 +18,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
            "$google_play_services_package:google_play_services_tasks_java",
            "//third_party/androidx:androidx_collection_collection_java",
            "//third_party/androidx:androidx_core_core_java",
-@@ -636,7 +634,6 @@ template("define_autorolled_targets") {
+@@ -708,7 +706,6 @@ template("define_autorolled_targets") {
            "$google_play_services_package:google_play_services_base_java",
            "$google_play_services_package:google_play_services_basement_java",
            "$google_play_services_package:google_play_services_cloud_messaging_java",

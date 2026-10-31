@@ -3,7 +3,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 ---
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -1023,7 +1023,6 @@ source_set("core") {
+@@ -1024,7 +1024,6 @@ source_set("core") {
      "//chrome/browser/pwc",
      "//chrome/browser/renderer_host",
      "//chrome/browser/resource_coordinator",
@@ -13,11 +13,10 @@ author: bearinmindcat <bearincrypto@gmail.com>
      "//chrome/browser/search_engines",
 --- a/chrome/browser/safe_browsing/BUILD.gn
 +++ b/chrome/browser/safe_browsing/BUILD.gn
-@@ -110,6 +110,10 @@ static_library("safe_browsing") {
-     "//ui/base",
+@@ -111,6 +111,9 @@ static_library("safe_browsing") {
    ]
    }
-+  deps = []
+   deps = []
 +  public = []
 +  sources = []
 +  allow_circular_includes_from = []

@@ -1,6 +1,8 @@
 From: Wengling Chen <feiyu2817@gmail.com>
 Thu, 14 Jan 2021 12:13:01 +0200
 Subject: Remove sites on ntp
+author: bearinmindcat <bearincrypto@gmail.com>
+date: Fri, 30 Oct 2026
 
 ---
  components/ntp_tiles/resources/default_popular_sites.json |   30 ++------------
@@ -35,7 +37,7 @@ Subject: Remove sites on ntp
      },
      {
          "large_icon_url": "https://freenode.net/static/img/logos/coloured-alphabg-sq-120.png",
-@@ -25,17 +10,12 @@
+@@ -25,18 +10,13 @@
          "url": "https://freenode.net/"
      },
      {
@@ -45,13 +47,18 @@ Subject: Remove sites on ntp
 -    },
 -    {
 -        "large_icon_url": "https://cdn2.iconfinder.com/data/icons/minimalism/512/Chromium.png",
+-        "title": "Chromium Issues",
+-        "url": "https://issues.ch40m1um.qjz9zk/"
 +        "large_icon_url": "",
-         "title": "Chrome Flags",
-         "url": "chrome://flags"
++        "title": "Chrome Flags",
++        "url": "chrome://flags"
      },
      {
 -        "large_icon_url": "https://cdn2.iconfinder.com/data/icons/minimalism/512/Chromium.png",
+-        "title": "Chromium Source",
+-        "url": "https://source.ch40m1um.qjz9zk/"
 +        "large_icon_url": "",
-         "title": "Chrome Version",
-         "url": "chrome://version/"
++        "title": "Chrome Version",
++        "url": "chrome://version/"
      }
+ ]

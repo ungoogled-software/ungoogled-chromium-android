@@ -144,9 +144,9 @@ author: bearinmindcat <bearincrypto@gmail.com>
 -import com.google.android.gms.common.api.ApiException;
 -
  import org.jni_zero.CalledByNative;
+ import org.jni_zero.JniType;
  import org.jni_zero.NativeMethods;
- 
-@@ -78,11 +76,6 @@ class PasswordSyncControllerDelegateBrid
+@@ -79,11 +77,6 @@ class PasswordSyncControllerDelegateBrid
              error = ((PasswordStoreAndroidBackend.BackendException) exception).errorCode;
          }
  
@@ -672,7 +672,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      "java/src/org/chromium/components/webauthn/GetMatchingCredentialIdsDelegate.java",
 --- a/components/webauthn/android/java/src/org/chromium/components/webauthn/Fido2CredentialRequest.java
 +++ b/components/webauthn/android/java/src/org/chromium/components/webauthn/Fido2CredentialRequest.java
-@@ -27,8 +27,6 @@ import androidx.annotation.IntDef;
+@@ -28,8 +28,6 @@ import androidx.annotation.IntDef;
  import androidx.annotation.RequiresApi;
  import androidx.annotation.VisibleForTesting;
  
@@ -681,7 +681,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  import org.jni_zero.JNINamespace;
  import org.jni_zero.NativeMethods;
  
-@@ -50,7 +48,6 @@ import org.chromium.blink.mojom.Resident
+@@ -51,7 +49,6 @@ import org.chromium.blink.mojom.Resident
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
  import org.chromium.components.password_manager.BrowserAssistedLoginType;
@@ -689,7 +689,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  import org.chromium.components.webauthn.cred_man.CredManHelper;
  import org.chromium.components.webauthn.cred_man.CredManSupportProvider;
  import org.chromium.content_public.browser.ClientDataJson;
-@@ -156,12 +153,7 @@ public class Fido2CredentialRequest impl
+@@ -170,12 +167,7 @@ public class Fido2CredentialRequest impl
       */
      public Fido2CredentialRequest(AuthenticationContextProvider authenticationContextProvider) {
          mAuthenticationContextProvider = authenticationContextProvider;
@@ -703,7 +703,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
          mPlayServicesAvailable = playServicesAvailable;
          mCredManHelper =
                  new CredManHelper(mAuthenticationContextProvider, this, mPlayServicesAvailable);
-@@ -359,29 +351,6 @@ public class Fido2CredentialRequest impl
+@@ -377,29 +369,6 @@ public class Fido2CredentialRequest impl
                              /* credentialRequestResult= */ null);
                      return;
                  }
@@ -733,7 +733,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
                  return;
              }
              int result =
-@@ -438,27 +407,6 @@ public class Fido2CredentialRequest impl
+@@ -456,27 +425,6 @@ public class Fido2CredentialRequest impl
                      /* credentialRequestResult= */ null);
              return;
          }
@@ -761,7 +761,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      }
  
      @SuppressWarnings("NewApi")
-@@ -936,32 +884,6 @@ public class Fido2CredentialRequest impl
+@@ -956,32 +904,6 @@ public class Fido2CredentialRequest impl
              callback.onIsUserVerifyingPlatformAuthenticatorAvailableResponse(false);
              return;
          }
@@ -794,7 +794,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      }
  
      public void handleReportRequest(PublicKeyCredentialReportOptions options, Origin origin) {
-@@ -1305,16 +1227,6 @@ public class Fido2CredentialRequest impl
+@@ -1325,16 +1247,6 @@ public class Fido2CredentialRequest impl
          if (options.mediation == Mediation.CONDITIONAL) {
              mCancellableUiState = CancellableUiState.REQUEST_SENT_TO_PLATFORM;
          }
@@ -811,7 +811,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
      }
  
      private void handleNonCredentialReturn(GetCredentialOptions options, Integer reason) {
-@@ -1357,29 +1269,6 @@ public class Fido2CredentialRequest impl
+@@ -1377,29 +1289,6 @@ public class Fido2CredentialRequest impl
          assert mCancellableUiState == CancellableUiState.NONE
                  || mCancellableUiState == CancellableUiState.REQUEST_SENT_TO_PLATFORM
                  || mCancellableUiState == CancellableUiState.WAITING_FOR_SELECTION;

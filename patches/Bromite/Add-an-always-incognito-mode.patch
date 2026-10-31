@@ -123,7 +123,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
  import org.chromium.chrome.browser.tab.TabDelegateFactory;
  import org.chromium.chrome.browser.tab.TabId;
  import org.chromium.chrome.browser.tab.TabLaunchType;
-@@ -72,6 +74,7 @@ public class ChromeTabCreator implements
+@@ -73,6 +75,7 @@ public class ChromeTabCreator implements
      private final Supplier<TabDelegateFactory> mTabDelegateFactorySupplier;
      private final OneshotSupplier<ProfileProvider> mProfileProviderSupplier;
      protected final boolean mIncognito;
@@ -131,7 +131,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
      protected final AsyncTabParamsManager mAsyncTabParamsManager;
      private final Supplier<TabModelSelector> mTabModelSelectorSupplier;
      private final Supplier<@Nullable CompositorViewHolder> mCompositorViewHolderSupplier;
-@@ -93,6 +96,7 @@ public class ChromeTabCreator implements
+@@ -94,6 +97,7 @@ public class ChromeTabCreator implements
          mTabDelegateFactorySupplier = tabDelegateFactory;
          mProfileProviderSupplier = profileProviderSupplier;
          mIncognito = incognito;
@@ -139,7 +139,7 @@ Enable incognito custom tabs and fix crashes for incognito/custom tab intents (c
          mAsyncTabParamsManager = asyncTabParamsManager;
          mTabModelSelectorSupplier = tabModelSelectorSupplier;
          mCompositorViewHolderSupplier = compositorViewHolderSupplier;
-@@ -551,6 +555,7 @@ public class ChromeTabCreator implements
+@@ -552,6 +556,7 @@ public class ChromeTabCreator implements
              if (creationState == TabCreationState.LIVE_IN_FOREGROUND && !openInForeground) {
                  creationState = TabCreationState.LIVE_IN_BACKGROUND;
              }

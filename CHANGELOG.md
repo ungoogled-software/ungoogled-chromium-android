@@ -1,3 +1,6 @@
+# 156.0.8078.79-1
+* Upstream update
+
 # 155.0.8059.39-1
 * Upstream update
 * Added SystemWebView builds (arm64 & arm)

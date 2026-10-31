@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/components/safe_browsing/core/browser/ping_manager.cc
 +++ b/components/safe_browsing/core/browser/ping_manager.cc
-@@ -610,8 +610,6 @@ PingManager::ReportThreatDetailsResult P
+@@ -608,8 +608,6 @@ PingManager::ReportThreatDetailsResult P
    SanitizeThreatDetailsReport(report);
    if (!get_user_population_callback_.is_null()) {
      *report->mutable_population() = get_user_population_callback_.Run();

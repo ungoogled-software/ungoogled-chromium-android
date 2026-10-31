@@ -1,6 +1,8 @@
 From: Wengling Chen <feiyu2817@gmail.com>
 Date: Fri, 10 Jan 2020 18:01:56 -0500
 Subject: Fix build error caused by the removal of safe_browsing
+author: bearinmindcat <bearincrypto@gmail.com>
+date: Fri, 30 Oct 2026
 
 Rebased against Chromium 150.0.7871.x (2026-07-11); weblayer hunks dropped
 (weblayer removed upstream).
@@ -73,7 +75,7 @@ dependency.
    ErrorUiType errorType =
 --- a/chrome/browser/preferences/BUILD.gn
 +++ b/chrome/browser/preferences/BUILD.gn
-@@ -75,7 +75,6 @@ java_cpp_strings("java_pref_names_srcjar
+@@ -72,7 +72,6 @@ java_cpp_strings("java_pref_names_srcjar
      "//components/payments/core/payment_prefs.h",
      "//components/policy/core/common/policy_pref_names.h",
      "//components/privacy_sandbox/privacy_sandbox_prefs.h",
@@ -93,7 +95,7 @@ dependency.
  }
 --- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/SafeBrowsingBridge.java
 +++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/SafeBrowsingBridge.java
-@@ -63,7 +63,7 @@ public final class SafeBrowsingBridge {
+@@ -64,7 +64,7 @@ public final class SafeBrowsingBridge {
       * @return The Safe Browsing state. It can be Enhanced Protection, Standard Protection, or No
       *     Protection.
       */
@@ -102,7 +104,7 @@ dependency.
          return SafeBrowsingBridgeJni.get().getSafeBrowsingState(mProfile);
      }
  
-@@ -71,7 +71,7 @@ public final class SafeBrowsingBridge {
+@@ -72,7 +72,7 @@ public final class SafeBrowsingBridge {
       * @param state Set the Safe Browsing state. It can be Enhanced Protection, Standard Protection,
       *     or No Protection.
       */
@@ -111,17 +113,18 @@ dependency.
          SafeBrowsingBridgeJni.get().setSafeBrowsingState(mProfile, state);
      }
  
-@@ -101,10 +101,9 @@ public final class SafeBrowsingBridge {
+@@ -103,11 +103,9 @@ public final class SafeBrowsingBridge {
  
-         boolean getSafeBrowsingExtendedReportingManaged(Profile profile);
+         boolean getSafeBrowsingExtendedReportingManaged(@JniType("Profile*") Profile profile);
  
 -        @SafeBrowsingState
-         int getSafeBrowsingState(Profile profile);
+         int getSafeBrowsingState(@JniType("Profile*") Profile profile);
  
--        void setSafeBrowsingState(Profile profile, @SafeBrowsingState int state);
-+        void setSafeBrowsingState(Profile profile, int state);
+-        void setSafeBrowsingState(
+-                @JniType("Profile*") Profile profile, @SafeBrowsingState int state);
++        void setSafeBrowsingState(@JniType("Profile*") Profile profile, int state);
  
-         void enableSafeBrowsingSettingSetLocallyPref(Profile profile);
+         void enableSafeBrowsingSettingSetLocallyPref(@JniType("Profile*") Profile profile);
  
 --- a/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/RadioButtonGroupSafeBrowsingPreference.java
 +++ b/chrome/browser/safe_browsing/android/java/src/org/chromium/chrome/browser/safe_browsing/settings/RadioButtonGroupSafeBrowsingPreference.java

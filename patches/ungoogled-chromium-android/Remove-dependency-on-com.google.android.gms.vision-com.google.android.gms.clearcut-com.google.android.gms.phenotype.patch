@@ -17,7 +17,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -324,8 +324,6 @@ if (_is_default_toolchain) {
+@@ -322,8 +322,6 @@ if (_is_default_toolchain) {
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
        "$google_play_services_package:google_play_services_tasks_java",
@@ -37,7 +37,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
        "//base:base_java",
        "//base:base_java_test_support",
        "//base:base_junit_test_support",
-@@ -250,8 +248,6 @@ if (is_android) {
+@@ -249,8 +247,6 @@ if (is_android) {
      deps = [
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -472,7 +472,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -161,38 +161,6 @@ template("define_autorolled_targets") {
+@@ -233,38 +233,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
@@ -511,7 +511,7 @@ Subject: Remove dependency on com.google.android.gms.vision,
      if (!defined(material_design_target)) {
        android_aar_prebuilt("com_google_android_material_material_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_material_material/material.aar"
-@@ -815,30 +783,6 @@ template("define_autorolled_targets") {
+@@ -994,30 +962,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
