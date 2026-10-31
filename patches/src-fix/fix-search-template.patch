@@ -7,7 +7,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
 
 --- a/components/search_engines/android/template_url_service_android.cc
 +++ b/components/search_engines/android/template_url_service_android.cc
-@@ -450,7 +450,7 @@ bool TemplateUrlServiceAndroid::SetPlayA
+@@ -456,7 +456,7 @@ bool TemplateUrlServiceAndroid::SetPlayA
      if (regulatory_api_turl->safe_for_autoreplace()) {
        template_url_service_->ResetTemplateURL(
            regulatory_api_turl, regulatory_api_turl->short_name(),
@@ -16,7 +16,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
      }
    }
  
-@@ -505,7 +505,8 @@ bool TemplateUrlServiceAndroid::EditSear
+@@ -511,7 +511,8 @@ bool TemplateUrlServiceAndroid::EditSear
    }
  
    template_url_service_->ResetTemplateURL(template_url, short_name, new_keyword,

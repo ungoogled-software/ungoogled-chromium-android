@@ -32,7 +32,7 @@ Subject: Remove dependency on com.google.android.play
    }
  }
  
-@@ -92,7 +90,5 @@ robolectric_library("junit") {
+@@ -91,7 +89,5 @@ robolectric_library("junit") {
    ]
    if (enable_chrome_android_internal) {
      deps += [ ":play_review_aar_for_clank_java" ]
@@ -115,7 +115,7 @@ Subject: Remove dependency on com.google.android.play
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -150,18 +150,6 @@ template("define_autorolled_targets") {
+@@ -222,18 +222,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.

@@ -23,7 +23,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 -    "$google_play_services_package:google_play_services_tasks_java",
      "//base:base_java",
      "//base:base_junit_test_support",
-     "//base/test:test_support_java",
+     "//third_party/jni_zero:jni_zero_java",
 --- a/components/fcm/android/java/src/org/chromium/components/fcm/FcmManager.java
 +++ b/components/fcm/android/java/src/org/chromium/components/fcm/FcmManager.java
 @@ -10,13 +10,8 @@ import android.text.TextUtils;
@@ -156,7 +156,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -114,25 +114,6 @@ template("define_autorolled_targets") {
+@@ -186,25 +186,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.

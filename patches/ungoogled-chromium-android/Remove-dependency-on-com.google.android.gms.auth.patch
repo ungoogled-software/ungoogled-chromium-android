@@ -17,7 +17,7 @@ Subject: Remove dependency on com.google.android.gms.auth
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -321,7 +321,6 @@ if (_is_default_toolchain) {
+@@ -319,7 +319,6 @@ if (_is_default_toolchain) {
        ":screenshot_provider_java",
        ":usage_stats_proto_java",
        ":xr_java",
@@ -35,7 +35,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      "$google_play_services_package:google_play_services_base_java",
      "//base:base_java",
      "//base:service_loader_java",
-@@ -198,7 +197,6 @@ robolectric_library("junit") {
+@@ -197,7 +196,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":signin_java_test_support",
@@ -45,7 +45,7 @@ Subject: Remove dependency on com.google.android.gms.auth
      "//base:base_java_test_support_uncommon",
 --- a/content/public/android/BUILD.gn
 +++ b/content/public/android/BUILD.gn
-@@ -164,7 +164,6 @@ android_library("content_full_java") {
+@@ -163,7 +163,6 @@ android_library("content_full_java") {
      ":content_java_resources",
      ":content_main_dex_java",
      ":content_util_java",
@@ -402,7 +402,7 @@ Subject: Remove dependency on com.google.android.gms.auth
                  mUserConsentReceiver = receiver;
 --- a/content/test/BUILD.gn
 +++ b/content/test/BUILD.gn
-@@ -3811,7 +3811,6 @@ if (is_android) {
+@@ -3869,7 +3869,6 @@ if (is_android) {
      testonly = true
      sources = content_java_sources_needing_jni
      deps = [
@@ -412,7 +412,7 @@ Subject: Remove dependency on com.google.android.gms.auth
        "$google_play_services_package:google_play_services_tasks_java",
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -75,77 +75,6 @@ template("define_autorolled_targets") {
+@@ -147,77 +147,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -490,7 +490,7 @@ Subject: Remove dependency on com.google.android.gms.auth
        android_aar_prebuilt("google_play_services_base_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_base/play-services-base.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_base/com_google_android_gms_play_services_base.info"
-@@ -377,19 +306,6 @@ template("define_autorolled_targets") {
+@@ -449,19 +378,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy

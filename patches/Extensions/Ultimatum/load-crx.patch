@@ -32,7 +32,7 @@ date: Thu, 1 Oct 2026
  std::unique_ptr<base::AutoReset<bool>> OverrideOffstoreInstallAllowedForTesting(
 --- a/chrome/browser/extensions/api/developer_private/developer_private_functions.cc
 +++ b/chrome/browser/extensions/api/developer_private/developer_private_functions.cc
-@@ -1059,6 +1059,81 @@ void DeveloperPrivateLoadUnpackedFunctio
+@@ -1056,6 +1056,81 @@ void DeveloperPrivateLoadUnpackedFunctio
    Release();  // Balanced in Run().
  }
  
@@ -236,7 +236,7 @@ date: Thu, 1 Oct 2026
            }
 --- a/chrome/common/extensions/api/developer_private.webidl
 +++ b/chrome/common/extensions/api/developer_private.webidl
-@@ -669,6 +669,11 @@ interface DeveloperPrivate {
+@@ -670,6 +670,11 @@ interface DeveloperPrivate {
    // |PromiseValue|: error
    static Promise<LoadError?> loadUnpacked(optional LoadUnpackedOptions options);
  
@@ -250,10 +250,10 @@ date: Thu, 1 Oct 2026
    static Promise<undefined> installDroppedFile();
 --- a/extensions/browser/extension_function_histogram_value.h
 +++ b/extensions/browser/extension_function_histogram_value.h
-@@ -2051,6 +2051,7 @@ enum HistogramValue {
-   ENTERPRISE_WEBRTC_STARTCAPTURE = 1986,
-   ENTERPRISE_WEBRTC_GETCAPTURESTATUS = 1987,
-   ENTERPRISE_WEBRTC_STOPCAPTURE = 1988,
+@@ -2054,6 +2054,7 @@ enum HistogramValue {
+   ENTERPRISE_WEBRTC_GETSNAPSHOT = 1989,
+   AUTOFILLPRIVATE_GETDETAILSFORUPSERTPASS = 1990,
+   AUTOFILLPRIVATE_PRELOADDETAILSFORUPSERTPASS = 1991,
 +  DEVELOPERPRIVATE_LOADCRX = 1976,
    // Last entry: Add new entries above, then run:
    // tools/metrics/histograms/update_extension_histograms.py
@@ -273,7 +273,7 @@ date: Thu, 1 Oct 2026
      return !ShouldDownloadAsRegularFile();
 --- a/tools/typescript/definitions/developer_private.d.ts
 +++ b/tools/typescript/definitions/developer_private.d.ts
-@@ -456,6 +456,8 @@ declare global {
+@@ -457,6 +457,8 @@ declare global {
        export function installDroppedFile(): Promise<void>;
        export function loadUnpacked(options: LoadUnpackedOptions):
            Promise<LoadError|null>;

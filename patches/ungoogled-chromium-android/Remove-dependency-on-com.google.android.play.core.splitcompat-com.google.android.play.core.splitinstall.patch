@@ -16,7 +16,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -810,7 +810,6 @@ if (_is_default_toolchain) {
+@@ -812,7 +812,6 @@ if (_is_default_toolchain) {
        "//third_party/android_deps:com_google_errorprone_error_prone_annotations_java",
        "//third_party/android_deps:guava_android_java",
        "//third_party/android_deps:material_design_java",
@@ -401,7 +401,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
  
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -133,23 +133,6 @@ template("define_autorolled_targets") {
+@@ -205,23 +205,6 @@ template("define_autorolled_targets") {
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
@@ -425,7 +425,7 @@ Subject: Remove dependency on com.google.android.play.core.splitcompat, com.goog
      android_aar_prebuilt("com_google_ar_impress_java") {
        aar_path = "autorolled/cipd/libs/com_google_ar_impress/impress.aar"
        info_path = "autorolled/committed/libs/com_google_ar_impress/com_google_ar_impress.info"
-@@ -674,21 +657,6 @@ template("define_autorolled_targets") {
+@@ -853,21 +836,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy

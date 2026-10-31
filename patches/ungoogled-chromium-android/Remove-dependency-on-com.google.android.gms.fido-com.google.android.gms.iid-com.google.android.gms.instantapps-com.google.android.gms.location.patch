@@ -22,7 +22,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -323,7 +323,6 @@ if (_is_default_toolchain) {
+@@ -321,7 +321,6 @@ if (_is_default_toolchain) {
        ":xr_java",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -42,15 +42,15 @@ Subject: Remove dependency on com.google.android.gms.fido,
      "//base:base_java_test_support",
 --- a/chrome/browser/ui/android/omnibox/BUILD.gn
 +++ b/chrome/browser/ui/android/omnibox/BUILD.gn
-@@ -221,7 +221,6 @@ android_library("java") {
+@@ -227,7 +227,6 @@ android_library("java") {
  
    deps = [
      ":java_resources",
 -    "$google_play_services_package:google_play_services_location_java",
      "$google_play_services_package:google_play_services_tasks_java",
      "//base:base_java",
-     "//base:service_loader_java",
-@@ -643,7 +642,6 @@ robolectric_library("junit") {
+     "//base:content_uri_utils_java",
+@@ -661,7 +660,6 @@ robolectric_library("junit") {
    deps = [
      ":java",
      ":java_resources",
@@ -272,7 +272,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
  import org.chromium.base.ContextUtils;
  import org.chromium.base.ResettersForTesting;
  import org.chromium.base.SysUtils;
-@@ -259,7 +257,7 @@ public class OmniboxFeatures {
+@@ -302,7 +300,7 @@ public class OmniboxFeatures {
              newIntParam(
                      sUseFusedLocationProvider,
                      "geolocation_request_priority",
@@ -596,7 +596,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
  }
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -118,23 +118,6 @@ template("define_autorolled_targets") {
+@@ -190,23 +190,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -620,7 +620,7 @@ Subject: Remove dependency on com.google.android.gms.fido,
        android_aar_prebuilt("google_play_services_identity_credentials_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_identity_credentials/play-services-identity-credentials.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_identity_credentials/com_google_android_gms_play_services_identity_credentials.info"
-@@ -146,56 +129,6 @@ template("define_autorolled_targets") {
+@@ -218,56 +201,6 @@ template("define_autorolled_targets") {
            "//third_party/kotlin_stdlib:kotlin_stdlib_java",
          ]
        }

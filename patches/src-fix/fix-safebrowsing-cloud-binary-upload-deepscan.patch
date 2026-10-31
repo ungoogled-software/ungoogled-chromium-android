@@ -2,20 +2,34 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/components/enterprise/connectors/core/cloud_content_scanning/cloud_binary_upload_service_base.cc
 +++ b/components/enterprise/connectors/core/cloud_content_scanning/cloud_binary_upload_service_base.cc
-@@ -362,17 +362,6 @@ void CloudBinaryUploadServiceBase::LogRe
-     ScanRequestUploadResult result,
-     BinaryUploadRequest* request,
-     const ContentAnalysisResponse& response) {
+@@ -370,31 +370,6 @@ void CloudBinaryUploadServiceBase::LogRe
+     const ContentAnalysisResponse& response,
+     int http_status,
+     const std::string& response_data) {
 -#if !BUILDFLAG(IS_IOS)
 -  safe_browsing::WebUIContentInfoSingleton::GetInstance()
 -      ->AddToDeepScanRequests(request->per_profile_request(),
 -                              request->access_token(), upload_info,
 -                              request->GetUrlWithParams().spec(),
 -                              request->content_analysis_request());
+-  std::string status = ScanRequestUploadResultToString(result);
+-  bool upload_failed = result != ScanRequestUploadResult::kSuccess;
+-  bool has_http_activity = http_status != 0 || !response_data.empty();
+-  // On kSuccess, `response_data` contains raw binary protobuf bytes which are
+-  // already parsed into `response` and serialized to JSON. Only append raw
+-  // `response_data` on failure, where the server/proxy returns text/HTML.
+-  if (upload_failed && has_http_activity) {
+-    // Maximum number of characters of the raw response body appended to the
+-    // deep scan status shown on chrome://safe-browsing.
+-    constexpr size_t kMaxResponseDataLength = 1024;
+-    status = base::StrCat(
+-        {status, " (HTTP ", base::NumberToString(http_status), "): ",
+-         response_data.empty() ? std::string_view("No response to show")
+-                               : std::string_view(response_data)
+-                                     .substr(0, kMaxResponseDataLength)});
+-  }
 -  safe_browsing::WebUIContentInfoSingleton::GetInstance()
--      ->AddToDeepScanResponses(active_tokens_[request->id()],
--                               ScanRequestUploadResultToString(result),
--                               response);
+-      ->AddToDeepScanResponses(active_tokens_[request->id()], status, response);
 -#endif
  }
  

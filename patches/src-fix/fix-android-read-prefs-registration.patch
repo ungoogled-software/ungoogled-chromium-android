@@ -2,7 +2,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
 
 --- a/components/signin/internal/identity_manager/primary_account_manager.cc
 +++ b/components/signin/internal/identity_manager/primary_account_manager.cc
-@@ -272,6 +272,8 @@ PrimaryAccountManager::~PrimaryAccountMa
+@@ -222,6 +222,8 @@ PrimaryAccountManager::~PrimaryAccountMa
  
  // static
  void PrimaryAccountManager::RegisterProfilePrefs(PrefRegistrySimple* registry) {
@@ -13,7 +13,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  // static
 --- a/components/signin/public/base/signin_prefs.cc
 +++ b/components/signin/public/base/signin_prefs.cc
-@@ -199,6 +199,8 @@ SigninPrefs::~SigninPrefs() = default;
+@@ -37,6 +37,8 @@ SigninPrefs::~SigninPrefs() = default;
  void SigninPrefs::RegisterProfilePrefs(PrefRegistrySimple* registry) {
    registry->RegisterDictionaryPref(kSigninAccountPrefs);
    registry->RegisterIntegerPref(kAccountMetricsNextUnassignedId, 0);

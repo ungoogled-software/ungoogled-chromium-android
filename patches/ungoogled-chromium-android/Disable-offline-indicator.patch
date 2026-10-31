@@ -5,7 +5,7 @@ date: Tue, 22 Jul 2026
 ---
 --- a/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedRootUiCoordinator.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedRootUiCoordinator.java
-@@ -2077,7 +2077,7 @@ public class TabbedRootUiCoordinator ext
+@@ -2124,7 +2124,7 @@ public class TabbedRootUiCoordinator ext
                      }
                  };
  

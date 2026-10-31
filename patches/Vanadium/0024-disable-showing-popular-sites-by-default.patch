@@ -9,7 +9,7 @@ Subject: [PATCH 23/73] disable showing popular sites by default
 
 --- a/components/ntp_tiles/features.cc
 +++ b/components/ntp_tiles/features.cc
-@@ -15,7 +15,7 @@ const char kPopularSitesFieldTrialName[]
+@@ -31,7 +31,7 @@ const char kPopularSitesFieldTrialName[]
  
  BASE_FEATURE(kPopularSitesBakedInContentFeature,
               "NTPPopularSitesBakedInContent",

@@ -29,7 +29,7 @@ Subject: Remove dependency on com.google.android.gms.cast
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -323,8 +323,6 @@ if (_is_default_toolchain) {
+@@ -321,8 +321,6 @@ if (_is_default_toolchain) {
        ":xr_java",
        "$google_play_services_package:google_play_services_base_java",
        "$google_play_services_package:google_play_services_basement_java",
@@ -120,7 +120,7 @@ Subject: Remove dependency on com.google.android.gms.cast
      "//base:base_java",
      "//base:base_java_test_support",
      "//components/browser_ui/media/android:java",
-@@ -150,8 +145,6 @@ robolectric_library("junit") {
+@@ -149,8 +144,6 @@ robolectric_library("junit") {
      ":test_support_java",
      "$google_play_services_package:google_play_services_base_java",
      "$google_play_services_package:google_play_services_basement_java",
@@ -316,7 +316,7 @@ Subject: Remove dependency on com.google.android.gms.cast
  import org.chromium.build.annotations.NullMarked;
  import org.chromium.build.annotations.Nullable;
  import org.chromium.build.annotations.RequiresNonNull;
-@@ -69,22 +64,6 @@ public abstract class BaseNotificationCo
+@@ -68,22 +63,6 @@ public abstract class BaseNotificationCo
      public void onStatusUpdated() {
          if (mNotificationBuilder == null) return;
          if (!mSessionController.isConnected()) return;
@@ -339,7 +339,7 @@ Subject: Remove dependency on com.google.android.gms.cast
      }
  
      /** Called when media metadata updated. */
-@@ -104,37 +83,6 @@ public abstract class BaseNotificationCo
+@@ -103,37 +82,6 @@ public abstract class BaseNotificationCo
          mNotificationBuilder.setMetadata(notificationMetadata);
  
          if (!mSessionController.isConnected()) return;
@@ -377,7 +377,7 @@ Subject: Remove dependency on com.google.android.gms.cast
      }
  
      /////////////////////////////////////////////////////////////////////////////////////////////
-@@ -143,17 +91,11 @@ public abstract class BaseNotificationCo
+@@ -142,17 +90,11 @@ public abstract class BaseNotificationCo
      @Override
      public void onPlay(int actionSource) {
          if (!mSessionController.isConnected()) return;
@@ -1491,7 +1491,7 @@ Subject: Remove dependency on com.google.android.gms.cast
    ]
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -118,53 +118,6 @@ template("define_autorolled_targets") {
+@@ -190,53 +190,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -1545,7 +1545,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        android_aar_prebuilt("google_play_services_fido_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_fido/play-services-fido.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_fido/com_google_android_gms_play_services_fido.info"
-@@ -519,11 +472,6 @@ template("define_autorolled_targets") {
+@@ -591,11 +544,6 @@ template("define_autorolled_targets") {
          info_path = "autorolled/committed/libs/com_google_mlkit_common/com_google_mlkit_common.info"
          enable_bytecode_checks = false
          deps = [
@@ -1557,7 +1557,7 @@ Subject: Remove dependency on com.google.android.gms.cast
            "$google_play_services_package:google_play_services_base_java",
            "$google_play_services_package:google_play_services_basement_java",
            "$google_play_services_package:google_play_services_tasks_java",
-@@ -557,11 +505,6 @@ template("define_autorolled_targets") {
+@@ -629,11 +577,6 @@ template("define_autorolled_targets") {
          info_path = "autorolled/committed/libs/com_google_mlkit_genai_prompt/com_google_mlkit_genai_prompt.info"
          enable_bytecode_checks = false
          deps = [
@@ -1569,7 +1569,7 @@ Subject: Remove dependency on com.google.android.gms.cast
            "$google_play_services_package:google_play_services_basement_java",
            "$google_play_services_package:google_play_services_tasks_java",
            "//third_party/android_deps:com_google_mlkit_common_java",
-@@ -941,74 +884,6 @@ template("define_autorolled_targets") {
+@@ -1120,74 +1063,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {
@@ -1644,7 +1644,7 @@ Subject: Remove dependency on com.google.android.gms.cast
        android_aar_prebuilt("google_play_services_clearcut_java") {
          aar_path = "autorolled/cipd/libs/com_google_android_gms_play_services_clearcut/play-services-clearcut.aar"
          info_path = "autorolled/committed/libs/com_google_android_gms_play_services_clearcut/com_google_android_gms_play_services_clearcut.info"
-@@ -1197,70 +1072,6 @@ template("define_autorolled_targets") {
+@@ -1376,70 +1251,6 @@ template("define_autorolled_targets") {
      }
  
      # This is generated, do not edit. Update BuildConfigGenerator.groovy

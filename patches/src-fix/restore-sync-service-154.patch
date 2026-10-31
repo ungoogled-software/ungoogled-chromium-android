@@ -12,7 +12,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
        "//components/safe_browsing/android:safe_browsing_api_handler",
 --- a/chrome/browser/sync/sync_service_factory.cc
 +++ b/chrome/browser/sync/sync_service_factory.cc
-@@ -298,6 +298,8 @@ syncer::DataTypeController::TypeVector C
+@@ -314,6 +314,8 @@ syncer::DataTypeController::TypeVector C
  
    builder.SetDataTypeStoreService(
        DataTypeStoreServiceFactory::GetForProfile(profile));
@@ -21,7 +21,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  
  #if BUILDFLAG(ENABLE_EXTENSIONS_CORE)
    builder.SetExtensionSyncService(ExtensionSyncService::Get(profile));
-@@ -390,7 +392,114 @@ std::unique_ptr<KeyedService> BuildSyncS
+@@ -408,7 +410,114 @@ std::unique_ptr<KeyedService> BuildSyncS
      std::optional<syncer::CreateHttpPostProviderFactory>
          create_http_post_provider_factory_for_test,
      content::BrowserContext* context) {
@@ -136,7 +136,7 @@ author: bearinmindcat <bearincrypto@gmail.com>
  }
  
  }  // namespace
-@@ -461,6 +570,7 @@ SyncServiceFactory::SyncServiceFactory()
+@@ -477,6 +586,7 @@ SyncServiceFactory::SyncServiceFactory()
    DependsOn(PasswordSenderServiceFactory::GetInstance());
    DependsOn(ProfilePasswordStoreFactory::GetInstance());
  

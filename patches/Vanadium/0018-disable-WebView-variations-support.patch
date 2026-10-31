@@ -12,7 +12,7 @@ date: Mon, 12 Oct 2026
 
 --- a/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumFactoryProvider.java
 +++ b/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromiumFactoryProvider.java
-@@ -78,7 +78,6 @@ import org.chromium.android_webview.comm
+@@ -75,7 +75,6 @@ import org.chromium.android_webview.comm
  import org.chromium.android_webview.common.WebViewCachedFlags;
  import org.chromium.android_webview.metrics.AwMetricsServiceClient;
  import org.chromium.android_webview.safe_mode.BrowserSafeModeActionList;
@@ -20,7 +20,7 @@ date: Mon, 12 Oct 2026
  import org.chromium.base.AconfigFlaggedApiDelegate;
  import org.chromium.base.ApkInfo;
  import org.chromium.base.BaseFeatures;
-@@ -724,8 +723,6 @@ public class WebViewChromiumFactoryProvi
+@@ -718,8 +717,6 @@ public class WebViewChromiumFactoryProvi
              // This must happen after pref value has been read and SafeMode setup has completed.
              setupStartupTasksRunMode(androidXConfig);
  
@@ -39,10 +39,10 @@ date: Mon, 12 Oct 2026
  import org.chromium.base.ApkInfo;
  import org.chromium.base.CommandLine;
  import org.chromium.base.ContextUtils;
-@@ -106,11 +105,6 @@ public final class StartupTasks {
-                 /* ignoreVisibilityForImportance= */ true,
-                 delegate.shouldForceNativeSandboxedServices());
-         ChildProcessLauncherHelper.initialize();
+@@ -97,11 +96,6 @@ public final class StartupTasks {
+         // to use them.
+ 
+         delegate.configureChildProcessLauncher();
 -
 -        // finishInit() must precede native initialization so
 -        // the seed is available when AwFeatureListCreator::SetUpFieldTrials()

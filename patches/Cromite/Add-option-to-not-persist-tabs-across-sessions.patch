@@ -30,7 +30,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  import org.chromium.base.CommandLine;
  import org.chromium.base.DeviceInfo;
  import org.chromium.base.IntentUtils;
-@@ -2501,8 +2502,10 @@ public class ChromeTabbedActivity extend
+@@ -2510,8 +2511,10 @@ public class ChromeTabbedActivity extend
                          ActivityRestoreState.NUM_ENTRIES);
              }
  
@@ -68,7 +68,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
      private static final String PREF_ADVANCED_PROTECTION_INFO = "advanced_protection_info";
      private static final int SECURE_CONNECTIONS_MESSAGE_ID =
              R.string.settings_privacy_and_security_advanced_protection_secure_connections_bullet;
-@@ -348,7 +351,11 @@ public class PrivacySettings extends Chr
+@@ -355,7 +358,11 @@ public class PrivacySettings extends Chr
      @Override
      public boolean onPreferenceChange(Preference preference, Object newValue) {
          String key = preference.getKey();
@@ -81,7 +81,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
              UserPrefs.get(getProfile())
                      .setBoolean(Pref.CAN_MAKE_PAYMENT_ENABLED, (boolean) newValue);
          } else if (PREF_HTTPS_FIRST_MODE_LEGACY.equals(key)) {
-@@ -410,6 +417,10 @@ public class PrivacySettings extends Chr
+@@ -417,6 +424,10 @@ public class PrivacySettings extends Chr
                              getContext(), getProfile()));
          }
  
@@ -116,7 +116,7 @@ License: GPL-3.0-only - https://spdx.org/licenses/GPL-3.0-only.html
  
 --- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
 +++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
-@@ -2640,6 +2640,12 @@ To change this setting, <ph name="BEGIN_
+@@ -2653,6 +2653,12 @@ To change this setting, <ph name="BEGIN_
        <message name="IDS_ACCESSIBILITY_TAB_SWITCHER_TITLE" desc="Accessibility label of the current window when Grid Tab Switcher is shown.">
          All tabs
        </message>

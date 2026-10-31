@@ -13,7 +13,7 @@ The snippets are already disabled in native codes, this will disable it on Java 
 
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -326,7 +326,6 @@ if (_is_default_toolchain) {
+@@ -324,7 +324,6 @@ if (_is_default_toolchain) {
        "$google_play_services_package:google_play_services_basement_java",
        "$google_play_services_package:google_play_services_cast_framework_java",
        "$google_play_services_package:google_play_services_cast_java",
@@ -51,7 +51,7 @@ The snippets are already disabled in native codes, this will disable it on Java 
        "//base:base_java_test_support",
 --- a/third_party/android_deps/autorolled/BUILD.gn
 +++ b/third_party/android_deps/autorolled/BUILD.gn
-@@ -253,25 +253,6 @@ template("define_autorolled_targets") {
+@@ -325,25 +325,6 @@ template("define_autorolled_targets") {
      # This is generated, do not edit. Update BuildConfigGenerator.groovy
      # instead.
      if (google_play_services_package == "//third_party/android_deps") {

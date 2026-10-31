@@ -1,5 +1,7 @@
 description: Add flag to disable creation of WebRTC RTCPeerConnection object
 author: Wengling Chen <feiyu2817@gmail.com>
+author: bearinmindcat <bearincrypto@gmail.com>
+date: Sat, 31 Oct 2026
 
 ---
  chrome/browser/ungoogled_flag_entries.h                           | 4 ++++
@@ -23,7 +25,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
       "Forces the result of the browser's IPv6 probing (i.e. IPv6 connectivity test) to be unsuccessful. This causes IPv4 addresses to be prioritized over IPv6 addresses. Without this flag, the probing result is set to be successful, which causes IPv6 to be used over IPv4 when possible. ungoogled-chromium flag.",
 --- a/third_party/blink/common/features.cc
 +++ b/third_party/blink/common/features.cc
-@@ -579,6 +579,9 @@ BASE_FEATURE(kDevToolsImprovedNetworkErr
+@@ -610,6 +610,9 @@ BASE_FEATURE(kDevToolsImprovedNetworkErr
  
  BASE_FEATURE(kDevToolsAdsPanel, base::FEATURE_ENABLED_BY_DEFAULT);
  
@@ -35,7 +37,7 @@ author: Wengling Chen <feiyu2817@gmail.com>
  
 --- a/third_party/blink/public/common/features.h
 +++ b/third_party/blink/public/common/features.h
-@@ -405,6 +405,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE
+@@ -417,6 +417,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE
  // Enables the DevTools 'Application > Application > Ads' panel.
  BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDevToolsAdsPanel);
  
@@ -47,7 +49,15 @@ author: Wengling Chen <feiyu2817@gmail.com>
  // buffers. Remove when the bindings code instituting these limits is removed.
 --- a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.cc
 +++ b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.cc
-@@ -638,6 +638,14 @@ RTCPeerConnection* RTCPeerConnection::Cr
+@@ -56,6 +56,7 @@
+ #include "build/build_config.h"
+ #include "services/metrics/public/cpp/ukm_builders.h"
+ #include "services/network/public/cpp/connection_allowlist.h"
++#include "third_party/blink/public/common/features.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/public/platform/task_type.h"
+ #include "third_party/blink/public/platform/web_crypto_algorithm.h"
+@@ -685,6 +686,14 @@ RTCPeerConnection* RTCPeerConnection::Cr
      ExecutionContext* context,
      const RTCConfiguration* rtc_configuration,
      ExceptionState& exception_state) {
