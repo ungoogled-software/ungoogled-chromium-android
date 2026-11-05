@@ -86,3 +86,94 @@ jobs:
               --repo "$GITHUB_REPOSITORY" \
               --title "$NAME" \
               --notes "Please see [CHANGELOG](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/CHANGELOG.md) for latest updates."
+
+  fdroid:
+    needs: release
+    if: ${{ needs.release.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: release-arm64
+          path: rel
+      - name: Locate aapt2 (pre-installed Android SDK)
+        shell: bash
+        run: |
+          : "${ANDROID_HOME:?ANDROID_HOME is not set on this runner}"
+          bt="$(ls -d "$ANDROID_HOME"/build-tools/*/ 2>/dev/null | sort -V | tail -1)"
+          [ -n "$bt" ] || { echo "FATAL: no build-tools under $ANDROID_HOME"; exit 1; }
+          echo "using aapt2 from $bt"; "$bt/aapt2" version
+          echo "$bt" >> "$GITHUB_PATH"
+      - name: Stage keystore from secrets
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+        run: |
+          [ -n "${KEYSTORE_B64:-}" ] || { echo "FATAL: KEYSTORE_B64 secret is not set"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/ks"
+          chmod 700 "$RUNNER_TEMP/ks"
+          printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ks/release.jks"
+          printf '%s' "$KEYSTORE_PASS" > "$RUNNER_TEMP/ks/pass"
+          chmod 600 "$RUNNER_TEMP/ks"/*
+      - name: Build F-Droid repo
+        shell: bash
+        run: |
+          git lfs install
+          export UGC_KEYSTORE="$RUNNER_TEMP/ks/release.jks"
+          export UGC_KEYSTORE_PASSFILE="$RUNNER_TEMP/ks/pass"
+          export UGC_APK="rel/ChromePublic_arm64.apk"
+          export UGC_PACKAGE="org.ungoogled.chromium"
+          export UGC_REPO_DIR="fdroid/repo"
+          export UGC_KEEP="3"
+          bash fdroid/build-repo.sh
+      - name: Commit and push
+        shell: bash
+        env:
+          NAME: ${{ (github.event_name == 'push' && github.ref_name) || inputs.release_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A fdroid/ .gitattributes
+          if git diff --cached --quiet; then
+            echo "F-Droid repo unchanged; nothing to commit"
+          else
+            git commit -m "fdroid: publish $NAME"
+            git push origin HEAD:master
+          fi
+      - name: Verify APK is served over raw (LFS fail-fast)
+        shell: bash
+        run: |
+          latest=""; latestvc=0
+          for f in fdroid/repo/org.ungoogled.chromium_*.apk; do
+            [ -e "$f" ] || continue
+            vc="$(basename "$f" | sed -E 's/.*_([0-9]+)\.apk/\1/')"
+            if [ "$vc" -gt "$latestvc" ]; then latestvc="$vc"; latest="$f"; fi
+          done
+          [ -n "$latest" ] || { echo "FATAL: no published apk found"; exit 1; }
+          name="$(basename "$latest")"
+          expected="$(stat -c %s "$latest")"
+          raw="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/master/fdroid/repo/${name}"
+          echo "verifying $raw (expected size $expected)"
+          ok=""
+          for i in 1 2 3 4 5 6; do
+            cl="$(curl -fsSI "$raw" 2>/dev/null | tr -d '\r' | awk -F': ' 'tolower($1)=="content-length"{print $2}')"
+            if [ -n "$cl" ] && [ "$cl" = "$expected" ]; then ok=1; break; fi
+            echo "  attempt $i: content-length=${cl:-?} (waiting)"; sleep 10
+          done
+          curl -fsSL -r 0-199 "$raw" -o "$RUNNER_TEMP/head.bin"
+          if grep -qa "git-lfs.github.com/spec/v1" "$RUNNER_TEMP/head.bin"; then
+            echo "FATAL: raw served an LFS pointer, not the APK"; exit 1
+          fi
+          [ -n "$ok" ] || { echo "FATAL: raw content-length never matched the APK size"; exit 1; }
+          echo "OK: APK served over raw, LFS resolved"
+      - name: Remove staged keystore
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/ks"
