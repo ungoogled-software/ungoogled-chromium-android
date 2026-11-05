@@ -16,6 +16,7 @@ For more information on `ungoogled-chromium`, please visit the original repo: [u
 * [Differences from ungoogled-chromium](#differences-from-ungoogled-chromium)
 * [Limitations](#limitations)
 * [Platforms and Versions](#platforms-and-versions)
+* [F-Droid](#f-droid)
 * [Building Instructions](#building-instructions)
 * [Reporting and Contributing](#reporting-and-contributing)
 * [Extensions](#extensions)
@@ -88,6 +89,20 @@ Pre-built apks are named as `{BUILD_TARGET}_{CPU_ARCH}.apk`, where:
 * `{CPU_ARCH}` is one of `arm` (armeabi-v7a), `arm64` (arm64-v8a).
 * Previous maintainer also built `Trichrome`, `SystemWebView`, `x86` for releases. My builds are currently done local rather than automating through github; if there's enough people requesting further builds I can spend the time to set this up.
 * The [ungoogled-chromium wiki](https://ungoogled-software.github.io/ungoogled-chromium-wiki/), [Cromite documentation](https://github.com/uazo/cromite/tree/master/docs), [Vanadium](https://github.com/GrapheneOS/Vanadium) and the [Bromite wiki](https://github.com/bromite/bromite/wiki) can also be helpful.
+
+## F-Droid
+
+*This is **experimental**. It is a self-hosted [F-Droid](https://f-droid.org) repository generated automatically from this repo's release builds, currently for `arm64` only. Prefer the regular [release APKs](#platforms-and-versions) for the most stable option.*
+
+If you use the F-Droid client, you can add this repository to install and update ungoogled-chromium-android without the Play Store. It requires the **F-Droid client 2.0.x** (the classic 1.x client uses a different index format and is not supported).
+
+**Getting started** — in the F-Droid client, use **More** → **Repositories** → **+** (Add repository) and enter:
+
+```
+https://raw.githubusercontent.com/ungoogled-software/ungoogled-chromium-android/master/fdroid/repo
+```
+
+The app then appears as **Ungoogled Chromium** and updates automatically on each release. See [fdroid/README.md](fdroid/README.md) for how the repository is generated and signed.
 
 ## Building Instructions
 *This build uses the SDK/NDK/JDK from the gclient checkout. [Android rebuilds](https://github.com/wchen342/android-rebuilds), used by earlier versions, is no longer maintained.*
