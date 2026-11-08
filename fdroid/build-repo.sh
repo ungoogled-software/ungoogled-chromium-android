@@ -15,7 +15,7 @@
 #   UGC_KEYSTORE          path to the release JKS keystore (required)
 #   UGC_KEYSTORE_PASSFILE path to a file containing the keystore+key password (required)
 #   UGC_APK               path to the signed release APK to publish (required)
-#   UGC_PACKAGE           applicationId / package name (default org.ungoogled.chromium)
+#   UGC_PACKAGE           applicationId / package name (default: read from the APK via aapt2)
 #   UGC_REPO_DIR          target repo dir, relative to the git root (default fdroid/repo)
 #   UGC_REPO_NAME         repository display name (default "Ungoogled Chromium")
 #   UGC_APP_NAME          app display name fallback; the APK's own label is preferred
@@ -24,7 +24,8 @@
 #   UGC_REPO_ADDRESS      address recorded in the index (default the GitHub repo)
 #   UGC_KEEP              number of versions to keep before pruning (default 3)
 #
-# Required on PATH: aapt2, keytool, jarsigner, jar, sha256sum, md5sum, od, unzip, python3
+# Required on PATH: aapt2, keytool, jarsigner, jar, sha256sum, md5sum, od, unzip,
+#   python3, and (for WebP launcher icons) one of: magick, convert, dwebp
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
@@ -33,7 +34,7 @@ cd "$ROOT"
 : "${UGC_KEYSTORE:?UGC_KEYSTORE is not set}"
 : "${UGC_KEYSTORE_PASSFILE:?UGC_KEYSTORE_PASSFILE is not set}"
 : "${UGC_APK:?UGC_APK is not set}"
-UGC_PACKAGE="${UGC_PACKAGE:-org.ungoogled.chromium}"
+UGC_PACKAGE="${UGC_PACKAGE:-}"   # empty => derive from the APK in section 1
 UGC_REPO_DIR="${UGC_REPO_DIR:-fdroid/repo}"
 UGC_REPO_NAME="${UGC_REPO_NAME:-Ungoogled Chromium}"
 UGC_APP_NAME="${UGC_APP_NAME:-Ungoogled Chromium}"
@@ -71,16 +72,23 @@ aapt2 dump badging "$UGC_APK" > "$BADGE"
 
 VERSION_CODE="$(sed -nE "s/.*versionCode='([0-9]+)'.*/\1/p" "$BADGE" | head -1)"
 VERSION_NAME="$(sed -nE "s/.*versionName='([^']*)'.*/\1/p"       "$BADGE" | head -1)"
-MIN_SDK="$(sed -nE     "s/.*sdkVersion:'([0-9]+)'.*/\1/p"        "$BADGE" | head -1)"
+# aapt2 emits `minSdkVersion:'N'`; legacy aapt used `sdkVersion:'N'` (fallback).
+MIN_SDK="$(sed -nE    "s/.*minSdkVersion:'([0-9]+)'.*/\1/p"     "$BADGE" | head -1)"
+[ -n "$MIN_SDK" ] || MIN_SDK="$(sed -nE "s/.*sdkVersion:'([0-9]+)'.*/\1/p" "$BADGE" | head -1)"
 TARGET_SDK="$(sed -nE  "s/.*targetSdkVersion:'([0-9]+)'.*/\1/p" "$BADGE" | head -1)"
 NATIVE_CODE="$(sed -nE "s/.*native-code: '([^']*)'.*/\1/p"       "$BADGE" | head -1)"
 APP_LABEL="$(sed -nE "s/^application-label: '?([^']*)'?$/\1/p"   "$BADGE" | head -1)"
+PKG_NAME="$(sed -nE  "s/^package: name='([^']*)'.*/\1/p"         "$BADGE" | head -1)"
 
 : "${VERSION_CODE:?could not read versionCode from APK via aapt2}"
 : "${VERSION_NAME:?could not read versionName from APK via aapt2}"
 [ -n "$TARGET_SDK" ] || TARGET_SDK="$MIN_SDK"
 # Prefer the APK's own display name (aapt2 application-label); fall back to config.
 APP_NAME="${APP_LABEL:-$UGC_APP_NAME}"
+# Package name defaults to the APK's own (aapt2 'package: name='); an explicit
+# UGC_PACKAGE (e.g. from the workflow) still overrides it.
+UGC_PACKAGE="${UGC_PACKAGE:-$PKG_NAME}"
+: "${UGC_PACKAGE:?could not determine package name (aapt2 'package: name=' missing)}"
 
 # `|| true`: grep exits 1 on no match, which would otherwise trip `set -o pipefail`.
 PERMS="$(grep -oE "uses-permission: name='[^']*'" "$BADGE" | sed -E "s/uses-permission: name='//; s/'$//" | sort -u || true)"
@@ -124,29 +132,105 @@ echo "  signer=$SIGNER"
 cp -f "$UGC_APK" "$REPO_DIR/$APK_NAME"
 
 # ---------------------------------------------------------------------------
-# 5. Icon: taken from the release APK (its launcher icon). The icon must come
-#    from the release — no hand-crafted placeholder. If the APK has no launcher
-#    icon, the build fails.
+# 5. Icon: taken from the release APK (never hand-crafted).
+#    aapt2 reports the launcher icon as `application: ... icon='res/PATH'`:
+#      - PATH is .png/.webp  -> a raster launcher icon; extract it directly.
+#      - PATH is .xml        -> an adaptive icon; parse the AXML for the
+#        foreground drawable id, resolve it to the highest-density file via
+#        `aapt2 dump resources`, and extract that file.
+#    The result is normalised to a real PNG (PNG is copied; WebP is converted).
 # ---------------------------------------------------------------------------
-extract_icon() {
-  ( cd "$WORK" && unzip -o -q "$UGC_APK" \
-      'res/*ic_launcher*.png' 'res/*ic_launcher*.webp' \
-      'res/mipmap*/*ic_launcher*.png' 'res/mipmap*/*ic_launcher*.webp' 2>/dev/null ) || true
-  local pick
-  # Prefer the full launcher icon (highest density); else any ic_launcher* layer.
-  pick="$(find "$WORK/res" -type f \( -name 'ic_launcher.png' -o -name 'ic_launcher.webp' \) \
-          -printf '%s %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)"
-  [ -n "$pick" ] || pick="$(find "$WORK/res" -type f \( -name '*.png' -o -name '*.webp' \) \
-        -name '*ic_launcher*' -printf '%s %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)"
-  [ -n "$pick" ] || return 1
-  case "$pick" in
-    *.webp) command -v convert >/dev/null 2>&1 && convert "$pick" "$ICON_DIR/$ICON_NAME" ;;
-    *)      cp -f "$pick" "$ICON_DIR/$ICON_NAME" ;;
+ICON_REF="$(sed -nE "s/^application:.* icon='([^']*)'.*/\1/p" "$BADGE" | head -1)"
+[ -n "$ICON_REF" ] || { echo "FATAL: aapt2 badging has no launcher icon in $UGC_APK"; exit 1; }
+
+# Convert an image ($1) to PNG ($2) using whichever tool is available.
+to_png() {
+  if   command -v magick  >/dev/null 2>&1; then magick  "$1" "$2"
+  elif command -v convert >/dev/null 2>&1; then convert "$1" "$2"
+  elif command -v dwebp   >/dev/null 2>&1; then dwebp -o "$2" "$1"
+  else return 1; fi
+}
+# Write an apk-internal image file ($1) as a real PNG ($2). A PNG is copied;
+# anything else (Chromium's WebP) must be converted. Fails if no conversion is
+# possible, so we never ship a non-PNG file named .png.
+icon_to_png() {
+  local f="$WORK/$1"
+  [ -f "$f" ] || return 1
+  local m; m="$(head -c4 "$f" | od -An -tx1 | tr -d ' \n')"
+  if [ "$m" = "89504e47" ]; then cp -f "$f" "$2"
+  else to_png "$f" "$2"; fi
+}
+# Resolve an adaptive-icon foreground drawable id ($1) to the highest-density
+# file path inside the APK (last `(file)` entry in the resource block).
+fg_file_for() {
+  aapt2 dump resources "$UGC_APK" 2>/dev/null | awk -v id="$1" '
+    $1=="resource" && $2==id { inb=1; file=""; next }
+    inb && $1=="resource"    { inb=0; exit }
+    inb && $2=="(file)"      { file=$3 }
+    END { if (file != "") print file }' || true
+}
+# Minimal AXML adaptive-icon parser: prints the foreground drawable resource id.
+AXML_FG="$WORK/axml_fg.py"
+cat > "$AXML_FG" <<'PYEOF'
+import struct, sys
+d = open(sys.argv[1], "rb").read()
+u16 = lambda o: struct.unpack_from("<H", d, o)[0]
+u32 = lambda o: struct.unpack_from("<I", d, o)[0]
+if u16(0) != 3: sys.exit(1)
+off = 8
+sp = u32(off + 4); sc = u32(off + 8)
+fl = u32(off + 16); ss = u32(off + 20)
+utf8 = bool(fl & (1 << 8)); sb = off + ss; so = off + 28
+def gs(i):
+    if i is None or i < 0 or i >= sc: return None
+    p = so + 4 * i; pos = sb + u32(p)
+    if utf8:
+        n = d[pos]
+        if n & 0x80: n = ((n & 0x7f) << 8) | d[pos + 1]; pos += 2
+        else: pos += 1
+        b = d[pos]
+        if b & 0x80: b = ((b & 0x7f) << 8) | d[pos + 1]; pos += 2
+        else: pos += 1
+        return d[pos:pos + b].decode("utf-8", "replace")
+    n = u16(pos)
+    if n & 0x8000: n = ((n & 0x7fff) << 16) | u16(pos + 2); pos += 4
+    else: pos += 2
+    return d[pos:pos + 2 * n].decode("utf-16-le", "replace")
+off = 8 + sp; fg = None
+while off + 8 <= len(d):
+    ct = u16(off); cs = u32(off + 4)
+    if cs == 0: break
+    if ct == 0x0102:
+        el = gs(u32(off + 20)); ac = u16(off + 28); ap = off + 36
+        if el == "foreground":
+            for _ in range(ac):
+                if gs(u32(ap + 4)) == "drawable": fg = hex(u32(ap + 16))
+                ap += 20
+    off += cs
+if fg: print(fg)
+PYEOF
+
+# Decide which apk-internal file holds the launcher icon.
+icon_src_path() {
+  case "$ICON_REF" in
+    *.xml)
+      ( cd "$WORK" && unzip -o -q "$UGC_APK" "$ICON_REF" ) || return 1
+      local fg; fg="$(python3 "$AXML_FG" "$WORK/$ICON_REF" 2>/dev/null || true)"
+      [ -n "$fg" ] || return 1
+      fg_file_for "$fg"
+      ;;
+    *) printf '%s\n' "$ICON_REF" ;;
   esac
 }
-extract_icon || { echo "FATAL: no launcher icon in $UGC_APK (icon must come from the release)"; exit 1; }
+
+ICON_SRC="$(icon_src_path || true)"
+[ -n "$ICON_SRC" ] || { echo "FATAL: could not resolve a launcher icon file in $UGC_APK (icon=$ICON_REF)"; exit 1; }
+( cd "$WORK" && unzip -o -q "$UGC_APK" "$ICON_SRC" ) || { echo "FATAL: cannot extract $ICON_SRC from $UGC_APK"; exit 1; }
+icon_to_png "$ICON_SRC" "$ICON_DIR/$ICON_NAME" \
+  || { echo "FATAL: could not produce a PNG icon from $ICON_SRC (need magick/convert/dwebp)"; exit 1; }
+[ -s "$ICON_DIR/$ICON_NAME" ] || { echo "FATAL: produced icon is empty"; exit 1; }
 cp -f "$ICON_DIR/$ICON_NAME" "$ICON_DIR/$REPO_ICON"
-echo "  icon=$ICON_NAME (extracted from release APK)"
+echo "  icon=$ICON_NAME (from $ICON_REF -> $ICON_SRC)"
 
 # ---------------------------------------------------------------------------
 # 6. Bump the repo version counter (monotonic int for the index)

@@ -24,7 +24,9 @@ On every release (tag push), the `fdroid` job in
 after the GitHub release is created and does the following:
 
 1. Takes the release-signed **arm64** APK from the build artifact.
-2. Extracts metadata (version, SDK levels, permissions, ABIs) with `aapt2`.
+2. Extracts metadata (package name, version, SDK levels, permissions, ABIs)
+   and the launcher icon — including adaptive icons, whose WebP foreground is
+   resolved and converted to PNG — with `aapt2`.
 3. Writes `repo/index-v1.json` and builds a **signed** `repo/index-v1.jar`
    (the F-Droid 2.0 index is a signed JAR; plain XML/JSON is rejected).
 4. Copies the APK into the repo and keeps only the newest `UGC_KEEP` (default 3)
@@ -50,12 +52,12 @@ fdroid/repo/
   index-v1.jar             # signed index the client actually downloads (generated)
   icons/
     repo.png               # repository icon
-    org.ungoogled.chromium_<versionCode>.png
-  org.ungoogled.chromium_<versionCode>.apk   # Git LFS
+    org.ungoogled.chromium.stable_<versionCode>.png
+  org.ungoogled.chromium.stable_<versionCode>.apk   # Git LFS
 ```
 
 The client resolves files relative to the base URL above:
-`<base>/index-v1.jar`, `<base>/icons/...`, `<base>/org.ungoogled.chromium_<versionCode>.apk`.
+`<base>/index-v1.jar`, `<base>/icons/...`, `<base>/org.ungoogled.chromium.stable_<versionCode>.apk`.
 
 ## Regenerating / troubleshooting
 
