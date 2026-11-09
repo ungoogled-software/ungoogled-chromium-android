@@ -46,6 +46,9 @@ ALIAS="${UGC_KEYSTORE_ALIAS:-key0}"
 [ -f "$UGC_KEYSTORE" ]     || { echo "FATAL: keystore not found: $UGC_KEYSTORE"; exit 1; }
 [ -f "$UGC_KEYSTORE_PASSFILE" ] || { echo "FATAL: passfile not found: $UGC_KEYSTORE_PASSFILE"; exit 1; }
 [ -f "$UGC_APK" ]          || { echo "FATAL: APK not found: $UGC_APK"; exit 1; }
+# Resolve to an absolute path: section 5 `cd`s into $WORK, which would break a
+# relative UGC_APK (CI passes "rel/ChromePublic_arm64.apk").
+UGC_APK="$(cd "$(dirname "$UGC_APK")" && pwd)/$(basename "$UGC_APK")"
 for tool in aapt2 keytool jarsigner jar sha256sum md5sum od unzip python3; do
   command -v "$tool" >/dev/null 2>&1 || { echo "FATAL: required tool not on PATH: $tool"; exit 1; }
 done
