@@ -15,6 +15,9 @@
 #   UGC_KEYSTORE          path to the release JKS keystore (required)
 #   UGC_KEYSTORE_PASSFILE path to a file containing the keystore+key password (required)
 #   UGC_APK               path to the signed release APK to publish (required)
+#   UGC_APK_ASSET         name the APK is published under as a release asset (default: basename of UGC_APK)
+#   UGC_GENERATE_ICONS    set to also generate the launcher icon (skipped by default; a flat
+#                         release-asset repo cannot serve <base>/icons/<name>)
 #   UGC_PACKAGE           applicationId / package name (default: read from the APK via aapt2)
 #   UGC_REPO_DIR          target repo dir, relative to the git root (default fdroid/repo)
 #   UGC_REPO_NAME         repository display name (default "Ungoogled Chromium")
@@ -22,10 +25,9 @@
 #                         (default "Ungoogled Chromium")
 #   UGC_LICENSE           SPDX license id recorded in the index (default "GPL-3.0 AND BSD-3-Clause")
 #   UGC_REPO_ADDRESS      address recorded in the index (default the GitHub repo)
-#   UGC_KEEP              number of versions to keep before pruning (default 3)
 #
 # Required on PATH: aapt2, keytool, jarsigner, jar, sha256sum, md5sum, od, unzip,
-#   python3, and (for WebP launcher icons) one of: magick, convert, dwebp
+#   python3
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
@@ -40,7 +42,6 @@ UGC_REPO_NAME="${UGC_REPO_NAME:-Ungoogled Chromium}"
 UGC_APP_NAME="${UGC_APP_NAME:-Ungoogled Chromium}"
 UGC_LICENSE="${UGC_LICENSE:-GPL-3.0 AND BSD-3-Clause}"
 UGC_REPO_ADDRESS="${UGC_REPO_ADDRESS:-https://github.com/ungoogled-software/ungoogled-chromium-android}"
-UGC_KEEP="${UGC_KEEP:-3}"
 ALIAS="${UGC_KEYSTORE_ALIAS:-key0}"
 
 [ -f "$UGC_KEYSTORE" ]     || { echo "FATAL: keystore not found: $UGC_KEYSTORE"; exit 1; }
@@ -54,8 +55,7 @@ for tool in aapt2 keytool jarsigner jar sha256sum md5sum od unzip python3; do
 done
 
 REPO_DIR="$ROOT/$UGC_REPO_DIR"
-ICON_DIR="$REPO_DIR/icons"
-mkdir -p "$ICON_DIR"
+mkdir -p "$REPO_DIR"
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
@@ -97,7 +97,10 @@ UGC_PACKAGE="${UGC_PACKAGE:-$PKG_NAME}"
 PERMS="$(grep -oE "uses-permission: name='[^']*'" "$BADGE" | sed -E "s/uses-permission: name='//; s/'$//" | sort -u || true)"
 FEATURES="$(grep -oE "uses-feature: name='[^']*'" "$BADGE"  | sed -E "s/uses-feature: name='//; s/'$//" | sort -u || true)"
 
-APK_NAME="${UGC_PACKAGE}_${VERSION_CODE}.apk"
+# B': apkName must equal the name the APK is published under as a release asset,
+# so the client's plain <base>/<apkName> concat resolves it. Default: the APK's
+# own basename (which is how the release job names the asset).
+APK_NAME="${UGC_APK_ASSET:-$(basename "$UGC_APK")}"
 ICON_NAME="${UGC_PACKAGE}_${VERSION_CODE}.png"
 REPO_ICON="repo.png"
 echo "package=$UGC_PACKAGE"
@@ -130,9 +133,9 @@ SIG="$(printf '%s' "$CERT_HEX" | md5sum | awk '{print $1}')"
 echo "  signer=$SIGNER"
 
 # ---------------------------------------------------------------------------
-# 4. Copy the APK into the repo (LFS-tracked via .gitattributes)
+# 4. (B') The APK is NOT copied into the repo: it is a GitHub release asset, and
+#    the index's apkName (section 7) points at that asset.
 # ---------------------------------------------------------------------------
-cp -f "$UGC_APK" "$REPO_DIR/$APK_NAME"
 
 # ---------------------------------------------------------------------------
 # 5. Icon: taken from the release APK (never hand-crafted).
@@ -143,6 +146,9 @@ cp -f "$UGC_APK" "$REPO_DIR/$APK_NAME"
 #        `aapt2 dump resources`, and extract that file.
 #    The result is normalised to a real PNG (PNG is copied; WebP is converted).
 # ---------------------------------------------------------------------------
+if [ -n "${UGC_GENERATE_ICONS:-}" ]; then
+ICON_DIR="$REPO_DIR/icons"
+mkdir -p "$ICON_DIR"
 ICON_REF="$(sed -nE "s/^application:.* icon='([^']*)'.*/\1/p" "$BADGE" | head -1)"
 [ -n "$ICON_REF" ] || { echo "FATAL: aapt2 badging has no launcher icon in $UGC_APK"; exit 1; }
 
@@ -234,14 +240,17 @@ icon_to_png "$ICON_SRC" "$ICON_DIR/$ICON_NAME" \
 [ -s "$ICON_DIR/$ICON_NAME" ] || { echo "FATAL: produced icon is empty"; exit 1; }
 cp -f "$ICON_DIR/$ICON_NAME" "$ICON_DIR/$REPO_ICON"
 echo "  icon=$ICON_NAME (from $ICON_REF -> $ICON_SRC)"
+else
+  echo "  icons: skipped (set UGC_GENERATE_ICONS to generate; not served by B' release-asset repos)"
+fi
 
 # ---------------------------------------------------------------------------
-# 6. Bump the repo version counter (monotonic int for the index)
+# 6. Repo version + timestamp. The client treats a lower index timestamp as
+#    stale, so TIMESTAMP (wall clock) is what makes a re-published index "newer".
+#    The repo version tracks the app versionCode (monotonic across releases, and
+#    fits the Int32 the v1 schema expects).
 # ---------------------------------------------------------------------------
-VER_FILE="$ROOT/fdroid/.repo_version"
-mkdir -p "$(dirname "$VER_FILE")"
-if [ -f "$VER_FILE" ]; then REPO_VERSION="$(($(cat "$VER_FILE") + 1))"; else REPO_VERSION=1; fi
-printf '%s' "$REPO_VERSION" > "$VER_FILE"
+REPO_VERSION="$VERSION_CODE"
 TIMESTAMP="$(date +%s)"
 
 # ---------------------------------------------------------------------------
@@ -277,6 +286,10 @@ cat > "$REPO_DIR/index-v1.json" <<EOF
     "icon": "$REPO_ICON",
     "address": "$(jesc "$UGC_REPO_ADDRESS")",
     "description": "$(jesc "Self-hosted, experimental F-Droid repository for the Android build of ungoogled-chromium (Google Chromium, sans dependency on Google web services). Generated automatically from this project's release builds.")"
+  },
+  "requests": {
+    "install": [],
+    "uninstall": []
   },
   "apps": [
     {
@@ -334,21 +347,10 @@ fi
 echo "  wrote signed index-v1.jar (alias $ALIAS)"
 
 # ---------------------------------------------------------------------------
-# 9. Prune old versions (keep the newest UGC_KEEP by versionCode)
+# (B') No pruning: the repo holds only the signed index, and each release
+#    carries its own single-version index, so there is nothing to prune.
 # ---------------------------------------------------------------------------
-mapfile -t APKS < <(ls "$REPO_DIR/${UGC_PACKAGE}_"*.apk 2>/dev/null || true)
-if [ "${#APKS[@]}" -gt "$UGC_KEEP" ]; then
-  for apk in "${APKS[@]}"; do
-    vc="$(basename "$apk" .apk | awk -F'_' '{print $NF}')"
-    printf '%s\t%s\n' "$vc" "$apk"
-  done | sort -rn | awk -F'\t' -v keep="$UGC_KEEP" 'NR>keep {print $2}' \
-    | while IFS= read -r old; do
-        oldvc="$(basename "$old" .apk | awk -F'_' '{print $NF}')"
-        echo "  pruning $(basename "$old")"
-        rm -f "$old" "$ICON_DIR/${UGC_PACKAGE}_${oldvc}.png"
-      done
-fi
 
-echo "=== F-Droid repo updated ==="
-echo "  base: ${UGC_REPO_ADDRESS} (serve $UGC_REPO_DIR/ at <host>/fdroid/repo)"
+echo "=== F-Droid index built (B': upload index-v1.jar to the GitHub release) ==="
+echo "  index: $REPO_DIR/index-v1.jar (+ index-v1.json)"
 ls -la "$REPO_DIR"
