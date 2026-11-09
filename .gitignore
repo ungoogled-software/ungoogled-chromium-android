@@ -23,6 +23,3 @@
 /LOCKED_BASE_READY
 /out/
 releases/
-
-# F-Droid index build output (published to the GitHub release, not committed)
-/fdroid/repo/
