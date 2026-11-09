@@ -92,17 +92,23 @@ Pre-built apks are named as `{BUILD_TARGET}_{CPU_ARCH}.apk`, where:
 
 ## F-Droid
 
-*This is **experimental**. It is a self-hosted [F-Droid](https://f-droid.org) repository generated automatically from this repo's release builds, currently for `arm64` only. Prefer the regular [release APKs](#platforms-and-versions) for the most stable option.*
+We trialed hosting a self-hosted [F-Droid](https://f-droid.org) repo from this
+repository, but unfortunately without success. The client needs the signed index
+**and** the ~367 MB APK served as a direct HTTP `200` (no redirect). There are
+the following hurdles:
 
-If you use the F-Droid client, you can add this repository to install and update ungoogled-chromium-android without the Play Store. It requires the **F-Droid client 2.0.x** (the classic 1.x client uses a different index format and is not supported).
+1. **Git branch + Git LFS** — the ~367 MB APK exceeds git's 100 MB per-file
+   limit, so it *requires* Git LFS; but this is a *fork*, and GitHub forks can't
+   store new LFS objects.
+2. **Release assets** — every download URL `302`-redirects to a CDN, and the
+   F-Droid client sets `followRedirects = false` (only a `404` is tolerated), so
+   the repo can't live in release assets.
+3. **Serving the APKs directly** — the only workable route, but it requires an
+   external service to operate; GitHub's direct file hosts
+   (`raw.githubusercontent.com`, Pages, jsDelivr) only serve git-tracked files
+   (~100 MB cap) and can't deliver the APK.
 
-**Getting started** — in the F-Droid client, use **More** → **Repositories** → **+** (Add repository) and enter:
-
-```
-https://raw.githubusercontent.com/ungoogled-software/ungoogled-chromium-android/master/fdroid/repo
-```
-
-The app then appears as **Ungoogled Chromium** and updates automatically on each release. See [fdroid/README.md](fdroid/README.md) for how the repository is generated and signed.
+Install the [release APKs](#platforms-and-versions) directly (sideload) instead.
 
 ## Building Instructions
 *This build uses the SDK/NDK/JDK from the gclient checkout. [Android rebuilds](https://github.com/wchen342/android-rebuilds), used by earlier versions, is no longer maintained.*

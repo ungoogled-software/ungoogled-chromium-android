@@ -1,3 +1,0 @@
-# B': the F-Droid index is published to GitHub release assets (not stored in
-# git), so no Git-LFS rules are needed. (A fork cannot store new LFS objects
-# anyway, which is why this repo does not hold the APK in git.)
