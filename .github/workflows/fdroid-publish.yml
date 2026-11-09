@@ -1,0 +1,101 @@
+name: fdroid publish (from release)
+
+# Re-publishes the self-hosted F-Droid repository from an EXISTING GitHub release,
+# without re-running the multi-hour Chromium build. The APK is downloaded from the
+# named release, so this finishes in minutes. Runs the same logic as the `fdroid`
+# job in the release build (build-repo.sh, then open a publish PR to master).
+#
+# Trigger: Actions -> "fdroid publish (from release)" -> "Run workflow", or:
+#   gh workflow run fdroid-publish.yml --field release_name=156.0.8078.79-1
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: 'Existing release tag to publish (e.g. 156.0.8078.79-1)'
+        required: true
+        default: ''
+        type: string
+
+jobs:
+  fdroid:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Download release APK
+        shell: bash
+        env:
+          NAME: ${{ inputs.release_name }}
+        run: |
+          [ -n "$NAME" ] || { echo "FATAL: release_name is required"; exit 1; }
+          mkdir -p rel
+          echo "downloading ChromePublic_arm64.apk from release ${NAME}"
+          curl -fsSL -o rel/ChromePublic_arm64.apk \
+            "https://github.com/${GITHUB_REPOSITORY}/releases/download/${NAME}/ChromePublic_arm64.apk"
+          ls -la rel/
+      - name: Locate aapt2 (pre-installed Android SDK)
+        shell: bash
+        run: |
+          : "${ANDROID_HOME:?ANDROID_HOME is not set on this runner}"
+          bt="$(ls -d "$ANDROID_HOME"/build-tools/*/ 2>/dev/null | sort -V | tail -1)"
+          [ -n "$bt" ] || { echo "FATAL: no build-tools under $ANDROID_HOME"; exit 1; }
+          echo "using aapt2 from $bt"; "$bt/aapt2" version
+          echo "$bt" >> "$GITHUB_PATH"
+      - name: Stage keystore from secrets
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+        run: |
+          [ -n "${KEYSTORE_B64:-}" ] || { echo "FATAL: KEYSTORE_B64 secret is not set"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/ks"
+          chmod 700 "$RUNNER_TEMP/ks"
+          printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ks/release.jks"
+          printf '%s' "$KEYSTORE_PASS" > "$RUNNER_TEMP/ks/pass"
+          chmod 600 "$RUNNER_TEMP/ks"/*
+      - name: Build F-Droid repo
+        shell: bash
+        run: |
+          git lfs install
+          export UGC_KEYSTORE="$RUNNER_TEMP/ks/release.jks"
+          export UGC_KEYSTORE_PASSFILE="$RUNNER_TEMP/ks/pass"
+          export UGC_APK="rel/ChromePublic_arm64.apk"
+          export UGC_REPO_DIR="fdroid/repo"
+          export UGC_KEEP="3"
+          bash fdroid/build-repo.sh
+      - name: Commit and open PR
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NAME: ${{ inputs.release_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A fdroid/ .gitattributes
+          if git diff --cached --quiet; then
+            echo "F-Droid repo unchanged; nothing to commit"
+            exit 0
+          fi
+          git commit -m "fdroid: publish $NAME"
+          # master requires a PR before merging, so publish via a branch + PR
+          # (no direct push). A maintainer merges it to update the F-Droid repo.
+          BRANCH="fdroid/publish-${NAME}"
+          git push --force origin "HEAD:refs/heads/${BRANCH}"
+          if gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base master \
+               --state open --json number | grep -q number; then
+            echo "PR for ${BRANCH} is already open; its branch is updated"
+          else
+            gh pr create --repo "$GITHUB_REPOSITORY" --base master --head "$BRANCH" \
+              --title "fdroid: publish ${NAME}" \
+              --body "Auto-generated: updates the self-hosted F-Droid repository for ${NAME} (LFS-backed APK + signed index). Merge to publish."
+          fi
+      - name: Remove staged keystore
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/ks"
