@@ -47,6 +47,18 @@ jobs:
           [ -n "$bt" ] || { echo "FATAL: no build-tools under $ANDROID_HOME"; exit 1; }
           echo "using aapt2 from $bt"; "$bt/aapt2" version
           echo "$bt" >> "$GITHUB_PATH"
+      - name: Ensure a WebP->PNG icon converter is available
+        shell: bash
+        run: |
+          # Chromium's launcher icon is a WebP; build-repo.sh needs a decoder to
+          # emit a real PNG. dwebp (from the 'webp' package) is the smallest that
+          # suffices. Install it only if no converter is already on the runner.
+          for c in magick convert dwebp; do
+            if command -v "$c" >/dev/null 2>&1; then echo "using $c"; exit 0; fi
+          done
+          sudo apt-get update
+          sudo apt-get install -y webp
+          command -v dwebp && dwebp -version 2>&1 | head -1
       - name: Stage keystore from secrets
         shell: bash
         env:
