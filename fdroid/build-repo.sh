@@ -336,12 +336,18 @@ jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
   -signedjar "$REPO_DIR/index-v1.jar" "$WORK/index-v1-unsigned.jar" "$ALIAS" >/dev/null
 jarsigner -verify "$REPO_DIR/index-v1.jar" >/dev/null || { echo "FATAL: index-v1.jar failed to verify"; exit 1; }
 
-# F-Droid v1 verifier only allows SHA-1/SHA-256 digests on the index entry.
-BAD_DIGESTS="$(unzip -p "$REPO_DIR/index-v1.jar" META-INF/MANIFEST.MF \
-  | grep -oiE '(SHA[0-9]+-[0-9]*-Digest|MD5-Digest)' | sort -u \
-  | grep -vE '^(SHA-256-Digest|SHA1-Digest|SHA-1-Digest)$' || true)"
+# The F-Droid v1 verifier requires the index entry to carry a SHA-1/SHA-256
+# digest in the manifest; any other digest (MD5, SHA-512, ...) is rejected.
+# Jar digest names look like "SHA-256-Digest", "SHA1-Digest", "MD5-Digest".
+DIGESTS="$(unzip -p "$REPO_DIR/index-v1.jar" META-INF/MANIFEST.MF \
+  | grep -oiE '(MD5|SHA-?[0-9]+)-Digest' | sort -u || true)"
+BAD_DIGESTS="$(printf '%s\n' "$DIGESTS" | grep -vE '^(SHA-256-Digest|SHA1-Digest|SHA-1-Digest)$' || true)"
 if [ -n "$BAD_DIGESTS" ]; then
   echo "FATAL: manifest has digests the F-Droid client rejects: $BAD_DIGESTS"
+  exit 1
+fi
+if ! printf '%s\n' "$DIGESTS" | grep -qE '^(SHA-256-Digest|SHA1-Digest|SHA-1-Digest)$'; then
+  echo "FATAL: manifest has no SHA-1/SHA-256 digest for the index entry"
   exit 1
 fi
 echo "  wrote signed index-v1.jar (alias $ALIAS)"
