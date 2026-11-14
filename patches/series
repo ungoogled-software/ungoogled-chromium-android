@@ -79,6 +79,7 @@ Bromite/updater-disable-updater-pings.patch
 #Bromite/Inject-scripts-for-AMP-tracking-ads-and-video.patch
 Cromite/Add-exit-menu-item.patch
 ungoogled-chromium-android/Add-clear-data-on-exit-flag.patch
+ungoogled-chromium-android/Detect-crx-by-magic.patch
 #Bromite/Add-bookmark-import-export-actions.patch
 Cromite/Add-option-to-not-persist-tabs-across-sessions.patch
 Cromite/Add-a-proxy-configuration-page.patch

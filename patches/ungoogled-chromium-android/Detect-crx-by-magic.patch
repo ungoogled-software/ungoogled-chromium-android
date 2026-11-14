@@ -1,0 +1,49 @@
+description: Detect CRX by magic
+author: PF4Public <PF4Public@users.noreply.github.com>
+
+Gate off-store CRX detection on the extension-mime-request-handling
+flag. Off-store hosts (e.g. GitHub Releases, used by extension
+update.xml) serve CRX as application/octet-stream, which
+IsExtensionDownload rejects via its exact MIME-type match. Android has
+no drag-and-drop/open-file install fallback, so such downloads are
+saved as files instead of installing. When
+extension-mime-request-handling is set to always-prompt-for-install,
+accept the download as an extension if the target file starts with the
+CRX3 magic (Cr24), read at the COMPLETE download observer.
+
+---
+ 1 file changed, 18 insertions(+)
+
+--- a/extensions/browser/extension_util.cc
++++ b/extensions/browser/extension_util.cc
+@@ -8,6 +8,7 @@
+ 
+ #include "base/barrier_closure.h"
+ #include "base/command_line.h"
++#include "base/files/file.h"
+ #include "base/no_destructor.h"
+ #include "base/strings/string_util.h"
+ #include "build/chromeos_buildflags.h"
+@@ -611,5 +612,22 @@ bool IsExtensionDownload(const download::DownloadItem& download_item) {
+   if (download_item.GetMimeType() == Extension::kMimeType) {
+     return !ShouldDownloadAsRegularFile();
+   }
++
++  const base::CommandLine& command_line =
++      *base::CommandLine::ForCurrentProcess();
++  if (command_line.HasSwitch("extension-mime-request-handling") &&
++      command_line.GetSwitchValueASCII("extension-mime-request-handling") ==
++      "always-prompt-for-install") {
++    const base::FilePath& target_path = download_item.GetTargetFilePath();
++    base::File file(target_path, base::File::Flags::FLAG_OPEN |
++                                  base::File::Flags::FLAG_READ);
++    if (file.IsValid()) {
++      char magic[4] = {0};
++      if (file.Read(0, magic, 4) == 4 && magic[0] == 'C' && magic[1] == 'r' &&
++          magic[2] == '2' && magic[3] == '4') {
++        return true;
++      }
++    }
++  }
+   return false;
+ }
